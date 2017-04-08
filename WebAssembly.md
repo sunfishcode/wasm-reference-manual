@@ -2787,6 +2787,7 @@ Function execution can be prompted by a [call-family instruction][L], by
 The input to execution of a function consists of:
  - the function to be executed.
  - the incoming argument values, one for each parameter [type] of the function.
+ - a module instance
 
 For the duration of the execution of a function body, several data structures
 are created:
