@@ -8,7 +8,6 @@ WebAssembly Reference Manual
 0. [Instructions](#instructions)
 0. [Validation](#validation)
 0. [Execution](#execution)
-0. [Binary Format](#binary-format)
 0. [Text Format](#text-format)
 
 ![WebAssembly Logo][logo]
@@ -30,9 +29,8 @@ interactions with other modules ([imports] and [exports]), sections declaring
 [data](#data-section) and other implements used by the module, and sections
 defining [*functions*]. For more information, see the [Module section].
 
-WebAssembly modules can be encoded either in [binary format] for size and
-decoding efficiency or in [text format] for readability, and can be translated
-from either format to the other.
+WebAssembly modules are encoded in binary form for size and decoding efficiency.
+They may be losslessly translated to [text form] for readability.
 
 WebAssembly code must be validated before it can be instantiated and executed.
 WebAssembly is designed to allow validation to be performed in a single linear
@@ -256,8 +254,8 @@ values `0` and `1` for false and true.
 
 [actual boolean]: https://en.wikipedia.org/wiki/Boolean_data_type
 
-> The [binary format] often uses alternate encodings for integers and boolean
-values, rather than using the literal encodings described here.
+> WebAssembly often uses alternate encodings for integers and boolean values,
+rather than using the literal encodings described here.
 
 #### Floating-Point Value Types
 
@@ -367,11 +365,15 @@ initializers.
 
 ### Module Contents
 
-Modules contain a version [varuint32].
+A module starts with header:
 
-Modules also contain a sequence of sections. Each section consists of a
-[varuint7] *opcode* followed by a [byte array] *payload*. The opcode is required
-to either indicate a *known section*, or be `0x00`, indicating a
+| Field Name     | Type     | Description                               |
+| -------------- | -------- | ----------------------------------------- |
+| `magic_cookie` | `uint32` |  The value `0x6d736100`, which is "\0asm" |
+
+The header is then followed by a sequence of sections. Each section consists of
+a [varuint7] *opcode* followed by a [byte array] *payload*. The opcode is
+required to either indicate a *known section*, or be `0x00`, indicating a
 *custom section*.
 
 In a custom section, the payload is required to start with an [identifier]
@@ -387,6 +389,10 @@ In a custom section, the payload is required to start with an [identifier]
  - Known sections are required to appear at most once, and those present are
    required to be ordered according to the order in the
    [enumeration of the Known Sections](#known-sections).
+
+> The `magic_cookie` bytes begin with a NUL, indicating to generic tools that
+the ensuing contents are not generally "text", followed by the UTF-8 encoding of
+the string "asm".
 
 > Some representations don't represent some of the known sections literally;
 they may be combined with other sections or implied by specialized syntax.
@@ -685,8 +691,8 @@ A *local entry* consists of:
 
 A *position* within a function refers to an element of the instruction sequence.
 
-> In the [binary format], positions are represented as byte offsets; in the
-[text format], positions are represented with a special syntax.
+> Positions in WebAssembly are represented as byte offsets; in [text form],
+positions may be represented with a special syntax.
 
 #### Data Section
 
@@ -738,14 +744,14 @@ The Name Section doesn't change execution semantics and malformed constructs,
 such as out-of-bounds indices, in this section cause the section to be ignored,
 and don't trigger validation failures.
 
-> Name data is represented as an explicit section in the [binary format],
-however in the [text format] it may be represented as an integrated part of the
-syntax for functions rather than as a discrete section.
+> Name data is represented as an explicit section in WebAssembly, however in
+[text form] it may be represented as an integrated part of the syntax for
+functions rather than as a discrete section.
 
 > The expectation is that, when a binary WebAssembly module is presented in a
 human-readable format in a browser or other development environment, the names
-in this section are to be used as the names of functions and locals in the
-[text format].
+in this section are to be used as the names of functions and locals in
+[text form].
 
 ### Module Index Spaces
 
@@ -835,6 +841,9 @@ Instructions in the [Instructions](#instructions) section are introduced with
 tables giving a concise description of several of their attributes, followed by
 additional content.
 
+[Instructions](#instructions) are encoded as their Opcode value followed by
+their immediate operand values.
+
 0. [Instruction Mnemonic Field](#instruction-mnemonic-field)
 0. [Instruction Immediates Field](#instruction-immediates-field)
 0. [Instruction Signature Field](#instruction-signature-field)
@@ -866,8 +875,12 @@ Immediates, if present, is a list of [typed] value names, representing values
 provided by the module itself as input to an instruction.
 
 As a special case, an immediate field can also contain `TABLE`, which signifies
-a branch table, which is an [array] of immediate integer values. This is for use
-in the [`br_table`](#table-branch) instruction.
+a *branch table*, which is an [array] of `varuint32`. This is for use in the
+[`br_table`](#table-branch) instruction.
+
+As another special case, an immediate field can contain `iPTR`, which signifies
+either [varuint32] or [varuint64] depending on whether the associated
+linear-memory is 32-bit or 64-bit.
 
 ### Instruction Signature Field
 
@@ -1184,14 +1197,13 @@ TODO: $align is encoded in log2 format, rather than required to be a power of 2.
 
 ### Instruction Opcode Field
 
-These values are used in the [binary format](#binary-format) to encode
-instruction [opcodes].
+These values are used in WebAssembly the to encode instruction [opcodes].
 
 [opcodes]: https://en.wikipedia.org/wiki/Opcode
 
 ### Instruction Syntax Field
 
-These are suggested operator names for use in the [text format]. A parenthesized
+These are suggested operator names for use in [text form]. A parenthesized
 number is given for each operator name giving a suggested operator [precedence]
 value when binary operators use infix notation and unary operators use prefix
 notation.
@@ -1234,9 +1246,9 @@ Instructions
 
 #### Block
 
-| Mnemonic    | Immediates    | Signature | Families | Opcode |
-| ----------- | ------------- | --------- | -------- | ------ |
-| `block`     | `$arity: i32` | `() : ()` |          | 0x01   |
+| Mnemonic    | Immediates            | Signature | Families | Opcode |
+| ----------- | --------------------- | --------- | -------- | ------ |
+| `block`     | `$arity: [varuint32]` | `() : ()` |          | 0x01   |
 
 The `block` instruction pushes an entry onto the control-flow stack. The entry
 contains an unbound [label], the current length of the value stack, and
@@ -1276,9 +1288,9 @@ TODO: Update to block signatures.
 
 #### Unconditional Branch
 
-| Mnemonic    | Immediates    | Signature                                 | Families | Opcode |
-| ----------- | ------------- | ----------------------------------------- | -------- | ------ |
-| `br`        | `$depth: i32` | `($T[$block_arity]) : ($T[$block_arity])` | [B] [Q]  | 0x06   |
+| Mnemonic    | Immediates            | Signature                                 | Families | Opcode |
+| ----------- | --------------------- | ----------------------------------------- | -------- | ------ |
+| `br`        | `$depth: [varuint32]` | `($T[$block_arity]) : ($T[$block_arity])` | [B] [Q]  | 0x06   |
 
 The `br` instruction [branches](#branching) according to the control-flow stack
 entry `$depth` from the top. It returns the values of its operands.
@@ -1288,9 +1300,9 @@ entry `$depth` from the top. It returns the values of its operands.
 
 #### Conditional Branch
 
-| Mnemonic    | Immediates    | Signature                                                  | Families | Opcode |
-| ----------- | ------------- | ---------------------------------------------------------- | -------- | ------ |
-| `br_if`     | `$depth: i32` | `($T[$block_arity], $condition: i32) : ($T[$block_arity])` | [B]      | 0x07   |
+| Mnemonic    | Immediates            | Signature                                                  | Families | Opcode |
+| ----------- | --------------------- | ---------------------------------------------------------- | -------- | ------ |
+| `br_if`     | `$depth: [varuint32]` | `($T[$block_arity], $condition: i32) : ($T[$block_arity])` | [B]      | 0x07   |
 
 If `$condition` is [true], the `br_if` instruction [branches](#branching)
 according to the control-flow stack entry `$depth` from the top. Otherwise, it
@@ -1301,9 +1313,9 @@ does nothing. It returns the values of its operands, except `$condition`.
 
 #### Table Branch
 
-| Mnemonic    | Immediates             | Signature                                              | Families | Opcode |
-| ----------- | ---------------------- | ------------------------------------------------------ | -------- | ------ |
-| `br_table`  | `TABLE, $default: i32` | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x08   |
+| Mnemonic    | Immediates                     | Signature                                              | Families | Opcode |
+| ----------- | ------------------------------ | ------------------------------------------------------ | -------- | ------ |
+| `br_table`  | `TABLE, $default: [varuint32]` | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x08   |
 
 First, the `br_table` instruction selects a depth to use. If `$index` is within
 the bounds of the table, the depth is the value of the indexed table element.
@@ -1326,9 +1338,9 @@ with the other branch instructions.
 
 #### If
 
-| Mnemonic    | Immediates    | Signature                   | Families | Opcode |
-| ----------- | ------------- | --------------------------- | -------- | ------ |
-| `if`        | `$arity: i32` | `($condition: i32) : ()`    | [B]      | 0x03   |
+| Mnemonic    | Immediates            | Signature                   | Families | Opcode |
+| ----------- | --------------------- | --------------------------- | -------- | ------ |
+| `if`        | `$arity: [varuint32]` | `($condition: i32) : ()`    | [B]      | 0x03   |
 
 The `if` instruction pushes an entry onto the control-flow stack. The entry
 contains an unbound [label], the current length of the value stack, and
@@ -1440,12 +1452,12 @@ discard unneeded values from the value stack.
 
 #### Constant
 
-| Mnemonic    | Immediates    | Signature    | Families | Opcode |
-| ----------- | ------------- | ------------ | -------- | ------ |
-| `i32.const` | `$value: i32` | `() : (i32)` |          | 0x10   |
-| `i64.const` | `$value: i64` | `() : (i64)` |          | 0x11   |
-| `f32.const` | `$value: f32` | `() : (f32)` |          | 0x13   |
-| `f64.const` | `$value: f64` | `() : (f64)` |          | 0x12   |
+| Mnemonic    | Immediates            | Signature    | Families | Opcode |
+| ----------- | --------------------- | ------------ | -------- | ------ |
+| `i32.const` | `$value: [varsint32]` | `() : (i32)` |          | 0x10   |
+| `i64.const` | `$value: [varsint64]` | `() : (i64)` |          | 0x11   |
+| `f32.const` | `$value: [float32]`   | `() : (f32)` |          | 0x13   |
+| `f64.const` | `$value: [float64]`   | `() : (f64)` |          | 0x12   |
 
 The `const` instruction returns the value of `$value`.
 
@@ -1453,9 +1465,9 @@ The `const` instruction returns the value of `$value`.
 
 #### Get Local
 
-| Mnemonic    | Immediates | Signature      | Families | Opcode |
-| ----------- | ---------- | -------------- | -------- | ------ |
-| `get_local` | `$id: i32` | `() : ($T[1])` |          | 0x14   |
+| Mnemonic    | Immediates         | Signature      | Families | Opcode |
+| ----------- | ------------------ | -------------- | -------- | ------ |
+| `get_local` | `$id: [varuint32]` | `() : ($T[1])` |          | 0x14   |
 
 The `get_local` instruction returns the value of the local at index `$id` in the
 locals array. The type parameter is bound to the type of the local.
@@ -1465,9 +1477,9 @@ locals array. The type parameter is bound to the type of the local.
 
 #### Set Local
 
-| Mnemonic    | Immediates | Signature      | Families | Opcode |
-| ----------- | ---------- | -------------- | -------- | ------ |
-| `set_local` | `$id: i32` | `($T[1]) : ()` |          | 0x15   |
+| Mnemonic    | Immediates         | Signature      | Families | Opcode |
+| ----------- | ------------------ | -------------- | -------- | ------ |
+| `set_local` | `$id: [varuint32]` | `($T[1]) : ()` |          | 0x15   |
 
 The `set_local` instruction sets the value of the local at index `$id` in the
 locals array to the value given in the operand. The type parameter is bound to
@@ -1481,9 +1493,9 @@ the type of the local.
 
 #### Tee Local
 
-| Mnemonic    | Immediates | Signature           | Families | Opcode |
-| ----------- | ---------- | ------------------- | -------- | ------ |
-| `tee_local` | `$id: i32` | `($T[1]) : ($T[1])` |          | 0x19   |
+| Mnemonic    | Immediates         | Signature           | Families | Opcode |
+| ----------- | ------------------ | ------------------- | -------- | ------ |
+| `tee_local` | `$id: [varuint32]` | `($T[1]) : ($T[1])` |          | 0x19   |
 
 The `tee_local` instruction sets the value of the locals at index `$id` in the
 locals array to the value given in the operand. Its return value is the value of
@@ -1500,9 +1512,9 @@ return value.
 
 #### Get Global
 
-| Mnemonic     | Immediates | Signature      | Families | Opcode |
-| ------------ | ---------- | -------------- | -------- | ------ |
-| `get_global` | `$id: i32` | `() : ($T[1])` |          | 0xbb   |
+| Mnemonic     | Immediates         | Signature      | Families | Opcode |
+| ------------ | ------------------ | -------------- | -------- | ------ |
+| `get_global` | `$id: [varuint32]` | `() : ($T[1])` |          | 0xbb   |
 
 The `get_global` instruction returns the value of the global identified by index
 `$id` in the [global index space]. The type parameter is bound to the type of
@@ -1513,9 +1525,9 @@ the global.
 
 #### Set Global
 
-| Mnemonic     | Immediates | Signature      | Families | Opcode |
-| ------------ | ---------- | -------------- | -------- | ------ |
-| `set_global` | `$id: i32` | `($T[1]) : ()` |          | 0xbc   |
+| Mnemonic     | Immediates         | Signature      | Families | Opcode |
+| ------------ | ------------------ | -------------- | -------- | ------ |
+| `set_global` | `$id: [varuint32]` | `($T[1]) : ()` |          | 0xbc   |
 
 The `set_global` instruction sets the value of the global identified by index
 `$id` in the [global index space] to the value given in the operand. The type
@@ -1542,9 +1554,9 @@ meant to have similar performance properties.
 
 #### Call
 
-| Mnemonic    | Immediates     | Signature                      | Families | Opcode |
-| ----------- | -------------- | ------------------------------ | -------- | ------ |
-| `call`      | `$callee: i32` | `($T[$args]) : ($T[$returns])` | [L]      | 0x16   |
+| Mnemonic    | Immediates             | Signature                      | Families | Opcode |
+| ----------- | ---------------------- | ------------------------------ | -------- | ------ |
+| `call`      | `$callee: [varuint32]` | `($T[$args]) : ($T[$returns])` | [L]      | 0x16   |
 
 The `call` instruction performs a [call](#calling) to the function with index
 `$callee` in the [function index space].
@@ -1556,9 +1568,9 @@ The `call` instruction performs a [call](#calling) to the function with index
 
 #### Indirect Call
 
-| Mnemonic        | Immediates        | Signature                                    | Families | Opcode |
-| --------------- | ----------------- | -------------------------------------------- | -------- | ------ |
-| `call_indirect` | `$signature: i32` | `($T[$args], $callee: i32) : ($T[$returns])` | [L]      | 0x17   |
+| Mnemonic        | Immediates                | Signature                                    | Families | Opcode |
+| --------------- | ------------------------- | -------------------------------------------- | -------- | ------ |
+| `call_indirect` | `$signature: [varuint32]` | `($T[$args], $callee: i32) : ($T[$returns])` | [L]      | 0x17   |
 
 The `call_indirect` instruction performs a [call](#calling) to the function in
 the default table with index `$callee`.
@@ -2827,31 +2839,6 @@ popped from the value stack. If the function execution was prompted by a
 Otherwise, they are provided to the embedding environment.
 
 
-Binary Format
---------------------------------------------------------------------------------
-
-The WebAssembly binary format starts with header:
-
-| Field Name     | Type     | Description                               |
-| -------------- | -------- | ----------------------------------------- |
-| `magic_cookie` | `uint32` |  The value `0x6d736100`, which is "\0asm" |
-
-This is followed by module contents, as specified starting in the
-[Module](#module) section.
-
-[Instructions](#instructions) are encoded as their Opcode value followed by
-their immediate operand values.
-
-`i32` and `i64` immediates are encoded as `varsint32` and `varsint64`,
-respectively. `iPTR` immediates are encoded as the integer type they resolve to.
-`f32` and `f64 immediates are encoded as `float32` and `float46`, respectively.
-The elements of a `TABLE` array immediate are encoded as `varuint32`.
-
-> The magic cookie bytes begin with a NUL, indicating to generic tools that the
-ensuing contents are not generally "text", followed by the UTF-8 encoding of the
-string "asm".
-
-
 Text Format
 --------------------------------------------------------------------------------
 
@@ -2891,7 +2878,6 @@ TODO: Figure out what to say about the text format.
 [array]: #array
 [binary32]: https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 [binary64]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-[binary format]: #binary-format
 [bit]: https://en.wikipedia.org/wiki/Bit
 [boolean]: #booleans
 [byte]: #bytes
@@ -2928,7 +2914,7 @@ TODO: Figure out what to say about the text format.
 [signature kind]: #signature-kinds
 [table]: #tables
 [table element type]: #table-element-type
-[text format]: #text-format
+[text form]: #text-format
 [true]: #booleans
 [type]: #value-types
 [types]: #value-types
