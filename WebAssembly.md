@@ -1139,6 +1139,8 @@ the callee, and released when it completes.
 **Trap:** Call Stack Exhausted, if the instance has insufficient
 [call-stack resources].
 
+**Trap:** Callee Trap, if a trap occurred during the execution of the callee.
+
 > This means that implementations aren't permitted to perform implicit
 opportunistic tail-call optimization (TCO).
 
@@ -2973,23 +2975,24 @@ implementation is exhausted, at any point during function-body execution.
 
 A label is a value which is either *unbound*, or *bound* to a specific position.
 
-#### Instruction Traps
-
-Instructions may *trap*, in which case execution of the current instance is
-immediately terminated and abnormal termination is reported to the
-[embedding environment].
-
-> Except for the call stack and the state of any executing functions, the
-contents of an instance, including any linear-memory spaces, are left intact
-after a trap. This allows inspection by debugging tools and crash reporters. It
-is also valid to call exported functions in an instance that has trapped.
-
 #### Function Return Execution
 
 One value for each return [type] in the function signature in reverse order is
 popped from the value stack. If the function execution was prompted by a
 [call instruction][L], these values are provided as the call's return values.
 Otherwise, they are provided to the [embedding environment].
+
+#### Instruction Traps
+
+Instructions may *trap*, in which case the function execution which encountered
+the trap is immediately terminated. If the function execution was prompted by a
+[call instruction][L], it traps too. Otherwise, abnormal termination is reported
+to the [embedding environment].
+
+> Except for the call stack and the state of executing functions, the contents
+of an instance, including any linear memories, are left intact after a trap.
+This allows inspection by debugging tools and crash reporters. It is also valid
+to call exported functions in an instance that has seen a trap.
 
 
 Text Format
