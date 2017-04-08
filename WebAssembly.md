@@ -368,20 +368,19 @@ initializers.
 
 A module starts with header:
 
-| Field Name     | Type     | Description                               |
-| -------------- | -------- | ----------------------------------------- |
-| `magic_cookie` | `uint32` |  The value `0x6d736100`, which is "\0asm" |
+| Field Name     | Type     | Description                                                              |
+| -------------- | -------- | ------------------------------------------------------------------------ |
+| `magic_cookie` | [uint32] | Magic cookie identifying the contents of a file as a WebAssembly module. |
+| `version`      | [uint32] | WebAssembly version number.                                              |
 
 The header is then followed by a sequence of sections. Each section consists of
 a [varuint7] *opcode* followed by a [byte array] *payload*. The opcode is
 required to either indicate a *known section*, or be `0x00`, indicating a
 *custom section*.
 
-In a custom section, the payload is required to start with an [identifier]
-*name*.
-
 **Validation:**
- - The version is required to be `0x01`.
+ - `magic_cookie` is required to be `0x6d736100` (the string "\0asm").
+ - `version` is required to be `0x1`.
  - For each present [known section](#known-sections), the requirements of its
    **Validation** clause are required, if one is specified for the section kind.
  - The requirements of the **Validation** clauses of every
@@ -390,10 +389,12 @@ In a custom section, the payload is required to start with an [identifier]
  - Known sections are required to appear at most once, and those present are
    required to be ordered according to the order in the
    [enumeration of the Known Sections](#known-sections).
+ - Custom sections are required to start their payload with an [identifier]
+   *name*.
 
-> The `magic_cookie` bytes begin with a NUL, indicating to generic tools that
-the ensuing contents are not generally "text", followed by the UTF-8 encoding of
-the string "asm".
+> The `magic_cookie` bytes begin with a NUL character, indicating to generic
+tools that the ensuing contents are not generally "text", followed by the UTF-8
+encoding of the string "asm".
 
 > Some representations don't represent some of the known sections literally;
 they may be combined with other sections or implied by specialized syntax.
@@ -621,8 +622,9 @@ re-export their imports.
 
 **Opcode:** `0x08`.
 
-The Start Section consists of an [varuint32] into the [function index space].
-See [Instance Execution](#instance-execution) for further information.
+The Start Section consists of a [varuint32] index into the
+[function index space]. See [Instance Execution](#instance-execution) for
+further information.
 
 **Validation:**
  - The index is required to be within the bounds of the [Code Section] array.
