@@ -1078,8 +1078,8 @@ bit-patterns of NaN result values.
 > In IEEE 754-1985, ["subnormal numbers"] are called "denormal numbers";
 WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
 
-> There is no observable difference between quiet and signaling NaN other than
-the difference in the bit pattern.
+> At present, there is no observable difference between quiet and signaling NaN
+> other than the difference in the bit pattern.
 
 > IEEE 754-2008 is the current revision of IEEE 754; a new revision is expected
 to be released some time in 2018, and it is expected to be a minor and
