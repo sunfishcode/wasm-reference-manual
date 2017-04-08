@@ -338,13 +338,13 @@ These types describe various data structures present in WebAssembly modules:
 | Field Name | Type         | Description                                            |
 | ---------- | ------------ | ------------------------------------------------------ |
 | `flags`    | [varuint32]  | bit-packed flags; see below.                           |
-| `initial`  | [varuint32]  | initial length (in units of table elements or [pages]) |
+| `minimum`  | [varuint32]  | minimum length (in units of table elements or [pages]) |
 
 If bit `0x1` is set in `flags`, the following fields are appended.
 
 | Field Name | Type         | Description                                            |
 | ---------- | ------------ | ------------------------------------------------------ |
-| `maximum`  | [varuint32]  | maximum length (in same units as `initial`)            |
+| `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
 
 ### Instantiation-Time Initializers
 
@@ -491,14 +491,14 @@ through their respective [module index spaces](#module-index-spaces).
  - All global imports are required to be immutable.
  - Each global import with an initializer is required to be mutable.
  - Each import is required to be resolved by the embedder.
- - A linear-memory import's initial size is required to be at most the imported
-   linear-memory space's initial size.
+ - A linear-memory import's `minimum` size is required to be at most the
+   imported linear-memory space's `minimum` size.
  - A linear-memory import is required to have a maximum size if the imported
-   linear memory space has a maximum size.
+   linear memory space has a `maximum` size.
  - If present, a linear-memory import's maximum size is required to be at least
    the imported linear-memory space's maximum size.
- - A table import's initial length is required to be at most the imported
-   table's initial length.
+ - A table import's `minimum` length is required to be at most the imported
+   table's `minimum` length.
  - A table import is required to have a maximum size if the imported table has a
    maximum size.
  - If present, a table import's maximum length is required to be at least the
@@ -552,7 +552,7 @@ A *linear-memory declaration* consists of:
 > Implementations are encouraged to attempt to reserve enough resources for
 allocating up to the maximum size up front, if a maximum size is present.
 Otherwise, implementations are encouraged to allocate only enough for the
-initial size up front.
+`minimum` size up front.
 
 #### Global Section
 
@@ -644,7 +644,7 @@ If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
     - `index` is required to be within the bounds of the [table index space].
     - A table is identified by `index` in [the table space] and:
        - The sum of the value of `offset` and the number of elements in `elems`
-         is required to be at most the `initial` size declared for the table.
+         is required to be at most the `minimum` size declared for the table.
        - The value of `offset` is required to be greater than the index of any
          element in the table that will be initialized by a prior table
          initializer in the array. TODO: Will this restriction be lifted?
@@ -704,7 +704,7 @@ the [linear-memory index space] during
     - A linear-memory space is identified by the linear-memory index in the
       linear-memory index space and:
        - The sum of `offset` and the length of `data` is required to be at most
-         the `initial` size declared for the linear-memory space.
+         the `minimum` size declared for the linear-memory space.
        - `offset` is required to be greater than the index of any byte in the
          linear-memory space that will be initialized by a prior data
          initializer in the array. TODO: Will this restriction be lifted?
@@ -782,9 +782,9 @@ followed by an index for each linear-memory space in the
 **Validation:**
  - The index space is required to have at most one element.
  - For each linear-memory declaration in the index space:
-    - If a maximum size is present, it is required to be at least the initial
-      size.
-    - If a maximum size is present, the index of every byte in a linear memory
+    - If a `maximum` size is present, it is required to be at least the
+      `minimum` size.
+    - If a `maximum` size is present, the index of every byte in a linear memory
       with the maximum size is required to be representable in an unsigned
       `iPTR`.
 
@@ -809,7 +809,7 @@ section.
  - The index space is required to contain at most one table.
  - For each table in the index space:
     - If a `maximum` length is present, it is required to be at least
-      the table's `initial` length.
+      the table's `minimum` length.
     - If a `maximum` length is present, the index of every element in a table
       with the maximum size is required to be representable in an unsigned
       `iPTR`.
@@ -2682,9 +2682,9 @@ instantiated as follows:
 
 For a linear-memory definition in the [Linear-Memory Section], as opposed to a
 [linear-memory import](#import-section), an array of [bytes] with the length
-being the value of the linear-memory space's initial size field is created,
-added to the instance, and initialized to all zeros. For a linear-memory import,
-storage for the array is already allocated.
+being the value of the linear-memory space's `minimum` size field times the
+[page size] is created, added to the instance, and initialized to all zeros. For
+a linear-memory import, storage for the array is already allocated.
 
 The contents of the [Data Section] are loaded into the byte array. Each
 [byte sequence] is loaded into linear memory starting at its associated start
@@ -2699,7 +2699,7 @@ A table declared in the [table index space] may be instantiated as follows:
 
 For a table definition in the [Table Section], as opposed to a
 [table import](#import-section), an array of elements is created with the
-table's initial length, with elements of the table's element type, and
+table's `minimum` length, with elements of the table's element type, and
 initialized to all special "null" values specific to the element type. For a
 table import, storage for the table is already allocated.
 
@@ -2908,6 +2908,7 @@ TODO: Figure out what to say about the text format.
 [nondeterministically]: #nondeterminism
 [page]: #pages
 [pages]: #pages
+[page size]: #pages
 [resizable limits]: #resizable-limits
 [rotated]: https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry
 [shift count]: #shift-count
