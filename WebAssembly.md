@@ -1088,8 +1088,8 @@ Instructions in this family follow the [IEEE 754-2008] standard, except that:
 When the result of any instruction in this family (which excludes `neg`, `abs`,
 `copysign`, `load`, `store`, and `const`) is a NaN, the sign bit and the
 significand field (which doesn't include the implicit leading digit of the
-significand) of the NaN are computed by one of the following rules, selected
-[nondeterministically]:
+significand) of the NaN are computed by one of the following rules,
+selected [nondeterministically]:
 
  - If the instruction has any NaN non-immediate operand values with significand
    fields that have any bits set to `1` other than the most significant bit of
@@ -2072,6 +2072,8 @@ The `trunc` instruction performs the IEEE 754-2008
 > ["Truncate"] describes the rounding method used here; the fractional part of
 the value is discarded, effectively rounding to the nearest integer toward zero.
 
+> This instruction corresponds to what is called `chop` in other languages.
+
 ["Truncate"]: https://en.wikipedia.org/wiki/Truncation
 
 #### Floating-Point Nearest Integer
@@ -2721,8 +2723,8 @@ which consists of the following steps:
    [instantiated](#table-instantiation).
  - A finite quantity of [call-stack resources] is allocated.
  - A *globals vector* is allocated, which is a heterogeneous vector of globals
-   corresponding to the entries in the module's [Global Section]. The initial
-   value of each global is the value of its
+   with an element for each entry in the module's [Global Section], if present.
+   The initial value of each global is the value of its
    [instantiation-time initializer](#instantiation-time-initializers), if it has
    one, or an all-zeros bit-pattern otherwise.
 
