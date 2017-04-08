@@ -92,7 +92,7 @@ Basics
 0. [Encoding Types](#primitive-encoding-types)
 0. [Value Types](#value-types)
 0. [Table Element Types](#table-element-types)
-0. [Signatures Types](#signature-types)
+0. [Signature Types](#signature-types)
 0. [Other Types](#other-types)
 0. [External Kinds](#external-kinds)
 
@@ -322,6 +322,7 @@ from another module. They can be any one of the following kinds:
 
 In the binary encoding, external kinds are encoded as their Binary Encoding
 value in a [varuint7].
+
 
 Module
 --------------------------------------------------------------------------------
