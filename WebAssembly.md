@@ -2788,7 +2788,9 @@ If the module contains a [Start Section], the referenced function is
 TODO: This section should be improved to be more approachable.
 
 Function execution can be prompted by a [call-family instruction][L], by
-[instance execution](#instance-execution), or by the embedding environment.
+[instance execution](#instance-execution), or by a call to an
+[exported](#export-section) function from another module or from the embedding
+environment.
 
 The input to execution of a function consists of:
  - the function to be executed.
