@@ -1121,7 +1121,8 @@ The *accessed bytes* consist of a contiguous sequence of [bytes] starting at the
 [effective address], with a length implied by the accessing instruction.
 
 **Trap:** Out Of Bounds, if any of the accessed bytes are beyond the end of the
-accessed linear-memory space.
+accessed linear-memory space. This trap is triggered before any of the bytes
+are actually accessed.
 
 > Linear-memory accesses trap on an out-of-bound access, which differs from
 [TypedArrays in ECMAScript] where storing out of bounds silently does nothing
