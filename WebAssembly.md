@@ -2337,6 +2337,9 @@ The floating-point `eq` instruction performs the IEEE 754-2008
 `compareQuietEqual` operation according to the
 [general floating-point rules][F].
 
+> This instruction corresponds to what is sometimes called "ordered and equal",
+or "oeq", in other languages.
+
 #### Floating-Point Inequality
 
 | Mnemonic    | Signature                   | Families | Opcode | Syntax      |
@@ -2352,6 +2355,9 @@ The floating-point `ne` instruction performs the IEEE 754-2008
 returns [true] if either operand is a NaN. It is the logical inverse of the `eq`
 instruction.
 
+> This instruction corresponds to what is sometimes called
+"unordered or not equal", or "une", in other languages.
+
 #### Floating-Point Less Than
 
 | Mnemonic    | Signature                   | Families | Opcode | Syntax      |
@@ -2361,6 +2367,9 @@ instruction.
 
 The `lt` instruction performs the IEEE 754-2008 `compareQuietLess` operation
 according to the [general floating-point rules][F].
+
+> This instruction corresponds to what is sometimes called "ordered and less
+than", or "olt", in other languages.
 
 #### Floating-Point Less Than Or Equal To
 
@@ -2372,6 +2381,9 @@ according to the [general floating-point rules][F].
 The `le` instruction performs the IEEE 754-2008 `compareQuietLessEqual`
 operation according to the [general floating-point rules][F].
 
+> This instruction corresponds to what is sometimes called "ordered and less
+than or equal", or "ole", in other languages.
+
 #### Floating-Point Greater Than
 
 | Mnemonic    | Signature                   | Families | Opcode | Syntax      |
@@ -2382,6 +2394,9 @@ operation according to the [general floating-point rules][F].
 The `gt` instruction performs the IEEE 754-2008 `compareQuietGreater` operation
 according to the [general floating-point rules][F].
 
+> This instruction corresponds to what is sometimes called "ordered and greater
+than", or "ogt", in other languages.
+
 #### Floating-Point Greater Than Or Equal To
 
 | Mnemonic    | Signature                   | Families | Opcode | Syntax      |
@@ -2391,6 +2406,9 @@ according to the [general floating-point rules][F].
 
 The `ge` instruction performs the IEEE 754-2008 `compareQuietGreaterEqual`
 operation according to the [general floating-point rules][F].
+
+> This instruction corresponds to what is sometimes called "ordered and greater
+than or equal", or "oge", in other languages.
 
 ### Conversion Instructions
 
