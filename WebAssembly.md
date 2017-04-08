@@ -2878,7 +2878,6 @@ TODO: Figure out what to say about the text format.
 [table index space]: #table-index-space
 [accessed bytes]: #accessed-bytes
 [array]: #array
-[arrays]: #array
 [binary32]: https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 [binary64]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 [binary format]: #binary-format
