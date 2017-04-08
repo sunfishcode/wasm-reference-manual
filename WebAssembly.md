@@ -774,6 +774,8 @@ If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
 > The Element Sections is to the [Table Section] as the [Data Section] is to the
 [Linear-Memory Section].
 
+> Table initializers are sometimes called "segments".
+
 #### Code Section
 
 **Opcode:** `0x0a`.
@@ -832,8 +834,8 @@ one entry point.
 WebAssembly.
 
 > The constraint on unreachable instructions is sometimes called
-"polymorphic type checking", however it does not require any kind of dynamic
-typing behavior.
+"polymorphic type checking", or "stack-polymorphism", however it does not
+require any kind of dynamic typing behavior.
 
 ##### Positions Within A Function Body
 
@@ -871,6 +873,8 @@ the [linear-memory index space] during
        - `offset` is required to be greater than the index of any byte in the
          linear memory that will be initialized by a prior data initializer in
          the array. TODO: Will this restriction be lifted?
+
+> Data initializers are sometimes called "segments".
 
 ### Custom Sections
 
@@ -937,7 +941,7 @@ section.
 
 > The global index space is used by:
  - the [`get_global`](#get-global) and [`set_global`](#set-global) instructions.
- - the [Data Section], to define the offset of a data segment (in a linear
+ - the [Data Section], to define the offset of a data initializer (in a linear
    memory) as the value of a global variable.
 
 #### Linear-Memory Index Space
