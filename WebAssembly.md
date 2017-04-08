@@ -1085,6 +1085,9 @@ Instructions in this family follow the [IEEE 754-2008] standard, except that:
    otherwise specified. Non-default directed rounding attributes aren't
    supported.
 
+ - Extended and extendable precision formats aren't supported. All computations
+   must be strictly and correctly rounded after each instruction.
+
 When the result of any instruction in this family (which excludes `neg`, `abs`,
 `copysign`, `load`, `store`, and `const`) is a NaN, the sign bit and the
 significand field (which doesn't include the implicit leading digit of the
@@ -1122,11 +1125,14 @@ bit-patterns of NaN result values.
 WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
 
 > At present, there is no observable difference between quiet and signaling NaN
-> other than the difference in the bit pattern.
+other than the difference in the bit pattern.
 
 > IEEE 754-2008 is the current revision of IEEE 754; a new revision is expected
 to be released some time in 2018, and it's expected to be a minor and
 backwards-compatible revision, so WebAssembly is expected to update to it.
+
+> Implementations are not permitted to contract or fuse operations, eliding
+intermediate rouding steps.
 
 [IEEE 754-2008]: https://en.wikipedia.org/wiki/IEEE_floating_point
 ["subnormal numbers"]: https://en.wikipedia.org/wiki/Subnormal_number
