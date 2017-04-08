@@ -138,6 +138,8 @@ globals, and tables, and their bounds are enforced.
 Linear memories can either be [defined by a module](#linear-memory-section)
 or [imported](#import-section).
 
+TODO: Use `size` vs. `length` more consistently.
+
 ### Tables
 
 A *table* is similar to a [linear memory] whose elements, instead of being
@@ -150,6 +152,8 @@ Tables can be [defined by a module](#table-section) or
 
 > In the future, tables are expected to be generalized to hold a wide variety of
 opaque values and serve a wide variety of purposes.
+
+TODO: Use `size` vs. `length` more consistently.
 
 ### Encoding Types
 
@@ -923,6 +927,9 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 | ---------- | ------------ | ------------------------------------------------------ |
 | `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
 
+TODO: In the rest of the document, code-quote `minimum` and `maximum` more
+consistently
+
 #### Linear-Memory Description
 
 | Field Name | Type               | Description                                       |
@@ -1607,6 +1614,9 @@ The `drop` instruction does nothing.
 > This differs from `nop` in that it has an operand, so it can be used to
 discard unneeded values from the value stack.
 
+TODO: Explicitly describe the binding of `$T` and document that this
+instruction is sometimes called "value-polymorphic".
+
 #### Constant
 
 | Mnemonic    | Immediates            | Signature    | Families | Opcode |
@@ -1631,6 +1641,8 @@ locals vector. The type parameter is bound to the type of the local.
 
 **Validation:**
  - `$id` is required to be within the bounds of the locals vector.
+
+TODO: Clarify which locals vector is accessed.
 
 #### Set Local
 
@@ -1708,6 +1720,9 @@ its second operand otherwise.
 
 > This instruction is similar to a "conditional move" in other languages and is
 meant to have similar performance properties.
+
+TODO: Explicitly describe the binding of `$T` and document that this
+instruction is sometimes called "value-polymorphic".
 
 #### Call
 
