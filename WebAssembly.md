@@ -403,16 +403,16 @@ they may be combined with other sections or implied by specialized syntax.
 There are several *known sections*:
 
 1. [Type Section]
-1. [Import Section]
-1. [Function Section]
-1. [Table Section]
-1. [Linear-Memory Section]
-1. [Global Section]
-1. [Export Section]
-1. [Start Section]
-1. [Element Section]
-1. [Code Section]
-1. [Data Section]
+0. [Import Section]
+0. [Function Section]
+0. [Table Section]
+0. [Linear-Memory Section]
+0. [Global Section]
+0. [Export Section]
+0. [Start Section]
+0. [Element Section]
+0. [Code Section]
+0. [Data Section]
 
 #### Type Section
 
@@ -1528,8 +1528,8 @@ its second operand otherwise.
 > This instruction differs from the conditional or ternary operator, eg.
 `x?y:z`, in some languages, in that it's not short-circuiting.
 
-> This instruction is similar to a "conditional move" in other languages
-and is meant to have similar performance properties.
+> This instruction is similar to a "conditional move" in other languages and is
+meant to have similar performance properties.
 
 #### Call
 
