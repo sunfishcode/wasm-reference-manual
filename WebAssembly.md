@@ -18,8 +18,8 @@ WebAssembly Reference Manual
 Introduction
 --------------------------------------------------------------------------------
 
-WebAssembly, or "wasm" for short, is a general-purpose virtual [ISA] designed to
-be a compilation target for a wide variety of programming languages. Much of its
+WebAssembly, or "wasm", is a general-purpose virtual [ISA] designed to be a
+compilation target for a wide variety of programming languages. Much of its
 distinct personality derives from its security, code compression, and decoding
 optimization features.
 
