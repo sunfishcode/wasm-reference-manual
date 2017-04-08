@@ -6,7 +6,6 @@ WebAssembly Reference Manual
 0. [Module](#module)
 0. [Instruction Descriptions](#instruction-descriptions)
 0. [Instructions](#instructions)
-0. [Validation](#validation)
 0. [Execution](#execution)
 0. [Text Format](#text-format)
 
@@ -38,7 +37,6 @@ pass through a WebAssembly module. In particular, control flow within each
 function is *structured*, and [loops are explicitly identified](#loop), which,
 for example, allows decoders to ensure that program state is consistent at all
 control flow merge points without having to see the entire function body first.
-For more information, see the [Validation section](#validation).
 
 A WebAssembly module can be [*instantiated*] to produce a WebAssembly instance,
 which contains all the data structures required by the module's code for
@@ -64,9 +62,9 @@ arithmetic, directing control flow, loading and storing to linear memory (as a
 see the [Instructions section]. The [Instruction Descriptions section] provides
 more information on how instructions are described.
 
-Implementations of WebAssembly [validation] and [execution] need not perform all
-the steps literally as described here; they need only behave ["as if"] they did
-so in all observable respects.
+Implementations of WebAssembly need not perform all the steps literally as
+described here; they need only behave ["as if"] they did so in all observable
+respects.
 
 > Except where specified otherwise, WebAssembly instructions are not required to
 execute in [constant time].
@@ -80,8 +78,6 @@ execute in [constant time].
 [load-store architecture]: https://en.wikipedia.org/wiki/Load/store_architecture
 [Instructions section]: #instructions
 [Instruction Descriptions section]: #instruction-descriptions
-[validation]: #validation
-[execution]: #execution
 ["as if"]: https://en.wikipedia.org/wiki/As-if_rule
 [constant time]: https://www.bearssl.org/constanttime.html
 
@@ -708,8 +704,42 @@ A *local entry* consists of:
 | `count`         | [varuint32]                | number of local variables of the following type |
 | `type`          | [value type]               | type of the variables                           |
 
-> Validation of function bodies is described
-[separately](#function-body-validation).
+**Validation:**
+ - Control-flow constructs are required to form properly nested *regions*. Each
+   [`loop`](#loop), [`block`](#block), and the function entry begin a region
+   required to be terminated with an [`end`](#end). Each [`if`](#if) begins a
+   region terminated with either an [`end`](#end) or an [`else`](#else). Each
+   [`else`](#else) begins a region terminated with an [`end`](#end). Each `end`
+   and each `else` terminates exactly one region.
+ - For each instruction:
+    - The requirements of the **Validation** clause in the associated
+      instruction description are required.
+ - For each instruction reachable from at least one control-flow path:
+    - The value stack is required to have at least as many elements as the
+      number of operands in the instruction's signature, on every path.
+    - The [types] of the operands passed to the instruction are required to
+      conform to the instruction's signature's operands, on every path.
+    - The [types] of the values on the value stack are required to be the
+      same for all paths that reach the instruction.
+    - All values that will be popped from the value stack at the instruction are
+      required to have been pushed within the same region (or within a region
+      nested inside it).
+ - For each instruction not reachable from any control-flow path:
+    - It is required that if fallthrough paths were added to every
+      [barrier instruction][Q] in the function, that there exist a set of types
+      for each barrier instruction such that the otherwise unreachable
+      instruction would satisfy the requirements for reachable instructions.
+
+> These validation requirements are sufficient to ensure that WebAssembly has
+*reducible control flow*, which essentially means that all loops have exactly
+one entry point.
+
+> There are no implicit type conversions, subtyping, or function overloading in
+WebAssembly.
+
+> The constraint on unreachable instructions is sometimes called
+"polymorphic type checking", however it does not require any kind of dynamic
+typing behavior.
 
 ##### Positions Within A Function Body
 
@@ -1244,8 +1274,8 @@ notation.
 
 Instruction semantics are described for use in the context of
 [function-body execution](#function-body-execution). Some instructions also have
-a special validation clause, introduced by "**Validation:**", which are for use
-in the context of [function-body validation](#function-body-validation).
+a special validation clause, introduced by "**Validation:**", which introduce
+instruction-specific validation requirements.
 
 
 Instructions
@@ -2665,60 +2695,6 @@ memory, as an unsigned value in units of [pages].
 > `$reserved` is intended for future use.
 
 
-Validation
---------------------------------------------------------------------------------
-
-0. [Module Validation](#module-validation)
-0. [Function-Body Validation](#function-body-validation)
-
-### Module Validation
-
-Validation of a module requires the requirements of the **Validation** clause of
-the [top-level module description](#module-contents).
-
-Then, if the module contains a [Code Section], each function body in the section
-is [validated](#function-body-validation).
-
-### Function-Body Validation
-
-The requirements for function-body validation are:
- - Control-flow constructs are required to form properly nested *regions*. Each
-   [`loop`](#loop), [`block`](#block), and the function entry begin a region
-   required to be terminated with an [`end`](#end). Each [`if`](#if) begins a
-   region terminated with either an [`end`](#end) or an [`else`](#else). Each
-   [`else`](#else) begins a region terminated with an [`end`](#end). Each `end`
-   and each `else` terminates exactly one region.
- - For each instruction:
-    - The requirements of the **Validation** clause in the associated
-      instruction description are required.
- - For each instruction reachable from at least one control-flow path:
-    - The value stack is required to have at least as many elements as the
-      number of operands in the instruction's signature, on every path.
-    - The [types] of the operands passed to the instruction are required to
-      conform to the instruction's signature's operands, on every path.
-    - The [types] of the values on the value stack are required to be the
-      same for all paths that reach the instruction.
-    - All values that will be popped from the value stack at the instruction are
-      required to have been pushed within the same region (or within a region
-      nested inside it).
- - For each instruction not reachable from any control-flow path:
-    - It is required that if fallthrough paths were added to every
-      [barrier instruction][Q] in the function, that there exist a set of types
-      for each barrier instruction such that the otherwise unreachable
-      instruction would satisfy the requirements for reachable instructions.
-
-> These requirements are sufficient to ensure that WebAssembly has
-*reducible control flow*, which essentially means that all loops have exactly
-one entry point.
-
-> There are no implicit type conversions, subtyping, or function overloading in
-WebAssembly.
-
-> The constraint on unreachable instructions is sometimes called
-"polymorphic type checking", however it does not require any kind of dynamic
-typing behavior.
-
-
 Execution
 --------------------------------------------------------------------------------
 
@@ -2727,8 +2703,10 @@ Execution
 WebAssembly code execution requires an *instance* of a module, which contains a
 reference to the module plus additional information added during instantiation,
 which consists of the following steps:
- - The entire module is first [validated](#validation). If there are any
-   failures, instantiation aborts and doesn't produce an instance.
+ - The entire module is first validated according to the requirements of the
+   **Validation** clause of the [top-level module description](#module-contents)
+   and all clauses it transitively requires. If there are any failures,
+   instantiation aborts and doesn't produce an instance.
  - If a [Linear-Memory Section] is present, each linear memory is
    [instantiated](#linear-memory-instantiation).
  - If a [Table Section] is present, each table is
