@@ -1327,7 +1327,6 @@ to this entry.
 TODO: Update to block signatures.
 TODO: If without else returns void.
 
-
 **Validation:**
  - `$arity` is required to be at most 1.
 
