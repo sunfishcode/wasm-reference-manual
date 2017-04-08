@@ -192,7 +192,7 @@ Except when specified otherwise, all values are encoded in
 ### Additional Encoding Types
 
 0. [Array](#array)
-0. [Byte Sequence](#byte-sequence)
+0. [Byte Array](#byte-array)
 0. [Identifier](#identifier)
 
 #### Array
@@ -202,16 +202,16 @@ followed by a sequence of that many elements of that type.
 
 > Array elements needn't all be the same size in some representations.
 
-#### Byte Sequence
+#### Byte Array
 
-A *byte sequence* is an [array] of bytes.
+A *byte array* is an [array] of [bytes].
 
 > Byte sequences may contain arbitrary bytes and aren't required to be
 [valid UTF-8] or any other format.
 
 #### Identifier
 
-An *identifier* is a [byte sequence] which is [valid UTF-8].
+An *identifier* is a [byte array] which is [valid UTF-8].
 
 > Identifiers may contain NUL characters, aren't required to be NUL-terminated,
 aren't required to be normalized, and aren't required to be marked with a BOM
@@ -370,8 +370,8 @@ initializers.
 Modules contain a version [varuint32].
 
 Modules also contain a sequence of sections. Each section consists of a
-[varuint7] *opcode* followed by a [byte sequence] *payload*. The opcode is
-required to either indicate a *known section*, or be `0x00`, indicating a
+[varuint7] *opcode* followed by a [byte array] *payload*. The opcode is required
+to either indicate a *known section*, or be `0x00`, indicating a
 *custom section*.
 
 In a custom section, the payload is required to start with an [identifier]
@@ -700,7 +700,7 @@ A *data initializer* consists of:
 | --------------- | -------------------------------- | ---------------------------------------------------- |
 | `index`         | [varuint32]                      | a [linear-memory index](#linear-memory-index-space)  |
 | `offset`        | [instantiation-time initializer] | the index of the byte in memory to start at          |
-| `data`          | [byte sequence]                  | data to initialize the contents of the linear memory |
+| `data`          | [byte array]                     | data to initialize the contents of the linear memory |
 
 It describes data to be loaded into the linear memory identified by the index in
 the [linear-memory index space] during
@@ -2894,7 +2894,7 @@ TODO: Figure out what to say about the text format.
 [boolean]: #booleans
 [byte]: #bytes
 [bytes]: #bytes
-[byte sequence]: #byte-sequence
+[byte array]: #byte-array
 [call-stack resources]: #call-stack-resources
 [effective address]: #effective-address
 [external kind]: #external-kinds
