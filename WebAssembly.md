@@ -471,6 +471,8 @@ would produce if it were executed within a function body.
 > In the future, more instructions may be permitted as instantiation-time
 initializers.
 
+> Instantiation-time initializers are sometimes called "constant expressions".
+
 ### Module Contents
 
 A module starts with header:
@@ -670,6 +672,10 @@ A *global declaration* consists of:
 | --------------- | -------------------------------- | ---------------------------------------- |
 | `desc`          | [global description]             | a description of the global variable     |
 | `init`          | [instantiation-time initializer] | the initial value of the global variable |
+
+**Validation:**
+  - The type of the value returned by `init` must be the same as `desc`'s
+    `type`.
 
 > Exporting of mutable global variables may be permitted in the future.
 
