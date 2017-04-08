@@ -323,6 +323,7 @@ Module
 0. [Instantiation-Time Initializers](#instantiation-time-initializers)
 0. [Module Contents](#module-contents)
 0. [Known Sections](#known-sections)
+0. [Custom Sections](#custom-sections)
 0. [Module Index Spaces](#module-index-spaces)
 
 ### Module Types
@@ -401,18 +402,17 @@ they may be combined with other sections or implied by specialized syntax.
 
 There are several *known sections*:
 
-0. [Type Section]
-0. [Import Section]
-0. [Function Section]
-0. [Table Section]
-0. [Linear-Memory Section]
-0. [Global Section]
-0. [Export Section]
-0. [Start Section]
-0. [Element Section]
-0. [Code Section]
-0. [Data Section]
-0. [Name Section]
+1. [Type Section]
+1. [Import Section]
+1. [Function Section]
+1. [Table Section]
+1. [Linear-Memory Section]
+1. [Global Section]
+1. [Export Section]
+1. [Start Section]
+1. [Element Section]
+1. [Code Section]
+1. [Data Section]
 
 #### Type Section
 
@@ -709,9 +709,11 @@ the [linear-memory index space] during
          linear-memory space that will be initialized by a prior data
          initializer in the array. TODO: Will this restriction be lifted?
 
-#### Name Section
+### Custom Sections
 
-**Opcode:** `0x00` (custom section).
+0. [Name Section]
+
+#### Name Section
 
 **Name:** `name`
 
