@@ -349,8 +349,8 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 
 ### Instantiation-Time Initializers
 
-An *instantiation-time initializer* is a single [instruction](#instructions),
-which is one of the following:
+An *instantiation-time initializer* is a single [instruction], which is one of
+the following:
  - [`const`](#constant) (of any type).
  - [`get_global`](#get-global).
 
@@ -371,7 +371,7 @@ Modules contain a version [varuint32].
 
 Modules also contain a sequence of sections. Each section consists of a
 [varuint7] *opcode* followed by a [byte sequence] *payload*. The opcode is
-required to either indicate a [*known section*], or be `0x00`, indicating a
+required to either indicate a *known section*, or be `0x00`, indicating a
 *custom section*.
 
 In a custom section, the payload is required to start with an [identifier]
@@ -392,11 +392,11 @@ In a custom section, the payload is required to start with an [identifier]
 they may be combined with other sections or implied by specialized syntax.
 
 > The version is expected to change infrequently if ever; forward-compatible
-> extension is intended to be achieved by adding sections, types, instructions
-> and others without bumping the version.
+extension is intended to be achieved by adding sections, types, instructions and
+others without bumping the version.
 
-> The contents of the payload of a custom section after its name are not
-> subject to validation.
+> The contents of the payload of a custom section after its name are not subject
+to validation.
 
 ### Known Sections
 
@@ -2784,7 +2784,7 @@ instruction is executed as follows:
 For each operand [type] in the instruction's signature in reverse order, a value
 is popped from the value stack and provided as the corresponding operand value.
 The instruction is then executed as described in the
-[Instructions Section](#instructions) entry describing it. Each of the
+[Instructions](#instructions) section entry describing it. Each of the
 instruction's return values are then pushed onto the value stack.
 
 If the current position is now past the end of the sequence,
@@ -2899,6 +2899,7 @@ TODO: Figure out what to say about the text format.
 [identifiers]: #identifier
 [index space]: #module-index-spaces
 [instantiation-time initializer]: #instantiation-time-initializers
+[instructions]: #instructions
 [KiB]: https://en.wikipedia.org/wiki/Kibibyte
 [known section]: #known-sections
 [label]: #labels
