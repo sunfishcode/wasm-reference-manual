@@ -2066,7 +2066,7 @@ otherwise.
 0. [Floating-Point Ceiling](#floating-point-ceiling)
 0. [Floating-Point Floor](#floating-point-floor)
 0. [Floating-Point Truncate](#floating-point-truncate)
-0. [Floating-Point Nearest Integer](#floating-point-nearest-integer)
+0. [Floating-Point Round To Nearest Integer](#floating-point-round-to-nearest-integer)
 0. [Floating-Point Absolute Value](#floating-point-absolute-value)
 0. [Floating-Point Negate](#floating-point-negate)
 0. [Floating-Point CopySign](#floating-point-copysign)
@@ -2209,7 +2209,7 @@ the value is discarded, effectively rounding to the nearest integer toward zero.
 
 ["Truncate"]: https://en.wikipedia.org/wiki/Truncation
 
-#### Floating-Point Nearest Integer
+#### Floating-Point Round To Nearest Integer
 
 | Mnemonic      | Signature                 | Families | Opcode |
 | ------------- | ------------------------- | -------- | ------ |
