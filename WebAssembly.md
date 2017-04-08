@@ -433,6 +433,10 @@ others without bumping the version.
 to validation. Custom sections may be used for debugging information or
 non-standard language extensions.
 
+> The section byte array length field is usually redundant, as most section
+encodings end up specifying their size through other means as well, however it
+is still useful to allow streaming decoders to quickly skip over whole sections.
+
 ### Known Sections
 
 There are several *known sections*:
