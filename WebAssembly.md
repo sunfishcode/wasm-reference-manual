@@ -507,15 +507,13 @@ required to either indicate a *known section*, or be `0x00`, indicating a
 tools that the ensuing contents are not generally "text", followed by the UTF-8
 encoding of the string "asm".
 
-> Some representations don't represent some of the known sections literally;
-they may be combined with other sections or implied by specialized syntax.
-
 > The version is expected to change infrequently if ever; forward-compatible
 extension is intended to be achieved by adding sections, types, instructions and
 others without bumping the version.
 
 > The contents of the payload of a custom section after its name are not subject
-to validation.
+to validation. Custom sections may be used for debugging information or
+non-standard language extensions.
 
 ### Known Sections
 
