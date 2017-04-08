@@ -396,8 +396,9 @@ There are several *known sections*:
 TODO: Replace the known section names with the new section opcodes:
 https://github.com/WebAssembly/design/pull/740
 
-TODO: User-defined sections.
-TODO: The name section is a user-defined section now.
+TODO: Custom sections.
+TODO: The name section is a custom section now.
+TODO: The new extensible name section format.
 
 #### Type Section
 
