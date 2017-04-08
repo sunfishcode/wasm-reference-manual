@@ -708,7 +708,7 @@ A *local entry* consists of:
      begins a region terminated with either an [`end`](#end) or an
      [`else`](#else). Each [`else`](#else) begins a region terminated with an
      [`end`](#end). Each `end` and each `else` terminates exactly one region.
-   - The last instruciton in the function body must be an `end`.
+   - The last instruction in the function body must be an `end`.
    - For each instruction:
       - The requirements of the **Validation** clause in the associated
         instruction description are required.
