@@ -701,30 +701,32 @@ A *local entry* consists of:
 | `type`          | [value type]               | type of the variables                           |
 
 **Validation:**
- - Control-flow constructs are required to form properly nested *regions*. Each
-   [`loop`](#loop), [`block`](#block), and the function entry begin a region
-   required to be terminated with an [`end`](#end). Each [`if`](#if) begins a
-   region terminated with either an [`end`](#end) or an [`else`](#else). Each
-   [`else`](#else) begins a region terminated with an [`end`](#end). Each `end`
-   and each `else` terminates exactly one region.
- - For each instruction:
-    - The requirements of the **Validation** clause in the associated
-      instruction description are required.
- - For each instruction reachable from at least one control-flow path:
-    - The value stack is required to have at least as many elements as the
-      number of operands in the instruction's signature, on every path.
-    - The [types] of the operands passed to the instruction are required to
-      conform to the instruction's signature's operands, on every path.
-    - The [types] of the values on the value stack are required to be the
-      same for all paths that reach the instruction.
-    - All values that will be popped from the value stack at the instruction are
-      required to have been pushed within the same region (or within a region
-      nested inside it).
- - For each instruction not reachable from any control-flow path:
-    - It is required that if fallthrough paths were added to every
-      [barrier instruction][Q] in the function, that there exist a set of return
-      types for each barrier instruction such that the otherwise unreachable
-      instruction would satisfy the requirements for reachable instructions.
+ - For each function body:
+   - Control-flow constructs are required to form properly nested *regions*.
+     Each [`loop`](#loop), [`block`](#block), and the function entry begin a
+     region required to be terminated with an [`end`](#end). Each [`if`](#if)
+     begins a region terminated with either an [`end`](#end) or an
+     [`else`](#else). Each [`else`](#else) begins a region terminated with an
+     [`end`](#end). Each `end` and each `else` terminates exactly one region.
+   - For each instruction:
+      - The requirements of the **Validation** clause in the associated
+        instruction description are required.
+   - For each instruction reachable from at least one control-flow path:
+      - The value stack is required to have at least as many elements as the
+        number of operands in the instruction's signature, on every path.
+      - The [types] of the operands passed to the instruction are required to
+        conform to the instruction's signature's operands, on every path.
+      - The [types] of the values on the value stack are required to be the
+        same for all paths that reach the instruction.
+      - All values that will be popped from the value stack at the instruction
+        are required to have been pushed within the same region (or within a
+        region nested inside it).
+   - For each instruction not reachable from any control-flow path:
+      - It is required that if fallthrough paths were added to every
+        [barrier instruction][Q] in the function, that there exist a set of
+        return types for each barrier instruction such that the otherwise
+        unreachable instruction would satisfy the requirements for reachable
+        instructions.
 
 > These validation requirements are sufficient to ensure that WebAssembly has
 *reducible control flow*, which essentially means that all loops have exactly
