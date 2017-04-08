@@ -2796,7 +2796,7 @@ are created:
       where to reset it to on a branch to that label.
     - an *arity* indicating the number of result values of the region
  - A *value stack*, which carries values between instructions.
- - A *locals* array, a heterogeneous array of values containing an element for
+ - A *locals* vector, a heterogeneous array of values containing an element for
    each type in the function's parameter list, followed by an element for each
    local declaration in the function.
  - A *current position*.
