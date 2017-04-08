@@ -2108,7 +2108,7 @@ The `trunc` instruction performs the IEEE 754-2008
 > ["Truncate"] describes the rounding method used here; the fractional part of
 the value is discarded, effectively rounding to the nearest integer toward zero.
 
-> This instruction corresponds to what is called `chop` in other languages.
+> This form of rounding is called a `chop` in other languages.
 
 ["Truncate"]: https://en.wikipedia.org/wiki/Truncation
 
@@ -2446,6 +2446,8 @@ signed, according to the [general floating-point rules][F].
 **Trap:** Invalid Conversion To Integer, when a floating-point Invalid condition
 occurs, due to the operand being outside the range that can be converted
 (including NaN values and infinities).
+
+> This form of rounding is called a `chop` in other languages.
 
 #### Truncate Floating-Point to Integer, Unsigned
 
