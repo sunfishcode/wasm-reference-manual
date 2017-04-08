@@ -592,7 +592,7 @@ A *global declaration* consists of:
 | `desc`          | [global description]             | a description of the global variable     |
 | `init`          | [instantiation-time initializer] | the initial value of the global variable |
 
-> In the MVP, only immutable global variables can be exported.
+> Exporting of mutable global variables may be permitted in the future.
 
 #### Export Section
 
