@@ -2802,8 +2802,8 @@ are created:
    local declaration in the function.
  - A *current position*.
 
-> Implementations needn't create a literal array to store the locals, or literal
-stacks to manage values at execution time.
+> Implementations needn't create a literal vector to store the locals, or
+literal stacks to manage values at execution time.
 
 > These data structures are all allocated outside any linear-memory address
 space and are not any accessible to applications.
