@@ -32,10 +32,12 @@ WebAssembly modules are encoded in binary form for size and decoding efficiency.
 They may be losslessly translated to [text form] for readability.
 
 WebAssembly code must be validated before it can be instantiated and executed.
-WebAssembly is designed to allow validation to be performed in a single linear
-pass through a WebAssembly module. [Loops are explicitly identified](#loop), and
-decoders can be sure that program state is consistent at all control flow merge
-points within a function without having to see the entire function body first.
+WebAssembly is designed to allow decoding and validation to be performed in a
+single linear pass through a WebAssembly module, and to enable many parts of
+decoding and validation to be performed concurrently. For example,
+[loops are explicitly identified](#loop), and decoders can be sure that program
+state is consistent at all control flow merge points within a function without
+having to see the entire function body first.
 
 A WebAssembly module can be [*instantiated*] to produce a WebAssembly instance,
 which contains all the data structures required by the module's code for
