@@ -1392,7 +1392,7 @@ depth from the top. It returns the values of its operands, except `$index`.
 in other languages. "Branch" is used here instead to emphasize the commonality
 with the other branch instructions.
 
-> The `$default` label is not considered to be part of the branch table.
+> The `$default` label isn't considered to be part of the branch table.
 
 ["jump table"]: https://en.wikipedia.org/w/index.php?title=Jump_table
 
@@ -2670,11 +2670,11 @@ initialized to all zeros.
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
  - `$reserved` is required to be `0`.
 
-> This instruction can fail even when the maximum size is not yet reached, due
-to resource exhaustion.
+> This instruction can fail even when the maximum size isn't yet reached, due to
+resource exhaustion.
 
 > Since the return value is in units of pages, `-1` isn't otherwise a valid
-linear-memory size. Also, note that `-1` is not the only "negative" value (when
+linear-memory size. Also, note that `-1` isn't the only "negative" value (when
 interpreted as signed) that can be returned; other such values can indicate
 valid returns.
 
