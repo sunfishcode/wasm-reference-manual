@@ -207,7 +207,7 @@ followed by a sequence of that many elements of that type.
 
 A *byte array* is an [array] of [bytes].
 
-> Byte sequences may contain arbitrary bytes and aren't required to be
+> Byte arrays may contain arbitrary bytes and aren't required to be
 [valid UTF-8] or any other format.
 
 #### Identifier
