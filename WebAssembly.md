@@ -150,7 +150,7 @@ or [imported](#import-section).
 
 A *table* is similar to a [linear-memory] space whose elements, instead of being
 bytes, are opaque values. Each table has a [table element type] specifying what
-kind of data they hold. A table of `"anyfunc"` is used as the index space for
+kind of data they hold. A table of `anyfunc` is used as the index space for
 [indirect calls](#indirect-call).
 
 Tables can be [defined by a module](#table-section) or
@@ -637,12 +637,14 @@ A *table initializer* consists of:
 
 If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
 
+| Field Name      | Type                             | Description                                       |
+| --------------- | -------------------------------- | ------------------------------------------------- |
 | `elems`         | [array] of [varuint32]           | indices into the [function index space]           |
 
 **Validation:**
  - For each table initializer in the array:
     - `index` is required to be within the bounds of the [table index space].
-    - A table is identified by `index` in [the table space] and:
+    - A table is identified by `index` in the [table index space] and:
        - The sum of the value of `offset` and the number of elements in `elems`
          is required to be at most the `minimum` size declared for the table.
        - The value of `offset` is required to be greater than the index of any
