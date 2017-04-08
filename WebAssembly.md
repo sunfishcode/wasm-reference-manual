@@ -17,8 +17,8 @@ WebAssembly Reference Manual
 Introduction
 --------------------------------------------------------------------------------
 
-WebAssembly, or "wasm", is a general-purpose virtual [ISA] designed to be a
-compilation target for a wide variety of programming languages. Much of its
+WebAssembly, or "wasm", is a general-purpose virtual :link: [ISA] designed to be
+a compilation target for a wide variety of programming languages. Much of its
 distinct personality derives from its security, code compression, and decoding
 optimization features.
 
@@ -50,15 +50,13 @@ among other things. An instance can then be executed, either by execution of its
 exported linear memories and global variables can be accessed.
 
 Along with the other contents, each function contains a sequence of
-*instructions*. During [execution](#execution), WebAssembly instructions
-conceptually communicate with each other primarily via pushing and popping
-values on a virtual stack, which allows them to have a very compact encoding.
-
-WebAssembly has [instructions](#instructions) for performing integer and
+[*instructions*], which are [described](#instruction-descriptions) with some
+simple conventions. There are instructions for performing integer and
 floating-point arithmetic, directing control flow, loading and storing to linear
-memory (as a [load-store architecture]), calling functions, and more.
-Instructions are [described](#instruction-descriptions) here with some simple
-conventions.
+memory (as a [:link: load-store architecture]), calling functions, and more. During
+[*execution*], instructions conceptually communicate with each other primarily
+via pushing and popping values on a virtual stack, which allows them to have a
+very compact encoding.
 
 Implementations of WebAssembly need not perform all the steps literally as
 described here; they need only behave ["as if"] they did so in all observable
@@ -70,7 +68,9 @@ execute in [constant time].
 [ISA]: https://en.wikipedia.org/wiki/Instruction_set
 [imports]: #import-section
 [exports]: #export-section
+[*execution*]: #execution
 [*functions*]: https://en.wikipedia.org/wiki/Subroutine
+[*instructions*]: #instructions
 [*instantiated*]: #module-instantiation
 [load-store architecture]: https://en.wikipedia.org/wiki/Load/store_architecture
 ["as if"]: https://en.wikipedia.org/wiki/As-if_rule
