@@ -33,10 +33,9 @@ They may be losslessly translated to [text form] for readability.
 
 WebAssembly code must be validated before it can be instantiated and executed.
 WebAssembly is designed to allow validation to be performed in a single linear
-pass through a WebAssembly module. In particular, control flow within each
-function is *structured*, and [loops are explicitly identified](#loop), which,
-for example, allows decoders to ensure that program state is consistent at all
-control flow merge points without having to see the entire function body first.
+pass through a WebAssembly module. [Loops are explicitly identified](#loop), and
+decoders can be sure that program state is consistent at all control flow merge
+points within a function without having to see the entire function body first.
 
 A WebAssembly module can be [*instantiated*] to produce a WebAssembly instance,
 which contains all the data structures required by the module's code for
