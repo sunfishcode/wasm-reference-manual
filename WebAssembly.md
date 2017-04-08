@@ -995,7 +995,8 @@ control-flow stack at the branch instruction.
 #### Q: Control-Flow Barrier Instruction Family
 
 These instructions either trap or reassign the current position, such that
-execution doesn't proceed to the instruction that lexically follows them.
+execution doesn't proceed (or "fall through") to the instruction that lexically
+follows them.
 
 #### L: Call Instruction Family
 
@@ -1328,7 +1329,8 @@ entry `$depth` from the top. It returns the values of its operands.
 
 If `$condition` is [true], the `br_if` instruction [branches](#branching)
 according to the control-flow stack entry `$depth` from the top. Otherwise, it
-does nothing. It returns the values of its operands, except `$condition`.
+does nothing (and control "falls through"). It returns the values of its
+operands, except `$condition`.
 
 **Validation:**
  - $depth is required to be a [valid branch index](#branch-index-validation).
@@ -2676,21 +2678,24 @@ The requirements for function-body validation are:
    region terminated with either an [`end`](#end) or an [`else`](#else). Each
    [`else`](#else) begins a region terminated with an [`end`](#end). Each `end`
    and each `else` terminates exactly one region.
- - The sequence of values that would be on the value stack at execution of
-   each instruction is required be the same for all paths to that instruction
-   in the static control-flow graph.
+ - For each instruction:
+    - The requirements of the **Validation** clause in the associated
+      instruction description are required.
  - For each instruction reachable from at least one control-flow path:
     - The value stack is required to have at least as many elements as the
-      number of operands in the instruction's signature.
+      number of operands in the instruction's signature, on every path.
     - The [types] of the operands passed to the instruction are required to
-      conform to the instruction's signature's operands.
+      conform to the instruction's signature's operands, on every path.
+    - The [types] of the values on the value stack are required to be the
+      same for all paths that reach the instruction.
     - All values that will be popped from the value stack at the instruction are
       required to have been pushed within the same region (or within a region
       nested inside it).
-    - The requirements of the **Validation** clause in the associated
-      instruction description are required.
-
-TODO: Describe the new polymorphic typing.
+ - For each instruction not reachable from any control-flow path:
+    - It is required that if fallthrough paths were added to every
+      [barrier instruction][Q] in the function, that there exist a set of types
+      for each barrier instruction such that the otherwise unreachable
+      instruction would satisfy the requirements for reachable instructions.
 
 > These requirements are sufficient to ensure that WebAssembly has
 *reducible control flow*, which essentially means that all loops have exactly
