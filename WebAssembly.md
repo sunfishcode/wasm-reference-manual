@@ -40,13 +40,13 @@ control flow merge points without having to see the entire function body first.
 
 A WebAssembly module can be [*instantiated*] to produce a WebAssembly instance,
 which contains all the data structures required by the module's code for
-execution. Instances can include [linear memory], which can serve the purpose of
-an address space for program data. For security and determinism, linear memory
-is *sandboxed*, and the other data structures in an instance, including the call
-stack, are allocated outside of linear memory so that they cannot be corrupted
-by errant linear-memory accesses. Instances can also include [tables], which can
-serve the purpose of an address space for indirect function calls, among other
-things. An instance can then be executed, either by execution of its
+execution. Instances can include [linear memories], which can serve the purpose
+of an address space for program data. For security and determinism, linear
+memory is *sandboxed*, and the other data structures in an instance, including
+the call stack, are allocated outside of linear memory so that they cannot be
+corrupted by errant linear-memory accesses. Instances can also include [tables],
+which can serve the purpose of an address space for indirect function calls,
+among other things. An instance can then be executed, either by execution of its
 [start function](#start-section) or by calls to its exported functions, and its
 exported linear memories and global variables can be accessed.
 
@@ -88,7 +88,7 @@ Basics
 0. [Bytes](#bytes)
 0. [Pages](#pages)
 0. [Nondeterminism](#nondeterminism)
-0. [Linear Memory](#linear-memory)
+0. [Linear Memories](#linear-memories)
 0. [Tables](#tables)
 0. [Encoding Types](#primitive-encoding-types)
 0. [Value Types](#value-types)
@@ -129,7 +129,7 @@ such with a link to this section.
 
 ["undefined behavior"]: https://en.wikipedia.org/wiki/Undefined_behavior
 
-### Linear Memory
+### Linear Memories
 
 A *linear memory* is a contiguous, [byte]-addressable, readable and writable
 range of memory spanning from offset `0` and extending up to a *linear-memory
@@ -2925,8 +2925,9 @@ TODO: Figure out what to say about the text format.
 [known section]: #known-sections
 [label]: #labels
 [labels]: #labels
-[linear memory]: #linear-memory
-[linear-memory]: #linear-memory
+[linear memory]: #linear-memories
+[linear memories]: #linear-memories
+[linear-memory]: #linear-memories
 [linear-memory access validation]: #linear-memory-access-validation
 [linear-memory description]: #linear-memory-description
 [linear-memory descriptions]: #linear-memory-description
