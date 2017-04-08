@@ -2658,11 +2658,9 @@ The `grow_memory` instruction increases the size of the referenced linear memory
 by a given unsigned amount, in units of [pages]. If the index of any byte of the
 referenced linear memory would be unrepresentable in an unsigned `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
-has a maximum size and the actual size would exceed the maximum size, or if the
-linear memory does not have a maximum size but and the index of any byte after
-the resize would be unrepresentable in an unsigned `iPTR`, it returns `-1`;
-otherwise it returns the previous linear-memory size, also as an unsigned value
-in units of [pages]. Newly allocated bytes are initialized to all zeros.
+has a maximum size and the actual size would exceed the maximum size, it returns
+`-1`; otherwise it returns the previous linear-memory size, also as an unsigned
+value in units of [pages]. Newly allocated bytes are initialized to all zeros.
 
 **Validation**:
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
