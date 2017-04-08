@@ -306,8 +306,8 @@ are usually unimportant).
 
 ### External Kinds
 
-Externals are entities which can either be defined within a module or imported
-from another module. They can be any one of the following kinds:
+Externals are entities which can either be defined within a module and exported,
+or imported from another module. They can be any one of the following kinds:
 
 | Name       | Binary Encoding |
 | ---------- | --------------- |
