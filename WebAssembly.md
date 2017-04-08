@@ -372,7 +372,7 @@ Modules also contain a sequence of sections. Each section has an [identifier]
 *name* and associated data.
 
 **Validation:**
- - The version index is required to be equal to `0xc`.
+ - The version is required to be `0x01`.
  - For each present [known section](#known-sections), the requirements of its
    **Validation** clause are required, if one is specified for the section kind.
  - The requirements of the **Validation** clauses of every
@@ -384,7 +384,9 @@ Modules also contain a sequence of sections. Each section has an [identifier]
 > Some representations don't represent some of the known sections literally;
 they may be combined with other sections or implied by specialized syntax.
 
-> The initial release of WebAssembly will use an expected version of `0x0`.
+> The version is expected to change infrequently if ever; forward-compatible
+> extension is intended to be achieved by adding sections, types, instructions
+> and others without bumping the version.
 
 ### Known Sections
 
