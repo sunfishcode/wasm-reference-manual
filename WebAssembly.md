@@ -174,6 +174,7 @@ Module.
 | `varuint32`        | 1-5              | unsigned [LEB128]; value limited to 32 bits  |
 | `varuint64`        | 1-10             | unsigned [LEB128]; value limited to 64 bits  |
 |                    |                  |                                              |
+| `varsint7`         | 1                | [signed LEB128]; value limited to 7 bits     |
 | `varsint32`        | 1-5              | [signed LEB128]; value limited to 32 bits    |
 | `varsint64`        | 1-10             | [signed LEB128]; value limited to 64 bits    |
 |                    |                  |                                              |
@@ -2923,6 +2924,7 @@ TODO: Figure out what to say about the text format.
 [linear-memory]: #linear-memory
 [linear-memory access validation]: #linear-memory-access-validation
 [linear-memory description]: #linear-memory-description
+[linear-memory descriptions]: #linear-memory-description
 [little-endian byte order]: https://en.wikipedia.org/wiki/Endianness#Little-endian
 [minimum signed integer value]: https://en.wikipedia.org/wiki/Two%27s_complement#Most_negative_number
 [nondeterministic]: #nondeterminism
@@ -2958,6 +2960,7 @@ TODO: Figure out what to say about the text format.
 [varuint7]: #primitive-type-encodings
 [varuint32]: #primitive-type-encodings
 [varuint64]: #primitive-type-encodings
+[varsint7]: #primitive-type-encodings
 [varsint32]: #primitive-type-encodings
 [varsint64]: #primitive-type-encodings
 [float32]: #primitive-type-encodings
