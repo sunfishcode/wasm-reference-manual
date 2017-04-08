@@ -368,8 +368,13 @@ initializers.
 
 Modules contain a version [varuint32].
 
-Modules also contain a sequence of sections. Each section has an [identifier]
-*name* and associated data.
+Modules also contain a sequence of sections. Each section consists of a
+[varuint7] *opcode* followed by a [byte sequence] *payload*. The opcode is
+required to either indicate a [*known section*], or be `0x00`, indicating a
+*custom section*.
+
+In a custom section, the payload is required to start with an [identifier]
+*name*.
 
 **Validation:**
  - The version is required to be `0x01`.
@@ -378,8 +383,9 @@ Modules also contain a sequence of sections. Each section has an [identifier]
  - The requirements of the **Validation** clauses of every
    [index space](#module-index-spaces) are required, if one is specified for the
    index space.
- - Present known sections are required to be ordered in the section sequence as
-   they are ordered in the [enumeration of the Known Sections](#known-sections).
+ - Known sections are required to appear at most once, and those present are
+   required to be ordered according to the order in the
+   [enumeration of the Known Sections](#known-sections).
 
 > Some representations don't represent some of the known sections literally;
 they may be combined with other sections or implied by specialized syntax.
@@ -387,6 +393,9 @@ they may be combined with other sections or implied by specialized syntax.
 > The version is expected to change infrequently if ever; forward-compatible
 > extension is intended to be achieved by adding sections, types, instructions
 > and others without bumping the version.
+
+> The contents of the payload of a custom section after its name are not
+> subject to validation.
 
 ### Known Sections
 
@@ -405,16 +414,9 @@ There are several *known sections*:
 0. [Data Section]
 0. [Name Section]
 
-TODO: Replace the known section names with the new section opcodes:
-https://github.com/WebAssembly/design/pull/740
-
-TODO: Custom sections.
-TODO: The name section is a custom section now.
-TODO: The new extensible name section format.
-
 #### Type Section
 
-**Name:** `type`.
+**Opcode:** `0x01`.
 
 The Type Section consists of an [array] of function signatures.
 
@@ -439,7 +441,7 @@ and support for function signatures with multiple return types.
 
 #### Import Section
 
-**Name:** `import`
+**Opcode:** `0x02`.
 
 The Import Section consists of an [array] of imports.
 
@@ -511,7 +513,7 @@ mechanisms for resolving imports as well.
 
 #### Function Section
 
-**Name:** `function`
+**Opcode:** `0x03`.
 
 The Function Section consists of an [array] of function declarations. Its
 elements directly correspond to elements in the [Code Section] array.
@@ -524,7 +526,7 @@ A *function declaration* consists of:
 
 #### Table Section
 
-**Name:** `table`
+**Opcode:** `0x04`.
 
 The Table Section consists of an [array] of table declarations.
 
@@ -537,7 +539,7 @@ A *table declaration* consists of:
 
 #### Linear-Memory Section
 
-**Name:** `memory`
+**Opcode:** `0x05`.
 
 The Memory Section consists of an [array] of [linear-memory] declarations.
 
@@ -554,7 +556,7 @@ initial size up front.
 
 #### Global Section
 
-**Name:** `global`
+**Opcode:** `0x06`.
 
 The Global Section consists of an [array] of global declarations.
 
@@ -570,7 +572,7 @@ A *global declaration* consists of:
 
 #### Export Section
 
-**Name:** `export`
+**Opcode:** `0x07`.
 
 The Export Section consists of an [array] of exports.
 
@@ -610,7 +612,7 @@ re-export their imports.
 
 #### Start Section
 
-**Name:** `start`
+**Opcode:** `0x08`.
 
 The Start Section consists of an [varuint32] into the [function index space].
 See [Instance Execution](#instance-execution) for further information.
@@ -622,7 +624,7 @@ See [Instance Execution](#instance-execution) for further information.
 
 #### Element Section
 
-**Name:** `elem`
+**Opcode:** `0x09`.
 
 The Element Section consists of an [array] of table initializers.
 
@@ -655,7 +657,7 @@ If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
 
 #### Code Section
 
-**Name:** `code`
+**Opcode:** `0x0a`.
 
 The Code Section consists of an [array] of function bodies.
 
@@ -679,7 +681,7 @@ A *position* within a function refers to an element of the instruction sequence.
 
 #### Data Section
 
-**Name:** `data`
+**Opcode:** `0x0b`.
 
 The Data Section consists of an [array] of data initializers.
 
@@ -709,15 +711,19 @@ the [linear-memory index space] during
 
 #### Name Section
 
+**Opcode:** `0x00` (custom section).
+
 **Name:** `name`
 
-The Names Section consists of an [array] of function name descriptors, which
+TODO: Update this to the new extensible name section format.
+
+The Name Section consists of an [array] of function name descriptors, which
 each describe names for the function with the corresponding index in the
 [function index space] and which consist of:
  - the function name, an [identifier].
  - the names of the locals in the function, an [array] of [identifiers].
 
-The Names Section doesn't change execution semantics and malformed constructs,
+The Name Section doesn't change execution semantics and malformed constructs,
 such as out-of-bounds indices, in this section cause the section to be ignored,
 and don't trigger validation failures.
 
@@ -2883,6 +2889,7 @@ TODO: Figure out what to say about the text format.
 [index space]: #module-index-spaces
 [instantiation-time initializer]: #instantiation-time-initializers
 [KiB]: https://en.wikipedia.org/wiki/Kibibyte
+[known section]: #known-sections
 [label]: #labels
 [labels]: #labels
 [linear-memory]: #linear-memory
