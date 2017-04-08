@@ -1010,7 +1010,7 @@ the callee, and released when it completes.
 [call-stack resources].
 
 > This means that implementations aren't permitted to perform implicit
-opportunistic tail-call elimination.
+opportunistic tail-call optimization (TCO).
 
 > The execution state of the function currently being executed remains live
 during the call, and the execution of the called function is performed
