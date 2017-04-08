@@ -870,6 +870,11 @@ addressable, even though the total number of bytes would not be.
 
 > 64-bit linear memories may be permitted in the future.
 
+##### Default Linear Memory
+
+The linear memory with index `0`, if there is one, is called the
+*default linear memory*, which is used by several instructions.
+
 #### Table Index Space
 
 The *table index space* begins with an index for each imported table, in the
@@ -2556,7 +2561,8 @@ instruction is always exact.
 | `f32.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
 | `f64.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
 
-The `load` instruction performs a [load](#loading) of the same size as its type.
+The `load` instruction performs a [load](#loading) of the same size as its type
+from the [default linear memory].
 
 Floating-point loads preserve all the bits of the value, performing an
 IEEE 754-2008 `copy` operation.
@@ -2574,7 +2580,7 @@ IEEE 754-2008 `copy` operation.
 | `f64.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
 
 The `store` instruction performs a [store](#storing) of `$value` of the same
-size as its type.
+size as its type to the [default linear memory].
 
 Floating-point stores preserve all the bits of the value, performing an
 IEEE 754-2008 `copy` operation.
@@ -2594,7 +2600,8 @@ IEEE 754-2008 `copy` operation.
 | `i64.load32_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
 
 The signed extending load instructions perform a [load](#loading) of narrower
-width than their type, and return the value [sign-extended] to their type.
+width than their type from the [default linear memory], and return the value
+[sign-extended] to their type.
  - `load8_s` loads an 8-bit value.
  - `load16_s` loads a 16-bit value.
  - `load32_s` loads a 32-bit value.
@@ -2614,7 +2621,8 @@ width than their type, and return the value [sign-extended] to their type.
 | `i64.load32_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
 
 The unsigned extending load instructions perform a [load](#loading) of narrower
-width than their type, and return the value zero-extended to their type.
+width than their type from the [default linear memory], and return the value
+zero-extended to their type.
  - `load8_u` loads an 8-bit value.
  - `load16_u` loads a 16-bit value.
  - `load32_u` loads a 32-bit value.
@@ -2633,8 +2641,8 @@ width than their type, and return the value zero-extended to their type.
 | `i64.store16` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
 | `i64.store32` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
 
-The wrapping store instructions performs a [store](#storing) of `$value`
-silently wrapped to a narrower width.
+The wrapping store instructions performs a [store](#storing) of `$value` to the
+[default linear memory], silently wrapped to a narrower width.
  - `store8` stores an 8-bit value.
  - `store16` stores a 16-bit value.
  - `store32` stores a 32-bit value.
@@ -2656,8 +2664,8 @@ the name "wrap".
 | ------------- | ----------------------- | ------------------------- | -------- | ------ |
 | `grow_memory` | `$reserved`: [varuint1] | `($delta: iPTR) : (iPTR)` | [Z]      | 0x40   |
 
-The `grow_memory` instruction increases the size of the referenced linear memory
-by a `$delta`, in units of unsigned [pages]. If the index of any byte of the
+The `grow_memory` instruction increases the size of the [default linear memory]
+by `$delta`, in units of unsigned [pages]. If the index of any byte of the
 referenced linear memory would be unrepresentable as unsigned in an `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
 has a maximum size and the actual size would exceed the maximum size, it returns
@@ -2686,8 +2694,8 @@ valid returns.
 | ---------------- | ----------------------- | ---------------------- | -------- | ------ |
 | `current_memory` | `$reserved`: [varuint1] | `() : (iPTR)`          | [Z]      | 0x3f   |
 
-The `current_memory` instruction returns the size of the referenced linear
-memory, as an unsigned value in units of [pages].
+The `current_memory` instruction returns the size of the [default linear
+memory], as an unsigned value in units of [pages].
 
 **Validation**:
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
@@ -2917,6 +2925,7 @@ TODO: Figure out what to say about the text format.
 [bytes]: #bytes
 [byte array]: #byte-array
 [call-stack resources]: #call-stack-resources
+[default linear memory]: #default-linear-memory
 [effective address]: #effective-address
 [external kind]: #external-kinds
 [false]: #booleans
