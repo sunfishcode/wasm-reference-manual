@@ -943,6 +943,8 @@ that they don't literally need to scan in this manner.
 
 > Branching is sometimes called "jumping" in other languages.
 
+> Branch instructions can only target [labels] within the same function.
+
 ##### Branch Index Validation
 
 A depth index is a valid branch index if it is less than the length of the
