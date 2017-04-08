@@ -464,9 +464,7 @@ The value produced by a module initializer is the value that such an instruction
 would produce if it were executed within a function body.
 
 **Validation:**
- - If the instruction is a `get_global`, the global index is required to be
-   within the bounds of the [global index space], and the indexed global
-   declaration is required to have the immutable flag set.
+ - The requirements of the instructions are required.
 
 > In the future, more instructions may be permitted as instantiation-time
 initializers.
