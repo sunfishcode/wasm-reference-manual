@@ -162,7 +162,7 @@ opaque values and serve a wide variety of purposes.
 0. [Byte Array](#byte-array)
 0. [Identifier](#identifier)
 0. [Table Immediate Type](#table-immediate-type)
-0. [iPTR Immediate Type](#iptr-immediate-type)
+0. [varuPTR Immediate Type](#varuptr-immediate-type)
 
 #### Primitive Encoding Types
 
@@ -223,9 +223,9 @@ aren't required to be normalized, and aren't required to be marked with a BOM
 A *table immediate* represents a *branch table*, which is an [array] of
 `varuint32`. This is for use in the [`br_table`](#table-branch) instruction.
 
-#### iPTR Immediate Type
+#### varuPTR Immediate Type
 
-An *iPTR immediate* is either [varuint32] or [varuint64] depending on whether
+A *varuPTR immediate* is either [varuint32] or [varuint64] depending on whether
 the linear memory associated with the instruction using it is 32-bit or 64-bit.
 
 ### Value Types
@@ -858,10 +858,10 @@ present, in the order of that section.
     - If a `maximum` size is present, it is required to be at least the
       `minimum` size.
     - If a `maximum` size is present, the index of every byte in a linear memory
-      with the maximum size is required to be representable in an [iPTR].
+      with the maximum size is required to be representable in an [varuPTR].
 
 > The validation rules here specifically avoid requiring the size in bytes of
-any linear memory to be representable as an [iPTR]. For example a 32-bit
+any linear memory to be representable as a [varuPTR]. For example a 32-bit
 linear-memory address space could theoretically be resized to 4 GiB if the
 implementation has sufficient resources; the index of every byte would be
 addressable, even though the total number of bytes would not be.
@@ -883,7 +883,7 @@ section.
     - If a `maximum` length is present, it is required to be at least
       the table's `minimum` length.
     - If a `maximum` length is present, the index of every element in a table
-      with the maximum size is required to be representable in an [iPTR].
+      with the maximum size is required to be representable in a [varuPTR].
 
 > The table index space is currently only used by the [Element Section].
 
@@ -2547,12 +2547,12 @@ instruction is always exact.
 
 #### Load
 
-| Mnemonic    | Immediates                          | Signature               | Families | Opcode |
-| ----------- | ----------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
-| `i64.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
-| `f32.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
-| `f64.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
+| Mnemonic    | Immediates                                | Signature               | Families | Opcode |
+| ----------- | ----------------------------------------- | ----------------------- | -------- | ------ |
+| `i32.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
+| `i64.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
+| `f32.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
+| `f64.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
 
 The `load` instruction performs a [load](#loading) of the same size as its type.
 
@@ -2564,12 +2564,12 @@ IEEE 754-2008 `copy` operation.
 
 #### Store
 
-| Mnemonic    | Immediates                          | Signature                         | Families | Opcode |
-| ----------- | ----------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
-| `i64.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
-| `f32.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
-| `f64.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
+| Mnemonic    | Immediates                                | Signature                         | Families | Opcode |
+| ----------- | ----------------------------------------- | --------------------------------- | -------- | ------ |
+| `i32.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
+| `i64.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
+| `f32.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
+| `f64.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
 
 The `store` instruction performs a [store](#storing) of `$value` of the same
 size as its type.
@@ -2582,14 +2582,14 @@ IEEE 754-2008 `copy` operation.
 
 #### Extending Load, Signed
 
-| Mnemonic       | Immediates                          | Signature               | Families | Opcode |
-| -------------- | ----------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_s`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
-| `i32.load16_s` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
-|                |                                     |                         |          |        |
-| `i64.load8_s`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
-| `i64.load16_s` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
-| `i64.load32_s` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
+| Mnemonic       | Immediates                                | Signature               | Families | Opcode |
+| -------------- | ----------------------------------------- | ----------------------- | -------- | ------ |
+| `i32.load8_s`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
+| `i32.load16_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
+|                |                                           |                         |          |        |
+| `i64.load8_s`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
+| `i64.load16_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
+| `i64.load32_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
 
 The signed extending load instructions perform a [load](#loading) of narrower
 width than their type, and return the value [sign-extended] to their type.
@@ -2602,14 +2602,14 @@ width than their type, and return the value [sign-extended] to their type.
 
 #### Extending Load, Unsigned
 
-| Mnemonic       | Immediates                      | Signature               | Families | Opcode |
-| -------------- | ------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_u`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i32)` | [M], [U] | 0x2d   |
-| `i32.load16_u` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i32)` | [M], [U] | 0x2f   |
-|                |                                 |                         |          |        |
-| `i64.load8_u`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x31   |
-| `i64.load16_u` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x33   |
-| `i64.load32_u` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
+| Mnemonic       | Immediates                            | Signature               | Families | Opcode |
+| -------------- | ------------------------------------- | ----------------------- | -------- | ------ |
+| `i32.load8_u`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i32)` | [M], [U] | 0x2d   |
+| `i32.load16_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i32)` | [M], [U] | 0x2f   |
+|                |                                       |                         |          |        |
+| `i64.load8_u`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x31   |
+| `i64.load16_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x33   |
+| `i64.load32_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
 
 The unsigned extending load instructions perform a [load](#loading) of narrower
 width than their type, and return the value zero-extended to their type.
@@ -2622,14 +2622,14 @@ width than their type, and return the value zero-extended to their type.
 
 #### Wrapping Store
 
-| Mnemonic      | Immediates                      | Signature                         | Families | Opcode |
-| ------------- | ------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store8`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3a   |
-| `i32.store16` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3b   |
-|               |                                 |                                   |          |        |
-| `i64.store8`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3c   |
-| `i64.store16` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
-| `i64.store32` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
+| Mnemonic      | Immediates                            | Signature                         | Families | Opcode |
+| ------------- | ------------------------------------- | --------------------------------- | -------- | ------ |
+| `i32.store8`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3a   |
+| `i32.store16` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3b   |
+|               |                                       |                                   |          |        |
+| `i64.store8`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3c   |
+| `i64.store16` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
+| `i64.store32` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
 
 The wrapping store instructions performs a [store](#storing) of `$value`
 silently wrapped to a narrower width.
@@ -2656,7 +2656,7 @@ the name "wrap".
 
 The `grow_memory` instruction increases the size of the referenced linear memory
 by a `$delta`, in units of unsigned [pages]. If the index of any byte of the
-referenced linear memory would be unrepresentable in an unsigned `iPTR`, if
+referenced linear memory would be unrepresentable as unsigned in an `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
 has a maximum size and the actual size would exceed the maximum size, it returns
 `-1` and the linear-memory size is not increased; otherwise the linear-memory
@@ -2920,7 +2920,7 @@ TODO: Figure out what to say about the text format.
 [instantiation-time initializer]: #instantiation-time-initializers
 [instruction]: #instructions
 [instructions]: #instructions
-[iPTR]: #iptr-immediate-type
+[varuPTR]: #varuptr-immediate-type
 [KiB]: https://en.wikipedia.org/wiki/Kibibyte
 [known section]: #known-sections
 [label]: #labels
