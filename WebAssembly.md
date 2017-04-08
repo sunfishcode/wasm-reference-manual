@@ -668,8 +668,15 @@ A *function body* consists of:
 | Field Name      | Type                       | Description                       |
 | --------------- | -------------------------- | --------------------------------- |
 | `body_size`     | [varuint32]                | the length of `body` in bytes     |
-| `locals`        | [array] of [local entry]   | local variable declarations       |
+| `locals`        | [array] of local entry     | local variable declarations       |
 | `body`          | sequence of [instructions] | the instructions                  |
+
+A *local entry* consists of:
+
+| Field Name      | Type                       | Description                                     |
+| --------------- | -------------------------- | ----------------------------------------------- |
+| `count`         | [varuint32]                | number of local variables of the following type |
+| `type`          | [value type]               | type of the variables                           |
 
 > Validation of function bodies is described
 [separately](#function-body-validation).
