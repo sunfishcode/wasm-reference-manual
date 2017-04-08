@@ -13,10 +13,7 @@ WebAssembly Reference Manual
 
 ![WebAssembly Logo][logo]
 
-[logo]: logo-placeholder.png "WebAssembly Logo"
-
-TODO: What will the real logo be? Monitor
-https://github.com/WebAssembly/design/issues/112
+[logo]: https://github.com/WebAssembly/web-assembly-logo/raw/master/dist/logo/web-assembly-logo.png "WebAssembly Logo"
 
 
 Introduction
