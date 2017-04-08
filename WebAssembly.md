@@ -118,14 +118,15 @@ size declarations and size operations.
 ### Nondeterminism
 
 When semantics are specified as *nondeterministic*, a WebAssembly implementation
-may perform any one of the set of specified alternatives.
+may perform any one of the discrete set of specified alternatives.
 
 There is no requirement that a given implementation make the same choice every
 time, even for successive executions of the same instruction within the same
 instance of a module.
 
 There is no ["undefined behavior"] in WebAssembly where the semantics become
-completely unspecified.
+completely unspecified. Thus, WebAssembly has only
+*Limited Local Nondeterminism*.
 
 > All instances of nondeterminism in WebAssembly are explicitly described as
 such with a link to this section.
@@ -1088,6 +1089,23 @@ Instructions in this family follow the [IEEE 754-2008] standard, except that:
  - Extended and extendable precision formats aren't supported. All computations
    must be strictly and correctly rounded after each instruction.
 
+> The exception and rounding behavior specified here are the default behavior on
+most contemporary software environments.
+
+> All computations are correctly rounded, subnormal values are fully supported,
+and negative zero, NaNs, and infinities are all produced as result values to
+indicate overflow, invalid, and divide-by-zero exceptional conditions, and
+interpreted appropriately when they appear as operands. Compiler optimizations
+that introduce changes to the effective precision, rounding, or range of any
+computation are not permitted. Implementations are not permitted to contract or
+fuse operations to elide intermediate rouding steps. All numeric results are
+deterministic, as are the rules for how NaNs are handled as operands and for
+when NaNs are to be generated as results. The only floating-point nondeterminism
+is in the specific bit-patterns of NaN result values.
+
+> In IEEE 754-1985, ["subnormal numbers"] are called "denormal numbers";
+WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
+
 When the result of any instruction in this family (which excludes `neg`, `abs`,
 `copysign`, `load`, `store`, and `const`) is a NaN, the sign bit and the
 significand field (which doesn't include the implicit leading digit of the
@@ -1108,21 +1126,7 @@ Implementations are permitted to further implement the IEEE 754-2008 section
 "Operations with NaNs" recommendation that operations propagate NaN bits from
 their operands, however it isn't required.
 
-> The exception and rounding behavior specified here are the default behavior on
-most contemporary software environments.
-
-> All computations are correctly rounded, subnormal values are fully supported,
-and negative zero, NaNs, and infinities are all produced as result values to
-indicate overflow, invalid, and divide-by-zero exceptional conditions, and
-interpreted appropriately when they appear as operands. Compiler optimizations
-that introduce changes to the effective precision, rounding, or range of any
-computation are not permitted. All numeric results are deterministic, as are the
-rules for how NaNs are handled as operands and for when NaNs are to be generated
-as results. The only floating-point nondeterminism is in the specific
-bit-patterns of NaN result values.
-
-> In IEEE 754-1985, ["subnormal numbers"] are called "denormal numbers";
-WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
+> The NaN propagation rules are intended to support NaN-boxing.
 
 > At present, there is no observable difference between quiet and signaling NaN
 other than the difference in the bit pattern.
@@ -1130,9 +1134,6 @@ other than the difference in the bit pattern.
 > IEEE 754-2008 is the current revision of IEEE 754; a new revision is expected
 to be released some time in 2018, and it's expected to be a minor and
 backwards-compatible revision, so WebAssembly is expected to update to it.
-
-> Implementations are not permitted to contract or fuse operations, eliding
-intermediate rouding steps.
 
 [IEEE 754-2008]: https://en.wikipedia.org/wiki/IEEE_floating_point
 ["subnormal numbers"]: https://en.wikipedia.org/wiki/Subnormal_number
