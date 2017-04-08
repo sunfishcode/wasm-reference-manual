@@ -1128,7 +1128,7 @@ indicate overflow, invalid, and divide-by-zero exceptional conditions, and
 interpreted appropriately when they appear as operands. Compiler optimizations
 that introduce changes to the effective precision, rounding, or range of any
 computation are not permitted. Implementations are not permitted to contract or
-fuse operations to elide intermediate rouding steps. All numeric results are
+fuse operations to elide intermediate rounding steps. All numeric results are
 deterministic, as are the rules for how NaNs are handled as operands and for
 when NaNs are to be generated as results. The only floating-point nondeterminism
 is in the specific bit-patterns of NaN result values.
