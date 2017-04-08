@@ -362,12 +362,12 @@ are usually unimportant).
 *Block signature types* are the types that may be used as a `block` or other
 control-flow construct signature.
 
+Block signature types include the [value types], which indicate single-element
+type sequences containing the type, and the following:
+
 | Name       | Description                                  |
 | ---------- | -------------------------------------------- |
 | `void`     | an empty type sequence                       |
-
-Block signature types also include the [value types], which indicate a
-single-element type sequence containing the type.
 
 **Validation:**
  - Block signature types are required to be either a [value type] or one of the
@@ -740,6 +740,8 @@ A *local entry* consists of:
         unreachable instruction would satisfy the requirements for reachable
         instructions.
 
+TODO: Update validation to account for block signatures.
+
 > These validation requirements are sufficient to ensure that WebAssembly has
 *reducible control flow*, which essentially means that all loops have exactly
 one entry point.
@@ -1043,7 +1045,7 @@ instruction. They are described in the following form:
 `(` *operands* `)` `:` `(` *returns* `)`
 
 *Operands* describes a list of [types] for values provided by program execution
-as input to an instruction. *returns* describes a list of [types] for values
+as input to an instruction. *Returns* describes a list of [types] for values
 computed by the instruction that are provided back to the program execution.
 
 Within the signature for a [linear-memory access instruction][M], `iPTR` refers
@@ -1078,8 +1080,8 @@ The following named values are defined:
    of callee signature return list.
  - `$any` indicates the number of values on the value stack pushed within the
    enclosing region.
- - `$block_arity` is defined in [branch instructions][B] and indicates the arity
-   value of the target control-flow stack entry.
+ - `$block_arity` is defined in [branch instructions][B] and indicates the
+   number of values types in the target control-flow stack entry's signature.
 
 ### Instruction Families Field
 
@@ -1413,31 +1415,26 @@ Instructions
 
 #### Block
 
-| Mnemonic    | Immediates            | Signature | Families | Opcode |
-| ----------- | --------------------- | --------- | -------- | ------ |
-| `block`     | `$arity`: [varuint32] | `() : ()` |          | 0x02   |
+| Mnemonic    | Immediates                           | Signature | Families | Opcode |
+| ----------- | ------------------------------------ | --------- | -------- | ------ |
+| `block`     | `$signature`: [block signature type] | `() : ()` |          | 0x02   |
 
 The `block` instruction pushes an entry onto the control-flow stack. The entry
 contains an unbound [label], the current length of the value stack, and
-`$arity`.
-
-**Validation:**
- - `$arity` is required to be at most 1.
+`$signature`.
 
 > Each `block` needs a corresponding [`end`](#end) to bind its label and pop
 its control-flow stack entry.
 
-TODO: Update to block signatures.
-
 #### Loop
 
-| Mnemonic    | Signature                   | Families | Opcode |
-| ----------- | --------------------------- | -------- | ------ |
-| `loop`      | `() : ()`                   |          | 0x03   |
+| Mnemonic    | Immediates                           | Signature | Families | Opcode |
+| ----------- | ------------------------------------ | --------- | -------- | ------ |
+| `loop`      | `$signature`: [block signature type] | `() : ()` |          | 0x03   |
 
 The `loop` instruction binds a [label] to the current position, and pushes an
 entry onto the control-flow stack. The entry contains that label, the current
-length of the value stack, and an arity of zero.
+length of the value stack, and `$signature`.
 
 > The `loop` instruction doesn't perform a loop by itself. It merely introduces
 a label that may be used by a branch to form an actual loop.
@@ -1450,8 +1447,6 @@ entry.
 
 > There is no requirement that loops eventually terminate or contain observable
 side effects.
-
-TODO: Update to block signatures.
 
 #### Unconditional Branch
 
@@ -1506,20 +1501,14 @@ with the other branch instructions.
 
 #### If
 
-| Mnemonic    | Immediates            | Signature                   | Families | Opcode |
-| ----------- | --------------------- | --------------------------- | -------- | ------ |
-| `if`        | `$arity`: [varuint32] | `($condition: i32) : ()`    | [B]      | 0x04   |
+| Mnemonic    | Immediates                      | Signature                   | Families | Opcode |
+| ----------- | ------------------------------- | --------------------------- | -------- | ------ |
+| `if`        | `$signature`: [block signature] | `($condition: i32) : ()`    | [B]      | 0x04   |
 
 The `if` instruction pushes an entry onto the control-flow stack. The entry
 contains an unbound [label], the current length of the value stack, and
-`$arity`. If `$condition` is [false], it then [branches](#branching) according
-to this entry.
-
-TODO: Update to block signatures.
-TODO: If without else returns void.
-
-**Validation:**
- - `$arity` is required to be at most 1.
+`$signature`. If `$condition` is [false], it then [branches](#branching)
+according to this entry.
 
 > Each `if` needs either a corresponding [`else`](#else) or [`end`](#end) to
 bind its label and pop its control-flow stack entry.
@@ -1533,15 +1522,20 @@ bind its label and pop its control-flow stack entry.
 The `else` instruction binds the control-flow stack top's [label] to the current
 position, pops an entry from the control-flow stack, pushes a new entry onto the
 control-flow stack containing an unbound [label], the length of the current
-value stack, and the arity of the control-flow stack entry that was just popped,
-and then [branches](#branching) according to this entry. It returns the values
-of its operands.
+value stack, and the signature of the control-flow stack entry that was just
+popped, and then [branches](#branching) according to this entry. It returns the
+values of its operands.
 
 **Validation:**
- - `$any` is required to be equal to the arity of the control-flow stack entry.
+ - `$T[$any]` is required to be the type sequence described by the signature of
+   the popped control-flow stack entry.
 
 > Each `else` needs a corresponding [`end`](#end) to bind its label and pop its
 control-flow stack entry.
+
+> Unlike in the branch instructions, `else` and `end` do not ignore surplus
+values on the stack, as `$any` is bound to the number of values pushed within
+the current block.
 
 #### End
 
@@ -1554,11 +1548,17 @@ The `end` instruction pops an entry from the control-flow stack. If the entry's
 values of its operands.
 
 **Validation:**
- - `$any` is required to be equal to the arity of the popped control-flow stack
-   entry.
+ - `$T[$any]` is required to be the type sequence described by the signature of
+   the popped control-flow stack entry.
+ - If the control-flow stack entry was pushed by an `if` (and there was no
+   `else`), the signature is required to be `void`.
 
 > Each `end` ends a region begun by a corresponding `block`, `loop`, `if`,
 `else`, or the function entry.
+
+> Unlike in the branch instructions, `else` and `end` do not ignore surplus
+values on the stack, as `$any` is bound to the number of values pushed within
+the current block.
 
 #### Return
 
@@ -2944,7 +2944,8 @@ are created:
     - a [label] for reference from branch instructions.
     - a *limit* integer value, which is an index into the value stack indicating
       where to reset it to on a branch to that label.
-    - an *arity* indicating the number of result values of the region
+    - a *signature*, which is a [block signature type] indicating the number and
+      types of result values of the region.
  - A *value stack*, which carries values between instructions.
  - A *locals* vector, a heterogeneous vector of values containing an element for
    each type in the function's parameter list, followed by an element for each
@@ -2962,7 +2963,10 @@ space and are not any accessible to applications.
 The current position starts at the first instruction in the function body. The
 value stack begins empty. The control-flow stack begins with an entry holding a
 [label] bound to the last instruction in the instruction sequence, a limit value
-of zero, and an arity of the number of return values of the function.
+of zero, and a signature corresponding to the function's return types:
+ - If the function's return type sequence is empty, its signature is `void`.
+ - If the function's return type sequence has exactly one element, the signature
+   is that element.
 
 The value of each incoming argument is copied to the local with the
 corresponding index, and the rest of the locals are initialized to all-zeros
@@ -3054,6 +3058,7 @@ TODO: Figure out what to say about the text format.
 [binary32]: https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 [binary64]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 [bit]: https://en.wikipedia.org/wiki/Bit
+[block signature type]: #block-signature-types
 [boolean]: #booleans
 [byte]: #bytes
 [bytes]: #bytes
