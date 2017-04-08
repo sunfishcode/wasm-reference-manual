@@ -6,6 +6,7 @@ WebAssembly Reference Manual
 0. [Module](#module)
 0. [Instruction Descriptions](#instruction-descriptions)
 0. [Instructions](#instructions)
+0. [Instantiation](#instantiation)
 0. [Execution](#execution)
 0. [Text Format](#text-format)
 
@@ -73,7 +74,7 @@ execute in [constant time].
 [*execution*]: #execution
 [*functions*]: https://en.wikipedia.org/wiki/Subroutine
 [*instructions*]: #instructions
-[*instantiated*]: #module-instantiation
+[*instantiated*]: #instantiation
 [load-store architecture]: https://en.wikipedia.org/wiki/Load/store_architecture
 ["as if"]: https://en.wikipedia.org/wiki/As-if_rule
 [constant time]: https://www.bearssl.org/constanttime.html
@@ -2706,14 +2707,8 @@ memory], as an unsigned value in units of [pages].
 > `$reserved` is intended for future use.
 
 
-Execution
+Instantiation
 --------------------------------------------------------------------------------
-
-0. [Module Instantiation](#module-instantiation)
-0. [Instance Execution](#instance-execution)
-0. [Function Execution](#function-execution)
-
-### Module Instantiation
 
 WebAssembly code execution requires an *instance* of a module, which contains a
 reference to the module plus additional information added during instantiation,
@@ -2733,6 +2728,9 @@ which consists of the following steps:
    [instantiation-time initializer](#instantiation-time-initializers), if it has
    one, or an all-zeros bit-pattern otherwise.
 
+**Trap:** Dynamic Resource Exhaustion, if dynamic resources are insufficient to
+support creation of the module instance or any of its components.
+
 > The contents of an instance, including functions and their bodies, are outside
 any linear-memory address space and not any accessible to applications.
 WebAssembly is therefore conceptually a [Harvard Architecture].
@@ -2744,24 +2742,24 @@ WebAssembly is therefore conceptually a [Harvard Architecture].
 A linear memory is instantiated as follows:
 
 For a linear-memory definition in the [Linear-Memory Section], as opposed to a
-[linear-memory import](#import-section), an array of [bytes] with the length
+[linear-memory import](#import-section), a vector of [bytes] with the length
 being the value of the linear memory's `minimum` size field times the
 [page size] is created, added to the instance, and initialized to all zeros. For
-a linear-memory import, storage for the array is already allocated.
+a linear-memory import, storage for the vector is already allocated.
 
 For each [Data Section] entry with and `index` value equal to the index of the
 linear memory, the contents of its `data` field are copied into the linear
 memory starting at its `offset` field.
 
 **Trap:** Dynamic Resource Exhaustion, if dynamic resources are insufficient to
-support creation of the array.
+support creation of any of the vectors.
 
 #### Table Instantiation
 
 A table is instantiated as follows:
 
 For a table definition in the [Table Section], as opposed to a
-[table import](#import-section), an array of elements is created with the
+[table import](#import-section), a vector of elements is created with the
 table's `minimum` length, with elements of the table's element type, and
 initialized to all special "null" values specific to the element type. For a
 table import, storage for the table is already allocated.
@@ -2788,6 +2786,13 @@ instance.
 [nondeterministically] perform a trap sooner if they exhaust other dynamic
 resources.
 
+
+Execution
+--------------------------------------------------------------------------------
+
+0. [Instance Execution](#instance-execution)
+0. [Function Execution](#function-execution)
+
 ### Instance Execution
 
 If the module contains a [Start Section], the referenced function is
@@ -2797,10 +2802,10 @@ If the module contains a [Start Section], the referenced function is
 
 TODO: This section should be improved to be more approachable.
 
-Function execution can be prompted by a [call-family instruction][L], by
-[instance execution](#instance-execution), or by a call to an
-[exported](#export-section) function from another module or from the embedding
-environment.
+Function execution can be prompted by a [call-family instruction][L] from within
+the same module, by [instance execution](#instance-execution), or by a call to
+an [exported](#export-section) function from another module or from the
+embedding environment.
 
 The input to execution of a function consists of:
  - the function to be executed.
@@ -2815,7 +2820,7 @@ are created:
       where to reset it to on a branch to that label.
     - an *arity* indicating the number of result values of the region
  - A *value stack*, which carries values between instructions.
- - A *locals* vector, a heterogeneous array of values containing an element for
+ - A *locals* vector, a heterogeneous vector of values containing an element for
    each type in the function's parameter list, followed by an element for each
    local declaration in the function.
  - A *current position*.
