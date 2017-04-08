@@ -735,12 +735,10 @@ A *local entry* consists of:
         region nested inside it).
    - For each instruction not reachable from any control-flow path:
       - It is required that if fallthrough paths were added to every
-        [barrier instruction][Q] in the function, that there exist a set of
-        return types for each barrier instruction such that the otherwise
-        unreachable instruction would satisfy the requirements for reachable
-        instructions.
-
-TODO: Update validation to account for block signatures.
+        [barrier instruction][Q] in the function, that there exist a possible
+        fall-through return type sequences for each barrier instruction, such
+        that the otherwise unreachable instruction would satisfy the
+        requirements for reachable instructions.
 
 > These validation requirements are sufficient to ensure that WebAssembly has
 *reducible control flow*, which essentially means that all loops have exactly
@@ -1460,6 +1458,8 @@ entry `$depth` from the top. It returns the values of its operands.
 **Validation:**
  - $depth is required to be a [valid branch index](#branch-index-validation).
 
+TODO: Explicitly describe the binding of $T.
+
 #### Conditional Branch
 
 | Mnemonic    | Immediates            | Signature                                                  | Families | Opcode |
@@ -1473,6 +1473,8 @@ operands, except `$condition`.
 
 **Validation:**
  - $depth is required to be a [valid branch index](#branch-index-validation).
+
+TODO: Explicitly describe the binding of $T.
 
 #### Table Branch
 
@@ -1498,6 +1500,8 @@ with the other branch instructions.
 > The `$default` label isn't considered to be part of the branch table.
 
 ["jump table"]: https://en.wikipedia.org/w/index.php?title=Jump_table
+
+TODO: Explicitly describe the binding of $T.
 
 #### If
 
@@ -1537,6 +1541,8 @@ control-flow stack entry.
 values on the stack, as `$any` is bound to the number of values pushed within
 the current block.
 
+TODO: Explicitly describe the binding of $T.
+
 #### End
 
 | Mnemonic    | Signature                     | Families | Opcode |
@@ -1560,6 +1566,8 @@ values of its operands.
 values on the stack, as `$any` is bound to the number of values pushed within
 the current block.
 
+TODO: Explicitly describe the binding of $T.
+
 #### Return
 
 | Mnemonic    | Signature                                 | Families | Opcode |
@@ -1573,6 +1581,8 @@ stack bottom. It returns the values of its operands.
 
 > Implementations needn't literally perform a branch before performing the
 actual function return.
+
+TODO: Explicitly describe the binding of $T.
 
 #### Unreachable
 
