@@ -1485,10 +1485,10 @@ The `const` instruction returns the value of `$value`.
 | `get_local` | `$id`: [varuint32] | `() : ($T[1])` |          | 0x20   |
 
 The `get_local` instruction returns the value of the local at index `$id` in the
-locals array. The type parameter is bound to the type of the local.
+locals vector. The type parameter is bound to the type of the local.
 
 **Validation:**
- - `$id` is required to be within the bounds of the locals array.
+ - `$id` is required to be within the bounds of the locals vector.
 
 #### Set Local
 
@@ -1497,11 +1497,11 @@ locals array. The type parameter is bound to the type of the local.
 | `set_local` | `$id`: [varuint32] | `($T[1]) : ()` |          | 0x21   |
 
 The `set_local` instruction sets the value of the local at index `$id` in the
-locals array to the value given in the operand. The type parameter is bound to
+locals vector to the value given in the operand. The type parameter is bound to
 the type of the local.
 
 **Validation:**
- - `$id` is required to be within the bounds of the locals array.
+ - `$id` is required to be within the bounds of the locals vector.
 
 > `set_local` is semantically equivalent to a similar `tee_local` followed by a
 `drop`.
@@ -1513,11 +1513,11 @@ the type of the local.
 | `tee_local` | `$id`: [varuint32] | `($T[1]) : ($T[1])` |          | 0x22   |
 
 The `tee_local` instruction sets the value of the locals at index `$id` in the
-locals array to the value given in the operand. Its return value is the value of
+locals vector to the value given in the operand. Its return value is the value of
 its operand. The type parameter is bound to the type of the local.
 
 **Validation:**
- - `$id` is required to be within the bounds of the locals array.
+ - `$id` is required to be within the bounds of the locals vector.
 
 > This instruction's name is inspired by the ["tee" command] in other languages,
 since it forwards the value of its operand to two places, the local and the
@@ -2708,7 +2708,7 @@ which consists of the following steps:
  - If a [Table Section] is present, each table is
    [instantiated](#table-instantiation).
  - A finite quantity of [call-stack resources] is allocated.
- - A *globals array* is allocated, which is a heterogeneous array of globals
+ - A *globals vector* is allocated, which is a heterogeneous vector of globals
    corresponding to the entries in the module's [Global Section]. The initial
    value of each global is the value of its
    [instantiation-time initializer](#instantiation-time-initializers), if it has
