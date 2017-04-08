@@ -2700,6 +2700,10 @@ memory, as an unsigned value in units of [pages].
 Execution
 --------------------------------------------------------------------------------
 
+0. [Module Instantiation](#module-instantiation)
+0. [Instance Execution](#instance-execution)
+0. [Function Execution](#function-execution)
+
 ### Module Instantiation
 
 WebAssembly code execution requires an *instance* of a module, which contains a
