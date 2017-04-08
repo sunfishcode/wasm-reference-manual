@@ -88,11 +88,8 @@ Basics
 0. [Nondeterminism](#nondeterminism)
 0. [Linear Memories](#linear-memories)
 0. [Tables](#tables)
-0. [Encoding Types](#primitive-encoding-types)
-0. [Value Types](#value-types)
-0. [Table Element Types](#table-element-types)
-0. [Signature Types](#signature-types)
-0. [Other Types](#other-types)
+0. [Encoding Types](#encoding-types)
+0. [Language Types](#language-types)
 0. [External Kinds](#external-kinds)
 
 ### Bytes
@@ -162,10 +159,11 @@ opaque values and serve a wide variety of purposes.
 0. [Identifier](#identifier)
 0. [Table Immediate Type](#table-immediate-type)
 0. [varuPTR Immediate Type](#varuptr-immediate-type)
+0. [Type Encoding Type](#language-types)
 
 #### Primitive Encoding Types
 
-Primitive encoding types are the basic types used to represent fields within a
+*Primitive encoding types* are the basic types used to represent fields within a
 Module.
 
 | Name               | Size (in bytes)  | Description                                  |
@@ -190,6 +188,11 @@ encodings may contain padding `0x80` and `0xff` bytes.
 Except when specified otherwise, all values are encoded in
 [little-endian byte order].
 
+**Validation:**
+ - For the types that have value limits, the encoded value is required to be
+   within the limit.
+ - The size of the encoded value is required to be within the type's size range.
+
 > These types aren't used to describe values at execution time.
 
 [LEB128]: https://en.wikipedia.org/wiki/LEB128
@@ -211,7 +214,14 @@ A *byte array* is an [array] of [bytes].
 
 #### Identifier
 
-An *identifier* is a [byte array] which is [valid UTF-8].
+An *identifier* is a [byte array] which is valid
+[UTF-8](https://en.wikipedia.org/wiki/UTF-8).
+
+**Validation:**
+ - Decoded the bytes according to the [UTF-8 decode without BOM or fail]
+   algorithm is required to not fail.
+
+[UTF-8 decode without BOM or fail]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail).
 
 > Identifiers may contain NUL characters, aren't required to be NUL-terminated,
 aren't required to be normalized, and aren't required to be marked with a BOM
@@ -227,33 +237,70 @@ A *table immediate* represents a *branch table*, which is an [array] of
 A *varuPTR immediate* is either [varuint32] or [varuint64] depending on whether
 the linear memory associated with the instruction using it is 32-bit or 64-bit.
 
-### Value Types
+#### Type Encoding Type
 
-Value Types are the types of input and output values of instructions at
-execution time.
+A *type encoding* is a value indicating a particular [language type].
 
-In the binary encoding, value types are encoded as their Binary Encoding value
-in a [varsint7].
+| Name      | Binary Encoding |
+| --------- | --------------- |
+| `i32`     | `-0x01`         |
+| `i64`     | `-0x02`         |
+| `f32`     | `-0x03`         |
+| `f64`     | `-0x04`         |
+| `anyfunc` | `-0x10`         |
+| `func`    | `-0x20`         |
+| `void`    | `-0x40`         |
+
+Type encodings are encoded as their Binary Encoding value in a [varsint7].
+
+**Validation:**
+ - A type encoding is required to be one of the values defined here.
+
+### Language Types
+
+*Language types* describe runtime values and language constructs. Each language
+type has a [type encoding](#type-encoding-type).
+
+0. [Value Types](#value-types)
+0. [Table Element Types](#table-element-types)
+0. [Signature Types](#signature-types)
+0. [Block Signature Types](#block-signature-types)
+
+#### Value Types
+
+*Value types* are the types of individual input and output values of
+instructions at execution time.
+
+**Validation:**
+ - A value type is required to be one of the integer or floating-point value
+   types.
 
 0. [Integer Value Types](#integer-value-types)
+0. [Booleans](#booleans)
 0. [Floating-Point Value Types](#floating-point-value-types)
 
-#### Integer Value Types
+##### Integer Value Types
 
-| Name  | Bits | Binary Encoding |
-| ----- | ---- | --------------- |
-| `i32` | 32   | `-0x01`         |
-| `i64` | 64   | `-0x02`         |
+| Name  | Bits |
+| ----- | ---- |
+| `i32` | 32   |
+| `i64` | 64   |
 
-Integer types in WebAssembly aren't inherently signed or unsigned. They may be
-interpreted as signed or unsigned by individual operations. When interpreted as
-signed, a [two's complement] interpretation is used.
+Integer value types in WebAssembly aren't inherently signed or unsigned. They
+may be interpreted as signed or unsigned by individual operations. When
+interpreted as signed, a [two's complement] interpretation is used.
+
+**Validation:**
+ - An integer value type is required to be one of the values defined here.
 
 > The [minimum signed integer value] is supported; consequently, two's
 complement signed integers aren't symmetric around zero.
 
 > When used as linear-memory indices or function table indices, integer types
 may play the role of "pointers".
+
+> Integer value types are sometimes described as fixed-point types with no
+fractional digits in other languages.
 
 ##### Booleans
 
@@ -269,18 +316,21 @@ values `0` and `1` for false and true.
 > WebAssembly often uses alternate encodings for integers and boolean values,
 rather than using the literal encodings described here.
 
-#### Floating-Point Value Types
+##### Floating-Point Value Types
 
-| Name  | Bits | Binary Encoding |
-| ----- | ---- | --------------- |
-| `f32` | 32   | `-0x03`         |
-| `f64` | 64   | `-0x04`         |
+| Name  | Bits |
+| ----- | ---- |
+| `f32` | 32   |
+| `f64` | 64   |
 
 `f32` in WebAssembly uses the IEEE 754-2008 [binary32] format, commonly known as
 "single precision".
 
 `f64` in WebAssembly uses the IEEE 754-2008 [binary64] format, commonly known as
 "double precision".
+
+**Validation:**
+ - A floating-point value type is required to be one of the values defined here.
 
 > Unlike with [Numbers in ECMAScript], [NaN] values in WebAssembly have sign
 bits and significand fields which may be observed and manipulated (though they
@@ -289,23 +339,43 @@ are usually unimportant).
 [Numbers in ECMAScript]: https://tc39.github.io/ecma262/#sec-ecmascript-language-types-number-type
 [NaN]: https://en.wikipedia.org/wiki/NaN
 
-### Table Element Types
+#### Table Element Types
 
-| Name       | Binary Encoding | Description                                  |
-| ---------- | --------------- | -------------------------------------------- |
-| `anyfunc`  | `-0x10`         | a reference to a function with any signature |
+*Table element types* are the types that may be used in a [table].
 
-### Signature Types
+| Name       | Description                                  |
+| ---------- | -------------------------------------------- |
+| `anyfunc`  | a reference to a function with any signature |
 
-| Name       | Binary Encoding | Description                                  |
-| ---------- | --------------- | -------------------------------------------- |
-| `func`     | `-0x20`         | a function signature                         |
+**Validation:**
+ - Table element types are required to be one of the values defined here.
 
-### Other Types
+#### Signature Types
 
-| Name       | Binary Encoding | Description                                  |
-| ---------- | --------------- | -------------------------------------------- |
-| `void`     | `-0x40`         | an empty type sequence                       |
+*Signature types* are the types that may be defined in the [Type Section].
+
+| Name       | Description                                  |
+| ---------- | -------------------------------------------- |
+| `func`     | a function signature                         |
+
+**Validation:**
+ - Signature types are required to be one of the values defined here.
+
+#### Block Signature Types
+
+*Block signature types* are the types that may be used as a `block` or other
+control-flow construct signature.
+
+| Name       | Description                                  |
+| ---------- | -------------------------------------------- |
+| `void`     | an empty type sequence                       |
+
+Block signature types also include the [value types], which indicate a
+single-element type sequence containing the type.
+
+**Validation:**
+ - Block signature types are required to be either a [value type] or one of the
+   values defined here.
 
 ### External Kinds
 
@@ -319,9 +389,10 @@ or imported from another module. They can be any one of the following kinds:
 | `Memory`   | `0x02`          |
 | `Global`   | `0x03`          |
 
-In the binary encoding, external kinds are encoded as their Binary Encoding
-value in a [varuint7].
+External kinds are encoded as their Binary Encoding value in a [varuint7].
 
+**Validation:**
+ - The value is required to be one of the above values.
 
 Module
 --------------------------------------------------------------------------------
@@ -369,6 +440,11 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 | --------------- | -------------------- | ------------------------------------------ |
 | `element_type`  | [table element type] | the element type of the [table]            |
 | `resizable`     | [resizable limits]   | table flags and sizes in units of elements |
+
+**Validation:**
+ - The `element_type` is required to be `anyfunc`.
+
+> In the future, other `element_type` values may be permitted.
 
 #### Global Description
 
@@ -422,6 +498,10 @@ required to either indicate a *known section*, or be `0x00`, indicating a
    [enumeration of the Known Sections](#known-sections).
  - Custom sections are required to start their payload with an [identifier]
    *name*. TODO: Is it a validation error if they don't?
+ - The encoding for the module is required to be exactly the length of the data
+   that encodes it
+ - The requirements of every component [encoding type] of the module are
+   required.
 
 > The `magic_cookie` bytes begin with a NUL character, indicating to generic
 tools that the ensuing contents are not generally "text", followed by the UTF-8
@@ -473,6 +553,7 @@ If `form` is `func`, the following fields are appended.
 | `returns`       | [array] of [value type] | the return types of the function        |
 
 **Validation:**
+ - `form` is required to be `func`.
  - Each `returns` array is required to contain at most one element.
 
 > In the future, this section may contain other forms of type entries as well,
@@ -541,7 +622,7 @@ through their respective [module index spaces](#module-index-spaces).
    maximum size.
  - If present, a table import's maximum length is required to be at least the
    imported table's maximum length.
- - Embedding-specific validation may be performed on each import.
+ - Embedding-specific validation requirements may be required of each import.
 
 > Global imports may be permitted to be mutable in the future.
 
@@ -934,8 +1015,8 @@ convention of ending in "_s" and "_u" respectively.
 ### Instruction Immediates Field
 
 Immediates, if present, is a list of value names with associated
-[encoding types](#encoding-types), representing values provided by the module
-itself as input to an instruction.
+[encoding types], representing values provided by the module itself as input to
+an instruction.
 
 ### Instruction Signature Field
 
@@ -2952,6 +3033,8 @@ TODO: Figure out what to say about the text format.
 [call-stack resources]: #call-stack-resources
 [default linear memory]: #default-linear-memory
 [effective address]: #effective-address
+[encoding type]: #encoding-types
+[encoding types]: #encoding-types
 [external kind]: #external-kinds
 [false]: #booleans
 [global description]: #global-description
@@ -2967,6 +3050,7 @@ TODO: Figure out what to say about the text format.
 [known section]: #known-sections
 [label]: #labels
 [labels]: #labels
+[language type]: #language-types
 [linear memory]: #linear-memories
 [linear memories]: #linear-memories
 [linear-memory]: #linear-memories
@@ -3003,6 +3087,7 @@ TODO: Figure out what to say about the text format.
 [two's complement product]: https://en.wikipedia.org/wiki/Two%27s_complement#Multiplication
 [two's complement sum]: https://en.wikipedia.org/wiki/Two%27s_complement#Addition
 [value type]: #value-types
+[value types]: #value-types
 [uint32]: #primitive-type-encodings
 [valid UTF-8]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail
 [varuint1]: #primitive-type-encodings
