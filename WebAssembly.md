@@ -1125,7 +1125,7 @@ WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
 > other than the difference in the bit pattern.
 
 > IEEE 754-2008 is the current revision of IEEE 754; a new revision is expected
-to be released some time in 2018, and it is expected to be a minor and
+to be released some time in 2018, and it's expected to be a minor and
 backwards-compatible revision, so WebAssembly is expected to update to it.
 
 [IEEE 754-2008]: https://en.wikipedia.org/wiki/IEEE_floating_point
@@ -1443,7 +1443,7 @@ be executed except in the case of a bug in the application.
 
 ### Basic Instructions
 
-0. [Nop](#nop)
+0. [No-op](#nop)
 0. [Drop](#drop)
 0. [Constant](#constant)
 0. [Get Local](#get-local)
@@ -1455,7 +1455,7 @@ be executed except in the case of a bug in the application.
 0. [Call](#call)
 0. [Indirect Call](#indirect-call)
 
-#### Nop
+#### No-op
 
 | Mnemonic    | Signature                   | Families | Opcode |
 | ----------- | --------------------------- | -------- | ------ |
@@ -2632,7 +2632,8 @@ in units of [pages]. Newly allocated bytes are initialized to all zeros.
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
  - `$reserved` is required to be `0`.
 
-> This instruction can fail even when the maximum size is not yet reached.
+> This instruction can fail even when the maximum size is not yet reached, due
+to resource exhaustion.
 
 > Since the return value is in units of pages, `-1` isn't otherwise a valid
 linear-memory size. Also, note that -1 is not the only "negative" value (when
@@ -2705,6 +2706,10 @@ one entry point.
 
 > There are no implicit type conversions, subtyping, or function overloading in
 WebAssembly.
+
+> The constraint on unreachable instructions is sometimes called
+"polymorphic type checking", however it does not require any kind of dynamic
+typing behavior.
 
 
 Execution
