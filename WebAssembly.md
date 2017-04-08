@@ -1273,7 +1273,7 @@ notation.
 
 Instruction semantics are described for use in the context of
 [function-body execution](#function-body-execution). Some instructions also have
-a special validation clause, introduced by "**Validation:**", which introduce
+a special validation clause, introduced by "**Validation:**", which defines
 instruction-specific validation requirements.
 
 
