@@ -2670,7 +2670,7 @@ value in units of [pages]. Newly allocated bytes are initialized to all zeros.
 to resource exhaustion.
 
 > Since the return value is in units of pages, `-1` isn't otherwise a valid
-linear-memory size. Also, note that -1 is not the only "negative" value (when
+linear-memory size. Also, note that `-1` is not the only "negative" value (when
 interpreted as signed) that can be returned; other such values can indicate
 valid returns.
 
