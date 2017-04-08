@@ -726,8 +726,8 @@ A *local entry* consists of:
       nested inside it).
  - For each instruction not reachable from any control-flow path:
     - It is required that if fallthrough paths were added to every
-      [barrier instruction][Q] in the function, that there exist a set of types
-      for each barrier instruction such that the otherwise unreachable
+      [barrier instruction][Q] in the function, that there exist a set of return
+      types for each barrier instruction such that the otherwise unreachable
       instruction would satisfy the requirements for reachable instructions.
 
 > These validation requirements are sufficient to ensure that WebAssembly has
