@@ -9,6 +9,5 @@ main things it lacks are automatic tables of contents and convenient term
 definitions, however the advantages in ease of use and collaboration at least
 partly make up for that.
 
-It is a work in progress known to be somewhat "incomplet and inkorrect" at this
-time. Known deficiencies are marked with TODO comments. Corrections and
-contributions are welcome.
+Known deficiencies are marked with TODO comments. Corrections and contributions
+are welcome!
