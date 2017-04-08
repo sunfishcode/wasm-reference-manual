@@ -1214,6 +1214,9 @@ TODO: And, it's part of a $flags immediate which has other parts to validate
 
 These values are used in WebAssembly the to encode instruction [opcodes].
 
+The opcodes for [signed][S] and [unsigned][U] instructions have the convention
+that the unsigned opcode is always one greater than the signed opcode.
+
 [opcodes]: https://en.wikipedia.org/wiki/Opcode
 
 ### Instruction Syntax Field
