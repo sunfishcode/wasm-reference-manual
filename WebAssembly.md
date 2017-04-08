@@ -22,11 +22,11 @@ compilation target for a wide variety of programming languages. Much of its
 distinct personality derives from its security, code compression, and decoding
 optimization features.
 
-The unit of WebAssembly code is the *module*. Modules primarily consist of a
-collection of sections. There are sections describing a WebAssembly's
-interactions with other modules ([imports] and [exports]), sections declaring
-[data](#data-section) and other implements used by the module, and sections
-defining [*functions*]. For more information, see the [Module section].
+The unit of WebAssembly code is the [*module*](#module). Modules consist of a
+header followed by a sequence of sections. There are sections describing a
+WebAssembly's interactions with other modules ([imports] and [exports]),
+sections declaring [data](#data-section) and other implements used by the
+module, and sections defining [*functions*].
 
 WebAssembly modules are encoded in binary form for size and decoding efficiency.
 They may be losslessly translated to [text form] for readability.
@@ -50,16 +50,15 @@ among other things. An instance can then be executed, either by execution of its
 exported linear memories and global variables can be accessed.
 
 Along with the other contents, each function contains a sequence of
-*instructions*. WebAssembly instructions conceptually communicate with each
-other primarily via pushing and popping values on a virtual stack, which allows
-them to have a very compact encoding. For more information, see the
-[Execution section](#execution).
+*instructions*. During [execution](#execution), WebAssembly instructions
+conceptually communicate with each other primarily via pushing and popping
+values on a virtual stack, which allows them to have a very compact encoding.
 
-WebAssembly has instructions for performing integer and floating-point
-arithmetic, directing control flow, loading and storing to linear memory (as a
-[load-store architecture]), calling functions, and more. For more information,
-see the [Instructions section]. The [Instruction Descriptions section] provides
-more information on how instructions are described.
+WebAssembly has [instructions](#instructions) for performing integer and
+floating-point arithmetic, directing control flow, loading and storing to linear
+memory (as a [load-store architecture]), calling functions, and more.
+Instructions are [described](#instruction-descriptions) here with some simple
+conventions.
 
 Implementations of WebAssembly need not perform all the steps literally as
 described here; they need only behave ["as if"] they did so in all observable
@@ -72,11 +71,8 @@ execute in [constant time].
 [imports]: #import-section
 [exports]: #export-section
 [*functions*]: https://en.wikipedia.org/wiki/Subroutine
-[Module section]: #module
 [*instantiated*]: #module-instantiation
 [load-store architecture]: https://en.wikipedia.org/wiki/Load/store_architecture
-[Instructions section]: #instructions
-[Instruction Descriptions section]: #instruction-descriptions
 ["as if"]: https://en.wikipedia.org/wiki/As-if_rule
 [constant time]: https://www.bearssl.org/constanttime.html
 
@@ -124,7 +120,7 @@ completely unspecified. Thus, WebAssembly has only
 *Limited Local Nondeterminism*.
 
 > All instances of nondeterminism in WebAssembly are explicitly described as
-such with a link to this section.
+such with a link to here.
 
 ["undefined behavior"]: https://en.wikipedia.org/wiki/Undefined_behavior
 
@@ -640,8 +636,8 @@ re-export their imports.
 **Opcode:** `0x08`.
 
 The Start Section consists of a [varuint32] index into the
-[function index space]. See [Instance Execution](#instance-execution) for
-further information.
+[function index space]. This is used by
+[Instance Execution](#instance-execution).
 
 **Validation:**
  - The index is required to be within the bounds of the [Code Section] array.
@@ -794,7 +790,7 @@ each describe names for the function with the corresponding index in the
  - the function name, an [identifier].
  - the names of the locals in the function, an [array] of [identifiers].
 
-The Name section should be sequenced after any known sections.
+The Name Section should be sequenced after any known sections.
 
 The Name Section doesn't change execution semantics and malformed constructs,
 such as out-of-bounds indices, or the section not being after any known
@@ -2835,7 +2831,7 @@ instruction is executed as follows:
 For each operand [type] in the instruction's signature in reverse order, a value
 is popped from the value stack and provided as the corresponding operand value.
 The instruction is then executed as described in the
-[Instructions](#instructions) section entry describing it. Each of the
+[Instruction](#instructions) description for it. Each of the
 instruction's return values are then pushed onto the value stack.
 
 If the current position is now past the end of the sequence,
