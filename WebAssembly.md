@@ -741,9 +741,12 @@ each describe names for the function with the corresponding index in the
  - the function name, an [identifier].
  - the names of the locals in the function, an [array] of [identifiers].
 
+The Name section should be sequenced after any known sections.
+
 The Name Section doesn't change execution semantics and malformed constructs,
-such as out-of-bounds indices, in this section cause the section to be ignored,
-and don't trigger validation failures.
+such as out-of-bounds indices, or the section not being after any known
+sections, in this section cause the section to be ignored, and don't trigger
+validation failures.
 
 > Name data is represented as an explicit section in WebAssembly, however in
 [text form] it may be represented as an integrated part of the syntax for
