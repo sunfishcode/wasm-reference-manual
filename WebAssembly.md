@@ -191,7 +191,8 @@ Except when specified otherwise, all values are encoded in
 ### Additional Encoding Types
 
 0. [Array](#array)
-0. [String](#string)
+0. [Byte Sequence](#byte-sequence)
+0. [Identifier](#identifier)
 
 #### Array
 
@@ -200,12 +201,20 @@ followed by a sequence of that many elements of that type.
 
 > Array elements needn't all be the same size in some representations.
 
-#### String
+#### Byte Sequence
 
-A *string* is an [array] of bytes.
+A *byte sequence* is an [array] of bytes.
 
-> Strings in this context may contain arbitrary bytes and aren't required to be
-valid UTF-8 or any other format, and aren't required to be NUL-terminated.
+> Byte sequences may contain arbitrary bytes and aren't required to be
+[valid UTF-8] or any other format.
+
+#### Identifier
+
+An *identifier* is a [byte sequence] which is [valid UTF-8].
+
+> Identifiers may contain NUL characters, aren't required to be NUL-terminated,
+aren't required to be normalized, and aren't required to be marked with a BOM
+(though they aren't prohibited from containing a BOM).
 
 ### Value Types
 
@@ -358,8 +367,8 @@ initializers.
 
 Modules contain a version [varuint32].
 
-Modules also contain a sequence of sections. Each section has a [string] *name*
-and associated data.
+Modules also contain a sequence of sections. Each section has an [identifier]
+*name* and associated data.
 
 **Validation:**
  - The version index is required to be equal to `0xc`.
@@ -435,8 +444,8 @@ An *import* consists of:
 
 | Field Name      | Type                 | Description                              |
 | --------------- | -------------------- | ---------------------------------------- |
-| `module_name`   | [string]             | the name of the module to import from    |
-| `export_name`   | [string]             | the name of the export in that module    |
+| `module_name`   | [identifier]         | the name of the module to import from    |
+| `export_name`   | [identifier]         | the name of the export in that module    |
 | `kind`          | [external kind]      | the kind of import                       |
 
 If `kind` is `Function`, the following fields are appended.
@@ -566,7 +575,7 @@ An *export* consists of:
 
 | Field Name      | Type               | Description                             |
 | --------------- | ------------------ | --------------------------------------- |
-| `name`          | [string]           | field name                              |
+| `name`          | [identifier]       | field name                              |
 | `kind`          | [external kind]    | the kind of export                      |
 | `index`         | [varuint32]        | an index into an [index space]          |
 
@@ -677,7 +686,7 @@ A *data initializer* consists of:
 | --------------- | -------------------------------- | --------------------------------------------------- |
 | `index`         | [varuint32]                      | a [linear memory index](#linear-memory-index-space) |
 | `offset`        | [instantiation-time initializer] | the index of the byte in memory to start at         |
-| `data`          | [string]                         | data to initialize the contents of linear memory    |
+| `data`          | [byte sequence]                  | data to initialize the contents of linear memory    |
 
 It describes data to be loaded into the linear memory identified by the index in
 the [linear-memory index space] during
@@ -702,8 +711,8 @@ the [linear-memory index space] during
 The Names Section consists of an [array] of function name descriptors, which
 each describe names for the function with the corresponding index in the
 [function index space] and which consist of:
- - the function name, a [string].
- - the names of the locals in the function, an [array] of [strings].
+ - the function name, an [identifier].
+ - the names of the locals in the function, an [array] of [identifiers].
 
 The Names Section doesn't change execution semantics and malformed constructs,
 such as out-of-bounds indices, in this section cause the section to be ignored,
@@ -717,11 +726,6 @@ syntax for functions rather than as a discrete section.
 human-readable format in a browser or other development environment, the names
 in this section are to be used as the names of functions and locals in the
 [text format].
-
-TODO: Should the names in this section be required to be valid UTF-8 strings?
-This section isn't used during normal validation or execution, so it's off the
-"hot path" and is only used during debugging, to present strings to humans, so
-it might make sense.
 
 ### Module Index Spaces
 
@@ -2664,8 +2668,9 @@ being the value of the linear-memory space's initial size field is created,
 added to the instance, and initialized to all zeros. For a linear-memory import,
 storage for the array is already allocated.
 
-The contents of the [Data Section] are loaded into the byte array. Each [string]
-is loaded into linear memory starting at its associated start offset value.
+The contents of the [Data Section] are loaded into the byte array. Each
+[byte sequence] is loaded into linear memory starting at its associated start
+offset value.
 
 **Trap:** Dynamic Resource Exhaustion, if dynamic resources are insufficient to
 support creation of the array.
@@ -2863,11 +2868,14 @@ TODO: Figure out what to say about the text format.
 [boolean]: #booleans
 [byte]: #bytes
 [bytes]: #bytes
+[byte sequence]: #byte-sequence
 [call-stack resources]: #call-stack-resources
 [effective address]: #effective-address
 [external kind]: #external-kinds)
 [false]: #booleans
 [Floor and Ceiling Functions]: https://en.wikipedia.org/wiki/Floor_and_ceiling_functions
+[identifier]: #identifier
+[identifiers]: #identifier
 [index space]: #module-index-spaces
 [instantiation-time initializer]: #instantiation-time-initializers
 [KiB]: https://en.wikipedia.org/wiki/Kibibyte
@@ -2888,8 +2896,6 @@ TODO: Figure out what to say about the text format.
 [shifted]: https://en.wikipedia.org/wiki/Logical_shift
 [sign-extended]: https://en.wikipedia.org/wiki/Sign_extension
 [signature kind]: #signature-kinds
-[string]: #string
-[strings]: #string
 [table]: #tables
 [table element type]: #table-element-type
 [text format]: #text-format
@@ -2904,6 +2910,7 @@ TODO: Figure out what to say about the text format.
 [two's complement sum]: https://en.wikipedia.org/wiki/Two%27s_complement#Addition
 [value type]: #value-types
 [uint32]: #primitive-type-encodings
+[valid UTF-8]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail
 [varuint1]: #primitive-type-encodings
 [varuint7]: #primitive-type-encodings
 [varuint32]: #primitive-type-encodings
