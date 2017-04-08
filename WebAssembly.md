@@ -2650,6 +2650,8 @@ The requirements for function-body validation are:
     - The requirements of the **Validation** clause in the associated
       instruction description are required.
 
+TODO: Describe the new polymorphic typing.
+
 > These requirements are sufficient to ensure that WebAssembly has
 *reducible control flow*, which essentially means that all loops have exactly
 one entry point.
@@ -2912,7 +2914,6 @@ TODO: Figure out what to say about the text format.
 [linear-memory]: #linear-memory
 [linear-memory access validation]: #linear-memory-access-validation
 [little-endian byte order]: https://en.wikipedia.org/wiki/Endianness#Little-endian
-[merged]: #type-sequence-merge
 [minimum signed integer value]: https://en.wikipedia.org/wiki/Two%27s_complement#Most_negative_number
 [nondeterministic]: #nondeterminism
 [nondeterministically]: #nondeterminism
