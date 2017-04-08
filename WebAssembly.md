@@ -2881,7 +2881,7 @@ TODO: Figure out what to say about the text format.
 [byte sequence]: #byte-sequence
 [call-stack resources]: #call-stack-resources
 [effective address]: #effective-address
-[external kind]: #external-kinds)
+[external kind]: #external-kinds
 [false]: #booleans
 [Floor and Ceiling Functions]: https://en.wikipedia.org/wiki/Floor_and_ceiling_functions
 [identifier]: #identifier
