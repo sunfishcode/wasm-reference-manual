@@ -1719,8 +1719,8 @@ The `and` instruction returns the [bitwise and] of its operands.
 
 | Mnemonic    | Signature                   | Families | Opcode | Syntax      |
 | ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.or`    | `(i32, i32) : (i32)`        | [G]      | 0x48   | `|` (7)     |
-| `i64.or`    | `(i64, i64) : (i64)`        | [G]      | 0x63   | `|` (7)     |
+| `i32.or`    | `(i32, i32) : (i32)`        | [G]      | 0x48   | `\|` (7)    |
+| `i64.or`    | `(i64, i64) : (i64)`        | [G]      | 0x63   | `\|` (7)    |
 
 The `or` instruction returns the [bitwise inclusive-or] of its operands.
 
