@@ -94,8 +94,7 @@ Basics
 0. [Nondeterminism](#nondeterminism)
 0. [Linear Memory](#linear-memory)
 0. [Tables](#tables)
-0. [Primitive Encoding Types](#primitive-encoding-types)
-0. [Additional Encoding Types](#additional-encoding-types)
+0. [Encoding Types](#primitive-encoding-types)
 0. [Value Types](#value-types)
 0. [Table Element Types](#table-element-types)
 0. [Signatures Types](#signature-types)
@@ -160,7 +159,16 @@ Tables can be [defined by a module](#table-section) or
 > In the future, tables are expected to be generalized to hold a wide variety of
 opaque values and serve a wide variety of purposes.
 
-### Primitive Encoding Types
+### Encoding Types
+
+0. [Primitive Encoding Types](#primitive-encoding-types)
+0. [Array](#array)
+0. [Byte Array](#byte-array)
+0. [Identifier](#identifier)
+0. [Table Immediate Type](#table-immediate-type)
+0. [iPTR Immediate Type](#iptr-immediate-type)
+
+#### Primitive Encoding Types
 
 Primitive encoding types are the basic types used to represent fields within a
 Module.
@@ -192,12 +200,6 @@ Except when specified otherwise, all values are encoded in
 [LEB128]: https://en.wikipedia.org/wiki/LEB128
 [signed LEB128]: https://en.wikipedia.org/wiki/LEB128#Signed_LEB128
 
-### Additional Encoding Types
-
-0. [Array](#array)
-0. [Byte Array](#byte-array)
-0. [Identifier](#identifier)
-
 #### Array
 
 An *array* of a given type is a [varuint32] indicating a number of elements,
@@ -219,6 +221,16 @@ An *identifier* is a [byte array] which is [valid UTF-8].
 > Identifiers may contain NUL characters, aren't required to be NUL-terminated,
 aren't required to be normalized, and aren't required to be marked with a BOM
 (though they aren't prohibited from containing a BOM).
+
+#### Table Immediate Type
+
+A *table immediate* represents a *branch table*, which is an [array] of
+`varuint32`. This is for use in the [`br_table`](#table-branch) instruction.
+
+#### iPTR Immediate Type
+
+An *iPTR immediate* is either [varuint32] or [varuint64] depending on whether
+the linear memory associated with the instruction using it is 32-bit or 64-bit.
 
 ### Value Types
 
@@ -816,13 +828,12 @@ present, in the order of that section.
     - If a `maximum` size is present, it is required to be at least the
       `minimum` size.
     - If a `maximum` size is present, the index of every byte in a linear memory
-      with the maximum size is required to be representable in an unsigned
-      `iPTR`.
+      with the maximum size is required to be representable in an [iPTR].
 
 > The validation rules here specifically avoid requiring the size in bytes of
-any linear memory to be representable as an unsigned `iPTR`. For example a
-32-bit linear-memory address space could theoretically be resized to 4 GiB if
-the implementation has sufficient resources; the index of every byte would be
+any linear memory to be representable as an [iPTR]. For example a 32-bit
+linear-memory address space could theoretically be resized to 4 GiB if the
+implementation has sufficient resources; the index of every byte would be
 addressable, even though the total number of bytes would not be.
 
 > Multiple linear memories may be permitted in the future.
@@ -842,8 +853,7 @@ section.
     - If a `maximum` length is present, it is required to be at least
       the table's `minimum` length.
     - If a `maximum` length is present, the index of every element in a table
-      with the maximum size is required to be representable in an unsigned
-      `iPTR`.
+      with the maximum size is required to be representable in an [iPTR].
 
 > The table index space is currently only used by the [Element Section].
 
@@ -885,16 +895,9 @@ convention of ending in "_s" and "_u" respectively.
 
 ### Instruction Immediates Field
 
-Immediates, if present, is a list of [typed] value names, representing values
-provided by the module itself as input to an instruction.
-
-As a special case, an immediate field can also contain `TABLE`, which signifies
-a *branch table*, which is an [array] of `varuint32`. This is for use in the
-[`br_table`](#table-branch) instruction.
-
-As another special case, an immediate field can contain `iPTR`, which signifies
-either [varuint32] or [varuint64] depending on whether the associated
-linear-memory is 32-bit or 64-bit.
+Immediates, if present, is a list of value names with associated
+[encoding types](#encoding-types), representing values provided by the module
+itself as input to an instruction.
 
 ### Instruction Signature Field
 
@@ -908,7 +911,8 @@ as input to an instruction. *returns* describes a list of [types] for values
 computed by the instruction that are provided back to the program execution.
 
 Within the signature for a [linear-memory access instruction][M], `iPTR` refers
-an integer [type] with the index bitwidth of the accessed linear memory.
+an [integer  type](#integer-value-types) with the index bitwidth of the accessed
+linear memory.
 
 Besides literal [types], descriptions of [types] can be from the following
 mechanisms:
@@ -1331,9 +1335,9 @@ does nothing. It returns the values of its operands, except `$condition`.
 
 #### Table Branch
 
-| Mnemonic    | Immediates                       | Signature                                              | Families | Opcode |
-| ----------- | -------------------------------- | ------------------------------------------------------ | -------- | ------ |
-| `br_table`  | `TABLE`, `$default`: [varuint32] | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x0e   |
+| Mnemonic    | Immediates                                                | Signature                                              | Families | Opcode |
+| ----------- | --------------------------------------------------------- | ------------------------------------------------------ | -------- | ------ |
+| `br_table`  | `$table`: [table immediate type], `$default`: [varuint32] | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x0e   |
 
 First, the `br_table` instruction selects a depth to use. If `$index` is within
 the bounds of the table, the depth is the value of the indexed table element.
@@ -1350,7 +1354,7 @@ depth from the top. It returns the values of its operands, except `$index`.
 in other languages. "Branch" is used here instead to emphasize the commonality
 with the other branch instructions.
 
-> The `$default` label is not considered to be part of the `TABLE`.
+> The `$default` label is not considered to be part of the branch table.
 
 ["jump table"]: https://en.wikipedia.org/w/index.php?title=Jump_table
 
@@ -1516,8 +1520,8 @@ the type of the local.
 | `tee_local` | `$id`: [varuint32] | `($T[1]) : ($T[1])` |          | 0x22   |
 
 The `tee_local` instruction sets the value of the locals at index `$id` in the
-locals vector to the value given in the operand. Its return value is the value of
-its operand. The type parameter is bound to the type of the local.
+locals vector to the value given in the operand. Its return value is the value
+of its operand. The type parameter is bound to the type of the local.
 
 **Validation:**
  - `$id` is required to be within the bounds of the locals vector.
@@ -2503,12 +2507,12 @@ instruction is always exact.
 
 #### Load
 
-| Mnemonic    | Immediates                      | Signature               | Families | Opcode |
-| ----------- | ------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
-| `i64.load`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
-| `f32.load`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
-| `f64.load`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
+| Mnemonic    | Immediates                          | Signature               | Families | Opcode |
+| ----------- | ----------------------------------- | ----------------------- | -------- | ------ |
+| `i32.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
+| `i64.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
+| `f32.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
+| `f64.load`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
 
 The `load` instruction performs a [load](#loading) of the same size as its type.
 
@@ -2520,12 +2524,12 @@ IEEE 754-2008 `copy` operation.
 
 #### Store
 
-| Mnemonic    | Immediates                      | Signature                         | Families | Opcode |
-| ----------- | ------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
-| `i64.store` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
-| `f32.store` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
-| `f64.store` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
+| Mnemonic    | Immediates                          | Signature                         | Families | Opcode |
+| ----------- | ----------------------------------- | --------------------------------- | -------- | ------ |
+| `i32.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
+| `i64.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
+| `f32.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
+| `f64.store` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
 
 The `store` instruction performs a [store](#storing) of `$value` of the same
 size as its type.
@@ -2538,14 +2542,14 @@ IEEE 754-2008 `copy` operation.
 
 #### Extending Load, Signed
 
-| Mnemonic       | Immediates                      | Signature               | Families | Opcode |
-| -------------- | ------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_s`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
-| `i32.load16_s` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
-|                |                                 |                         |          |        |
-| `i64.load8_s`  | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
-| `i64.load16_s` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
-| `i64.load32_s` | `$offset`: iPTR, `$align`: iPTR | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
+| Mnemonic       | Immediates                          | Signature               | Families | Opcode |
+| -------------- | ----------------------------------- | ----------------------- | -------- | ------ |
+| `i32.load8_s`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
+| `i32.load16_s` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
+|                |                                     |                         |          |        |
+| `i64.load8_s`  | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
+| `i64.load16_s` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
+| `i64.load32_s` | `$offset`: [iPTR], `$align`: [iPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
 
 The signed extending load instructions perform a [load](#loading) of narrower
 width than their type, and return the value [sign-extended] to their type.
@@ -2919,6 +2923,7 @@ TODO: Figure out what to say about the text format.
 [instantiation-time initializer]: #instantiation-time-initializers
 [instruction]: #instructions
 [instructions]: #instructions
+[iPTR]: #iptr-immediate-type
 [KiB]: https://en.wikipedia.org/wiki/Kibibyte
 [known section]: #known-sections
 [label]: #labels
@@ -2946,6 +2951,7 @@ TODO: Figure out what to say about the text format.
 [table element type]: #table-element-types
 [table description]: #table-description
 [table descriptions]: #table-description
+[table immediate type]: #table-immediate-type
 [text form]: #text-format
 [true]: #booleans
 [type]: #value-types
