@@ -219,8 +219,8 @@ An *identifier* is a [byte array] which is valid
 [UTF-8](https://en.wikipedia.org/wiki/UTF-8).
 
 **Validation:**
- - Decoded the bytes according to the [UTF-8 decode without BOM or fail]
-   algorithm is required to not fail.
+ - Decoding the bytes according to the [UTF-8 decode without BOM or fail]
+   algorithm is required to succeed.
 
 [UTF-8 decode without BOM or fail]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail).
 
