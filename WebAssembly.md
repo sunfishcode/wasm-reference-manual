@@ -73,6 +73,9 @@ Implementations of WebAssembly [validation] and [execution] need not perform all
 the steps literally as described here; they need only behave ["as if"] they did
 so in all observable respects.
 
+> Except where specified otherwise, WebAssembly instructions are not required to
+execute in [constant time].
+
 [ISA]: https://en.wikipedia.org/wiki/Instruction_set
 [imports]: #import-section
 [exports]: #export-section
@@ -85,6 +88,7 @@ so in all observable respects.
 [validation]: #validation
 [execution]: #execution
 ["as if"]: https://en.wikipedia.org/wiki/As-if_rule
+[constant time]: https://www.bearssl.org/constanttime.html
 
 
 Basics
