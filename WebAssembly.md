@@ -90,7 +90,6 @@ Basics
 0. [Tables](#tables)
 0. [Encoding Types](#encoding-types)
 0. [Language Types](#language-types)
-0. [External Kinds](#external-kinds)
 0. [Embedding Environment](#embedding-environment)
 
 ### Bytes
@@ -155,11 +154,10 @@ opaque values and serve a wide variety of purposes.
 ### Encoding Types
 
 0. [Primitive Encoding Types](#primitive-encoding-types)
+0. [varuPTR Immediate Type](#varuptr-immediate-type)
 0. [Array](#array)
 0. [Byte Array](#byte-array)
 0. [Identifier](#identifier)
-0. [Table Immediate Type](#table-immediate-type)
-0. [varuPTR Immediate Type](#varuptr-immediate-type)
 0. [Type Encoding Type](#language-types)
 
 #### Primitive Encoding Types
@@ -199,6 +197,11 @@ Except when specified otherwise, all values are encoded in
 [LEB128]: https://en.wikipedia.org/wiki/LEB128
 [signed LEB128]: https://en.wikipedia.org/wiki/LEB128#Signed_LEB128
 
+#### varuPTR Immediate Type
+
+A *varuPTR immediate* is either [varuint32] or [varuint64] depending on whether
+the linear memory associated with the instruction using it is 32-bit or 64-bit.
+
 #### Array
 
 An *array* of a given type is a [varuint32] indicating a number of elements,
@@ -227,16 +230,6 @@ An *identifier* is a [byte array] which is valid
 > Identifiers may contain NUL characters, aren't required to be NUL-terminated,
 aren't required to be normalized, and aren't required to be marked with a BOM
 (though they aren't prohibited from containing a BOM).
-
-#### Table Immediate Type
-
-A *table immediate* represents a *branch table*, which is an [array] of
-`varuint32`. This is for use in the [`br_table`](#table-branch) instruction.
-
-#### varuPTR Immediate Type
-
-A *varuPTR immediate* is either [varuint32] or [varuint64] depending on whether
-the linear memory associated with the instruction using it is 32-bit or 64-bit.
 
 #### Type Encoding Type
 
@@ -282,10 +275,12 @@ instructions at execution time.
 
 ##### Integer Value Types
 
-| Name  | Bits |
-| ----- | ---- |
-| `i32` | 32   |
-| `i64` | 64   |
+*Integer value types* describe fixed-width integer values.
+
+| Name  | Bits | Description                                                      |
+| ----- | ---- | ---------------------------------------------------------------- |
+| `i32` | 32   | [32-bit integer](https://en.wikipedia.org/wiki/32-bit)           |
+| `i64` | 64   | [64-bit integer](https://en.wikipedia.org/wiki/64-bit_computing) |
 
 Integer value types in WebAssembly aren't inherently signed or unsigned. They
 may be interpreted as signed or unsigned by individual operations. When
@@ -319,16 +314,12 @@ rather than using the literal encodings described here.
 
 ##### Floating-Point Value Types
 
-| Name  | Bits |
-| ----- | ---- |
-| `f32` | 32   |
-| `f64` | 64   |
+*Floating-point value types* describe IEEE 754-2008 floating-point values.
 
-`f32` in WebAssembly uses the IEEE 754-2008 [binary32] format, commonly known as
-"single precision".
-
-`f64` in WebAssembly uses the IEEE 754-2008 [binary64] format, commonly known as
-"double precision".
+| Name  | Bits | Description                                                    |
+| ----- | ---- | -------------------------------------------------------------- |
+| `f32` | 32   | IEEE 754-2008 [binary32], commonly known as "single precision" |
+| `f64` | 64   | IEEE 754-2008 [binary64], commonly known as "double precision" |
 
 **Validation:**
  - A floating-point value type is required to be one of the values defined here.
@@ -378,23 +369,6 @@ single-element type sequence containing the type.
  - Block signature types are required to be either a [value type] or one of the
    values defined here.
 
-### External Kinds
-
-Externals are entities which can either be defined within a module and exported,
-or imported from another module. They can be any one of the following kinds:
-
-| Name       | Binary Encoding |
-| ---------- | --------------- |
-| `Function` | `0x00`          |
-| `Table`    | `0x01`          |
-| `Memory`   | `0x02`          |
-| `Global`   | `0x03`          |
-
-External kinds are encoded as their Binary Encoding value in a [varuint7].
-
-**Validation:**
- - The value is required to be one of the above values.
-
 ### Embedding Environment
 
 A WebAssembly runtime environment will typically provide APIs for
@@ -405,88 +379,20 @@ linking wasm modules. This is the *embedding environment*.
 Module
 --------------------------------------------------------------------------------
 
-0. [Module Types](#module-types)
-0. [Instantiation-Time Initializers](#instantiation-time-initializers)
 0. [Module Contents](#module-contents)
 0. [Known Sections](#known-sections)
 0. [Custom Sections](#custom-sections)
 0. [Module Index Spaces](#module-index-spaces)
-
-### Module Types
-
-These types describe various data structures present in WebAssembly modules:
-
-0. [Resizable Limits](#resizable-limits)
-0. [Linear-Memory Description](#linear-memory-description)
-0. [Table Description](#table-description)
-0. [Global Description](#global-description)
-
-> These types aren't used to describe values at execution time.
-
-#### Resizable Limits
-
-| Field Name | Type         | Description                                            |
-| ---------- | ------------ | ------------------------------------------------------ |
-| `flags`    | [varuint32]  | bit-packed flags; see below.                           |
-| `minimum`  | [varuint32]  | minimum length (in units of table elements or [pages]) |
-
-If bit `0x1` is set in `flags`, the following fields are appended.
-
-| Field Name | Type         | Description                                            |
-| ---------- | ------------ | ------------------------------------------------------ |
-| `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
-
-#### Linear-Memory Description
-
-| Field Name | Type               | Description                                       |
-| ---------- | ------------------ | ------------------------------------------------- |
-| `limits`   | [resizable limits] | linear-memory flags and sizes in units of [pages] |
-
-#### Table Description
-
-| Field Name      | Type                 | Description                                |
-| --------------- | -------------------- | ------------------------------------------ |
-| `element_type`  | [table element type] | the element type of the [table]            |
-| `resizable`     | [resizable limits]   | table flags and sizes in units of elements |
-
-**Validation:**
- - The `element_type` is required to be `anyfunc`.
-
-> In the future, other `element_type` values may be permitted.
-
-#### Global Description
-
-| Field Name      | Type                 | Description                               |
-| --------------- | -------------------- | ----------------------------------------- |
-| `type`          | [value type]         | the type of the global variable           |
-| `mutability`    | [varuint1]           | `0` if immutable, `1` if mutable          |
-
-### Instantiation-Time Initializers
-
-An *instantiation-time initializer* is a single [instruction], which is one of
-the following:
- - [`const`](#constant) (of any type).
- - [`get_global`](#get-global).
-
-The value produced by a module initializer is the value that such an instruction
-would produce if it were executed within a function body.
-
-**Validation:**
- - The requirements of the instructions are required.
-
-> In the future, more instructions may be permitted as instantiation-time
-initializers.
-
-> Instantiation-time initializers are sometimes called "constant expressions".
+0. [Module Types](#module-types)
 
 ### Module Contents
 
 A module starts with header:
 
-| Field Name     | Type     | Description                                                              |
-| -------------- | -------- | ------------------------------------------------------------------------ |
-| `magic_cookie` | [uint32] | Magic cookie identifying the contents of a file as a WebAssembly module. |
-| `version`      | [uint32] | WebAssembly version number.                                              |
+| Field Name     | Type     | Description                                                             |
+| -------------- | -------- | ----------------------------------------------------------------------- |
+| `magic_cookie` | [uint32] | magic cookie identifying the contents of a file as a WebAssembly module |
+| `version`      | [uint32] | WebAssembly version number.                                             |
 
 The header is then followed by a sequence of sections. Each section consists of
 a [varuint7] *opcode* followed by a [byte array] *payload*. The opcode is
@@ -991,6 +897,91 @@ section.
 
 > The table index space is currently only used by the [Element Section].
 
+### Module Types
+
+These types describe various data structures present in WebAssembly modules:
+
+0. [Resizable Limits](#resizable-limits)
+0. [Linear-Memory Description](#linear-memory-description)
+0. [Table Description](#table-description)
+0. [Global Description](#global-description)
+0. [External Kinds](#external-kinds)
+0. [Instantiation-Time Initializers](#instantiation-time-initializers)
+
+> These types aren't used to describe values at execution time.
+
+#### Resizable Limits
+
+| Field Name | Type         | Description                                            |
+| ---------- | ------------ | ------------------------------------------------------ |
+| `flags`    | [varuint32]  | bit-packed flags; see below.                           |
+| `minimum`  | [varuint32]  | minimum length (in units of table elements or [pages]) |
+
+If bit `0x1` is set in `flags`, the following fields are appended.
+
+| Field Name | Type         | Description                                            |
+| ---------- | ------------ | ------------------------------------------------------ |
+| `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
+
+#### Linear-Memory Description
+
+| Field Name | Type               | Description                                       |
+| ---------- | ------------------ | ------------------------------------------------- |
+| `limits`   | [resizable limits] | linear-memory flags and sizes in units of [pages] |
+
+#### Table Description
+
+| Field Name      | Type                 | Description                                |
+| --------------- | -------------------- | ------------------------------------------ |
+| `element_type`  | [table element type] | the element type of the [table]            |
+| `resizable`     | [resizable limits]   | table flags and sizes in units of elements |
+
+**Validation:**
+ - The `element_type` is required to be `anyfunc`.
+
+> In the future, other `element_type` values may be permitted.
+
+#### Global Description
+
+| Field Name      | Type                 | Description                               |
+| --------------- | -------------------- | ----------------------------------------- |
+| `type`          | [value type]         | the type of the global variable           |
+| `mutability`    | [varuint1]           | `0` if immutable, `1` if mutable          |
+
+#### External Kinds
+
+Externals are entities which can either be defined within a module and
+[exported], or [imported] from another module. They are encoded as a [varuint7]
+and can be any one of the following values:
+
+| Name       | Binary Encoding |
+| ---------- | --------------- |
+| `Function` | `0x00`          |
+| `Table`    | `0x01`          |
+| `Memory`   | `0x02`          |
+| `Global`   | `0x03`          |
+
+**Validation:**
+ - The value is required to be one of the above values.
+
+#### Instantiation-Time Initializers
+
+An *instantiation-time initializer* is a single [instruction], which is one of
+the following:
+ - [`const`](#constant) (of any type).
+ - [`get_global`](#get-global).
+
+The value produced by a module initializer is the value that such an instruction
+would produce if it were executed within a function body.
+
+**Validation:**
+ - The requirements of the instructions are required.
+
+> In the future, more instructions may be permitted as instantiation-time
+initializers.
+
+> Instantiation-time initializers are sometimes called "constant expressions".
+
 
 Instruction Descriptions
 --------------------------------------------------------------------------------
@@ -1479,10 +1470,10 @@ operands, except `$condition`.
 
 | Mnemonic    | Immediates                                                | Signature                                              | Families | Opcode |
 | ----------- | --------------------------------------------------------- | ------------------------------------------------------ | -------- | ------ |
-| `br_table`  | `$table`: [table immediate type], `$default`: [varuint32] | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x0e   |
+| `br_table`  | `$table`: [array] of [varuint32], `$default`: [varuint32] | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x0e   |
 
 First, the `br_table` instruction selects a depth to use. If `$index` is within
-the bounds of the table, the depth is the value of the indexed table element.
+the bounds of `$table`, the depth is the value of the indexed `$table` element.
 Otherwise, the depth is `$default`.
 
 Then, it [branches](#branching) according to the control-flow stack entry that
@@ -3051,12 +3042,14 @@ TODO: Figure out what to say about the text format.
 [embedding environment]: #embedding-environment
 [encoding type]: #encoding-types
 [encoding types]: #encoding-types
+[exported]: #export-section
 [external kind]: #external-kinds
 [false]: #booleans
 [global description]: #global-description
 [Floor and Ceiling Functions]: https://en.wikipedia.org/wiki/Floor_and_ceiling_functions
 [identifier]: #identifier
 [identifiers]: #identifier
+[imported]: #import-section
 [index space]: #module-index-spaces
 [instantiation-time initializer]: #instantiation-time-initializers
 [instruction]: #instructions
@@ -3091,7 +3084,6 @@ TODO: Figure out what to say about the text format.
 [table element type]: #table-element-types
 [table description]: #table-description
 [table descriptions]: #table-description
-[table immediate type]: #table-immediate-type
 [text form]: #text-format
 [true]: #booleans
 [type]: #value-types
