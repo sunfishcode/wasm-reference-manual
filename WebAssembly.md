@@ -134,21 +134,21 @@ such with a link to this section.
 
 ### Linear Memory
 
-A *linear memory space* is a contiguous, [byte]-addressable, readable and
-writable range of memory spanning from offset `0` and extending up to a
-*linear-memory size*, allocated as part of a WebAssembly instance. The size of a
-linear memory is always a multiple of the [page] size and may be increased
-dynamically (with the [`grow_memory`](#grow-memory) instruction) up to an
-optional declared *maximum size*. Linear memory spaces are sandboxed, so they
-don't overlap with each other or with other parts of a WebAssembly instance,
-including the call stack, globals, and tables, and their bounds are enforced.
+A *linear memory* is a contiguous, [byte]-addressable, readable and writable
+range of memory spanning from offset `0` and extending up to a *linear-memory
+size*, allocated as part of a WebAssembly instance. The size of a linear memory
+is always a multiple of the [page] size and may be increased dynamically (with
+the [`grow_memory`](#grow-memory) instruction) up to an optional declared
+*maximum size*. Linear memories are sandboxed, so they don't overlap with each
+other or with other parts of a WebAssembly instance, including the call stack,
+globals, and tables, and their bounds are enforced.
 
-Linear-memory spaces can either be [defined by a module](#linear-memory-section)
+Linear memories can either be [defined by a module](#linear-memory-section)
 or [imported](#import-section).
 
 ### Tables
 
-A *table* is similar to a [linear-memory] space whose elements, instead of being
+A *table* is similar to a [linear memory] whose elements, instead of being
 bytes, are opaque values. Each table has a [table element type] specifying what
 kind of data they hold. A table of `anyfunc` is used as the index space for
 [indirect calls](#indirect-call).
@@ -492,11 +492,11 @@ through their respective [module index spaces](#module-index-spaces).
  - Each global import with an initializer is required to be mutable.
  - Each import is required to be resolved by the embedder.
  - A linear-memory import's `minimum` size is required to be at most the
-   imported linear-memory space's `minimum` size.
+   imported linear memory's `minimum` size.
  - A linear-memory import is required to have a maximum size if the imported
-   linear memory space has a `maximum` size.
+   linear memory has a `maximum` size.
  - If present, a linear-memory import's maximum size is required to be at least
-   the imported linear-memory space's maximum size.
+   the imported linear memory's maximum size.
  - A table import's `minimum` length is required to be at most the imported
    table's `minimum` length.
  - A table import is required to have a maximum size if the imported table has a
@@ -696,11 +696,11 @@ The Data Section consists of an [array] of data initializers.
 
 A *data initializer* consists of:
 
-| Field Name      | Type                             | Description                                         |
-| --------------- | -------------------------------- | --------------------------------------------------- |
-| `index`         | [varuint32]                      | a [linear memory index](#linear-memory-index-space) |
-| `offset`        | [instantiation-time initializer] | the index of the byte in memory to start at         |
-| `data`          | [byte sequence]                  | data to initialize the contents of linear memory    |
+| Field Name      | Type                             | Description                                          |
+| --------------- | -------------------------------- | ---------------------------------------------------- |
+| `index`         | [varuint32]                      | a [linear-memory index](#linear-memory-index-space)  |
+| `offset`        | [instantiation-time initializer] | the index of the byte in memory to start at          |
+| `data`          | [byte sequence]                  | data to initialize the contents of the linear memory |
 
 It describes data to be loaded into the linear memory identified by the index in
 the [linear-memory index space] during
@@ -710,13 +710,13 @@ the [linear-memory index space] during
  - For each data initializer in the array:
     - The linear-memory index is required to be within the bounds of the
       [linear-memory index space].
-    - A linear-memory space is identified by the linear-memory index in the
+    - A linear memory is identified by the linear-memory index in the
       linear-memory index space and:
        - The sum of `offset` and the length of `data` is required to be at most
-         the `minimum` size declared for the linear-memory space.
+         the `minimum` size declared for the linear memory.
        - `offset` is required to be greater than the index of any byte in the
-         linear-memory space that will be initialized by a prior data
-         initializer in the array. TODO: Will this restriction be lifted?
+         linear memory that will be initialized by a prior data initializer in
+         the array. TODO: Will this restriction be lifted?
 
 ### Custom Sections
 
@@ -749,7 +749,7 @@ in this section are to be used as the names of functions and locals in the
 
 ### Module Index Spaces
 
-Module Index Spaces are abstract mappings from indices, starting from zero, to
+*Module Index Spaces* are abstract mappings from indices, starting from zero, to
 various types of elements.
 
 0. [Function Index Space]
@@ -780,15 +780,15 @@ section.
 
 > The global index space is used by:
  - the [`get_global`](#get-global) and [`set_global`](#set-global) instructions.
- - the [Data Section], to define the offset of a data segment (in linear memory)
-   as the value of a global variable.
+ - the [Data Section], to define the offset of a data segment (in a linear
+   memory) as the value of a global variable.
 
 #### Linear-Memory Index Space
 
 The *linear-memory index space* begins with an index for each imported linear
 memory, in the order the imports appear in the [Import Section], if present,
-followed by an index for each linear-memory space in the
-[Linear-Memory Section], if present, in the order of that section.
+followed by an index for each linear memory in the [Linear-Memory Section], if
+present, in the order of that section.
 
 **Validation:**
  - The index space is required to have at most one element.
@@ -800,14 +800,14 @@ followed by an index for each linear-memory space in the
       `iPTR`.
 
 > The validation rules here specifically avoid requiring the size in bytes of
-linear memory to be representable as an unsigned `iPTR`. For example a 32-bit
-linear-memory address space could theoretically be resized to 4 GiB if the
-implementation has sufficient resources; the index of every byte would be
+any linear memory to be representable as an unsigned `iPTR`. For example a
+32-bit linear-memory address space could theoretically be resized to 4 GiB if
+the implementation has sufficient resources; the index of every byte would be
 addressable, even though the total number of bytes would not be.
 
-> Multiple linear-memory spaces may be permitted in the future.
+> Multiple linear memories may be permitted in the future.
 
-> 64-bit linear-memory spaces may be permitted in the future.
+> 64-bit linear memories may be permitted in the future.
 
 #### Table Index Space
 
@@ -881,7 +881,7 @@ as input to an instruction. *returns* describes a list of [types] for values
 computed by the instruction that are provided back to the program execution.
 
 Within the signature for a [linear-memory access instruction][M], `iPTR` refers
-an integer [type] with the index bitwidth of the accessed linear-memory space.
+an integer [type] with the index bitwidth of the accessed linear memory.
 
 Besides literal [types], descriptions of [types] can be from the following
 mechanisms:
@@ -990,8 +990,8 @@ during the call, and the execution of the called function is performed
 independently. In this way, calls form a stack-like data structure called the
 *call stack*.
 
-> Data associated with the call stack is stored outside any linear address space
-and isn't directly accessible to applications.
+> Data associated with the call stack is stored outside any linear-memory
+address space and isn't directly accessible to applications.
 
 ##### Call Validation
 
@@ -1117,7 +1117,7 @@ or equal to any other values, including themselves.
 
 #### M: Linear-Memory Access Instruction Family
 
-These instructions load from and store to a linear-memory space.
+These instructions load from and store to a linear memory.
 
 ##### Effective Address
 
@@ -1144,8 +1144,8 @@ The *accessed bytes* consist of a contiguous sequence of [bytes] starting at the
 [effective address], with a length implied by the accessing instruction.
 
 **Trap:** Out Of Bounds, if any of the accessed bytes are beyond the end of the
-accessed linear-memory space. This trap is triggered before any of the bytes
-are actually accessed.
+accessed linear memory. This trap is triggered before any of the bytes are
+actually accessed.
 
 > Linear-memory accesses trap on an out-of-bound access, which differs from
 [TypedArrays in ECMAScript] where storing out of bounds silently does nothing
@@ -1170,7 +1170,7 @@ before any of the bytes are written to.
 
  - `$align` is required to be a [power of 2].
  - `$align` is required to be at most the number of [accessed bytes].
- - The module is required to contain a default linear-memory space.
+ - The module is required to contain a default linear memory.
 
 [power of 2]: https://en.wikipedia.org/wiki/Power_of_two
 
@@ -1180,7 +1180,7 @@ TODO: $align is encoded in log2 format, rather than required to be a power of 2.
 
 ##### Linear-Memory Size Validation
 
- - The module is required to contain a default linear-memory space.
+ - The module is required to contain a default linear memory.
 
 ### Instruction Opcode Field
 
@@ -2580,16 +2580,15 @@ the name "wrap".
 | ------------- | ------------------------- | -------- | ------ |
 | `grow_memory` | `(iPTR) : (iPTR)`         | [Z]      | 0x39   |
 
-The `grow_memory` instruction increases the size of the referenced linear-memory
-space by a given unsigned amount, in units of [pages]. If the index of any byte
-of the referenced linear-memory space would be unrepresentable in an unsigned
-`iPTR`, if allocation fails due to insufficient dynamic resources, or if the
-linear-memory space has a maximum size and the actual size would exceed the
-maximum size, or if the linear-memory space does not have a maximum size but and
-the index of any byte after the resize would be unrepresentable in an unsigned
-`iPTR`, it returns `-1`; otherwise it returns the previous linear-memory size,
-also as an unsigned value in units of [pages]. Newly allocated bytes are
-initialized to all zeros.
+The `grow_memory` instruction increases the size of the referenced linear memory
+by a given unsigned amount, in units of [pages]. If the index of any byte of the
+referenced linear memory would be unrepresentable in an unsigned `iPTR`, if
+allocation fails due to insufficient dynamic resources, or if the linear memory
+has a maximum size and the actual size would exceed the maximum size, or if the
+linear memory does not have a maximum size but and the index of any byte after
+the resize would be unrepresentable in an unsigned `iPTR`, it returns `-1`;
+otherwise it returns the previous linear-memory size, also as an unsigned value
+in units of [pages]. Newly allocated bytes are initialized to all zeros.
 
 **Validation**:
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
@@ -2607,8 +2606,8 @@ valid returns.
 | ---------------- | ---------------------- | -------- | ------ |
 | `current_memory` | `() : (iPTR)`          | [Z]      | 0x3b   |
 
-The `current_memory` instruction returns the size of the referenced
-linear-memory space, as an unsigned value in units of [pages].
+The `current_memory` instruction returns the size of the referenced linear
+memory, as an unsigned value in units of [pages].
 
 **Validation**:
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
@@ -2669,7 +2668,7 @@ reference to the module plus additional information added during instantiation,
 which consists of the following steps:
  - The entire module is first [validated](#validation). If there are any
    failures, instantiation aborts and doesn't produce an instance.
- - If a [Linear-Memory Section] is present, each linear-memory space is
+ - If a [Linear-Memory Section] is present, each linear memory is
    [instantiated](#linear-memory-instantiation).
  - If a [Table Section] is present, each table is
    [instantiated](#table-instantiation).
@@ -2681,32 +2680,31 @@ which consists of the following steps:
    one, or an all-zeros bit-pattern otherwise.
 
 > The contents of an instance, including functions and their bodies, are outside
-any linear address space and not any accessible to applications. WebAssembly is
-therefore conceptually a [Harvard Architecture].
+any linear-memory address space and not any accessible to applications.
+WebAssembly is therefore conceptually a [Harvard Architecture].
 
 [Harvard Architecture]: https://en.wikipedia.org/wiki/Harvard_architecture
 
 #### Linear-Memory Instantiation
 
-A linear-memory space declared in the [linear-memory index space] may be
-instantiated as follows:
+A linear memory is instantiated as follows:
 
 For a linear-memory definition in the [Linear-Memory Section], as opposed to a
 [linear-memory import](#import-section), an array of [bytes] with the length
-being the value of the linear-memory space's `minimum` size field times the
+being the value of the linear memory's `minimum` size field times the
 [page size] is created, added to the instance, and initialized to all zeros. For
 a linear-memory import, storage for the array is already allocated.
 
-The contents of the [Data Section] are loaded into the byte array. Each
-[byte sequence] is loaded into linear memory starting at its associated start
-offset value.
+For each [Data Section] entry with and `index` value equal to the index of the
+linear memory, the contents of its `data` field are copied into the linear
+memory starting at its `offset` field.
 
 **Trap:** Dynamic Resource Exhaustion, if dynamic resources are insufficient to
 support creation of the array.
 
 #### Table Instantiation
 
-A table declared in the [table index space] may be instantiated as follows:
+A table is instantiated as follows:
 
 For a table definition in the [Table Section], as opposed to a
 [table import](#import-section), an array of elements is created with the
@@ -2768,8 +2766,8 @@ are created:
 > Implementations needn't create a literal array to store the locals, or literal
 stacks to manage values at execution time.
 
-> These data structures are all allocated outside any linear-address space and
-are not any accessible to applications.
+> These data structures are all allocated outside any linear-memory address
+space and are not any accessible to applications.
 
 #### Function Execution Initialization
 
@@ -2815,9 +2813,9 @@ immediately terminated and abnormal termination is reported to the embedding
 environment.
 
 > Except for the call stack and the state of any executing functions, the
-contents of an instance, including the linear memory, are left intact after a
-trap. This allows inspection by debugging tools and crash reporters. It is also
-valid to call exported functions in an instance that has trapped.
+contents of an instance, including any linear-memory spaces, are left intact
+after a trap. This allows inspection by debugging tools and crash reporters. It
+is also valid to call exported functions in an instance that has trapped.
 
 #### Function Return Execution
 
