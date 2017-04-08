@@ -91,6 +91,7 @@ Basics
 0. [Encoding Types](#encoding-types)
 0. [Language Types](#language-types)
 0. [External Kinds](#external-kinds)
+0. [Embedding Environment](#embedding-environment)
 
 ### Bytes
 
@@ -394,6 +395,13 @@ External kinds are encoded as their Binary Encoding value in a [varuint7].
 **Validation:**
  - The value is required to be one of the above values.
 
+### Embedding Environment
+
+A WebAssembly runtime environment will typically provide APIs for
+interacting with the outside world, as well as mechanisms for loading and
+linking wasm modules. This is the *embedding environment*.
+
+
 Module
 --------------------------------------------------------------------------------
 
@@ -596,7 +604,7 @@ If `kind` is `Global`, the following fields are appended.
 | `desc`          | [global description] | a description of the global variable     |
 
 The meaning of an import's `module_name` and `export_name` are determined by
-the embedding environment.
+the [embedding environment].
 
 Imports provide access to constructs, defined and allocated by external entities
 outside the scope of this reference manual (though they may be exports provided
@@ -607,7 +615,7 @@ through their respective [module index spaces](#module-index-spaces).
 **Validation:**
  - All global imports are required to be immutable.
  - Each global import with an initializer is required to be mutable.
- - Each import is required to be resolved by the embedder.
+ - Each import is required to be resolved by the [embedding environment].
  - A linear-memory import's `minimum` size is required to be at most the
    imported linear memory's `minimum` size.
  - A linear-memory import is required to have a maximum size if the imported
@@ -620,13 +628,14 @@ through their respective [module index spaces](#module-index-spaces).
    maximum size.
  - If present, a table import's maximum length is required to be at least the
    imported table's maximum length.
- - Embedding-specific validation requirements may be required of each import.
+ - Embedding-environment-specific validation requirements may be required of
+   each import.
 
 > Global imports may be permitted to be mutable in the future.
 
 > `module_name` will often identify a module to import from, and `export_name`
-an export in that module to import, but embedding environments may provide other
-mechanisms for resolving imports as well.
+an export in that module to import, but [embedding environments] may provide
+other mechanisms for resolving imports as well.
 
 #### Function Section
 
@@ -702,7 +711,7 @@ If `kind` is `Memory`, `index` identifies an element in the
 If `kind` is `Global`, `index` identifies an element in the
 [global index space].
 
-The meaning of `name` is determined by the embedding environment.
+The meaning of `name` is determined by the [embedding environment].
 
 Exports provide access to an instance's constructs to external entities outside
 the scope of this reference manual (though they may be other WebAssembly
@@ -2906,7 +2915,7 @@ TODO: This section should be improved to be more approachable.
 Function execution can be prompted by a [call-family instruction][L] from within
 the same module, by [instance execution](#instance-execution), or by a call to
 an [exported](#export-section) function from another module or from the
-embedding environment.
+[embedding environment].
 
 The input to execution of a function consists of:
  - the function to be executed.
@@ -2972,8 +2981,8 @@ A label is a value which is either *unbound*, or *bound* to a specific position.
 #### Instruction Traps
 
 Instructions may *trap*, in which case execution of the current instance is
-immediately terminated and abnormal termination is reported to the embedding
-environment.
+immediately terminated and abnormal termination is reported to the
+[embedding environment].
 
 > Except for the call stack and the state of any executing functions, the
 contents of an instance, including any linear-memory spaces, are left intact
@@ -2985,7 +2994,7 @@ is also valid to call exported functions in an instance that has trapped.
 One value for each return [type] in the function signature in reverse order is
 popped from the value stack. If the function execution was prompted by a
 [call instruction][L], these values are provided as the call's return values.
-Otherwise, they are provided to the embedding environment.
+Otherwise, they are provided to the [embedding environment].
 
 
 Text Format
@@ -3035,6 +3044,7 @@ TODO: Figure out what to say about the text format.
 [call-stack resources]: #call-stack-resources
 [default linear memory]: #default-linear-memory
 [effective address]: #effective-address
+[embedding environment]: #embedding-environment
 [encoding type]: #encoding-types
 [encoding types]: #encoding-types
 [external kind]: #external-kinds
