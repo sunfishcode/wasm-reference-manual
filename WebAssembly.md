@@ -11,7 +11,7 @@ WebAssembly Reference Manual
 
 ![WebAssembly Logo][logo]
 
-[logo]: https://github.com/WebAssembly/web-assembly-logo/raw/master/dist/logo/web-assembly-logo.png "WebAssembly Logo"
+[logo]: https://github.com/WebAssembly/web-assembly-logo/raw/master/dist/logo/web-assembly-logo.png "The WebAssembly Logo"
 
 
 Introduction
