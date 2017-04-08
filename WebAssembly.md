@@ -175,8 +175,8 @@ Module.
 | `varsint32`        | 1-5              | [signed LEB128]; value limited to 32 bits    |
 | `varsint64`        | 1-10             | [signed LEB128]; value limited to 64 bits    |
 |                    |                  |                                              |
-| `float32`          | 4                | [binary32]                                   |
-| `float64`          | 8                | [binary64]                                   |
+| `float32`          | 4                | IEEE 754-2008 [binary32]                     |
+| `float64`          | 8                | IEEE 754-2008 [binary64]                     |
 
 [LEB128] encodings may contain padding `0x80` bytes, and [signed LEB128]
 encodings may contain padding `0x80` and `0xff` bytes.
@@ -1078,6 +1078,10 @@ WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
 
 > There is no observable difference between quiet and signaling NaN other than
 the difference in the bit pattern.
+
+> IEEE 754-2008 is the current revision of IEEE 754; a new revision is expected
+to be released some time in 2018, and it is expected to be a minor and
+backwards-compatible revision, so WebAssembly is expected to update to it.
 
 [IEEE 754-2008]: https://en.wikipedia.org/wiki/IEEE_floating_point
 ["subnormal numbers"]: https://en.wikipedia.org/wiki/Subnormal_number
