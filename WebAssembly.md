@@ -1526,6 +1526,9 @@ its second operand otherwise.
 > This instruction differs from the conditional or ternary operator, eg.
 `x?y:z`, in some languages, in that it's not short-circuiting.
 
+> This instruction is similar to a "conditional move" in other languages
+and is meant to have similar performance properties.
+
 #### Call
 
 | Mnemonic    | Immediates     | Signature                      | Families | Opcode |
