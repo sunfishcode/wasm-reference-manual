@@ -2650,12 +2650,12 @@ the name "wrap".
 
 #### Grow Linear-Memory Size
 
-| Mnemonic      | Immediates              | Signature         | Families | Opcode |
-| ------------- | ----------------------- | ----------------- | -------- | ------ |
-| `grow_memory` | `$reserved`: [varuint1] | `(iPTR) : (iPTR)` | [Z]      | 0x40   |
+| Mnemonic      | Immediates              | Signature                 | Families | Opcode |
+| ------------- | ----------------------- | ------------------------- | -------- | ------ |
+| `grow_memory` | `$reserved`: [varuint1] | `($delta: iPTR) : (iPTR)` | [Z]      | 0x40   |
 
 The `grow_memory` instruction increases the size of the referenced linear memory
-by a given unsigned amount, in units of [pages]. If the index of any byte of the
+by a `$delta`, in units of unsigned [pages]. If the index of any byte of the
 referenced linear memory would be unrepresentable in an unsigned `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
 has a maximum size and the actual size would exceed the maximum size, it returns
