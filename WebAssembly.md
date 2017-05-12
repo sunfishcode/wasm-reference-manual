@@ -235,6 +235,9 @@ An *identifier* is a [byte array] which is valid
 aren't required to be normalized, and aren't required to be marked with a BOM
 (though they aren't prohibited from containing a BOM).
 
+> Normalization is not performed when considering whether two identifiers are
+the same.
+
 #### Type Encoding Type
 
 A *type encoding* is a value indicating a particular [language type].
