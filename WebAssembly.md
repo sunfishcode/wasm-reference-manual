@@ -226,20 +226,20 @@ An *identifier* is a [byte array] which is valid
 [UTF-8](https://en.wikipedia.org/wiki/UTF-8).
 
 **Validation:**
- - Decoding the bytes according to the
-   [UTF-8 decode without BOM or fail][identifier predicate]
+ - Decoding the bytes according to the [UTF-8 decode without BOM or fail]
    algorithm is required to succeed.
 
-[identifier predicate]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail).
+[UTF-8 decode without BOM or fail]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail
 
 > Identifiers may contain [NUL] characters, aren't required to be
-[NUL-terminated][NUL terminated], aren't required to be normalized, and aren't
-required to be marked with a [BOM] (though they aren't prohibited from
+[NUL-terminated], aren't required to be [normalized][unicode normalization], and
+aren't required to be marked with a [BOM] (though they aren't prohibited from
 containing a BOM).
 
 [NUL]: https://en.wikipedia.org/wiki/Null_character
-[NUL terminated]: https://en.wikipedia.org/wiki/Null-terminated_string
+[NUL-terminated]: https://en.wikipedia.org/wiki/Null-terminated_string
 [BOM]: https://en.wikipedia.org/wiki/Byte_order_mark
+[unicode normalization]: http://www.unicode.org/reports/tr15/
 
 > Normalization is not performed when considering whether two identifiers are
 the same.
