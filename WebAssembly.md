@@ -226,14 +226,20 @@ An *identifier* is a [byte array] which is valid
 [UTF-8](https://en.wikipedia.org/wiki/UTF-8).
 
 **Validation:**
- - Decoding the bytes according to the [UTF-8 decode without BOM or fail]
+ - Decoding the bytes according to the
+   [UTF-8 decode without BOM or fail][identifier predicate]
    algorithm is required to succeed.
 
-[UTF-8 decode without BOM or fail]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail).
+[identifier predicate]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail).
 
-> Identifiers may contain NUL characters, aren't required to be NUL-terminated,
-aren't required to be normalized, and aren't required to be marked with a BOM
-(though they aren't prohibited from containing a BOM).
+> Identifiers may contain [NUL] characters, aren't required to be
+[NUL-terminated][NUL terminated], aren't required to be normalized, and aren't
+required to be marked with a [BOM] (though they aren't prohibited from
+containing a BOM).
+
+[NUL]: https://en.wikipedia.org/wiki/Null_character
+[NUL terminated]: https://en.wikipedia.org/wiki/Null-terminated_string
+[BOM]: https://en.wikipedia.org/wiki/Byte_order_mark
 
 > Normalization is not performed when considering whether two identifiers are
 the same.
@@ -1508,9 +1514,9 @@ TODO: Explicitly describe the binding of $T.
 
 #### If
 
-| Mnemonic    | Immediates                      | Signature                   | Families | Opcode |
-| ----------- | ------------------------------- | --------------------------- | -------- | ------ |
-| `if`        | `$signature`: [block signature] | `($condition: i32) : ()`    | [B]      | 0x04   |
+| Mnemonic    | Immediates                           | Signature                   | Families | Opcode |
+| ----------- | ------------------------------------ | --------------------------- | -------- | ------ |
+| `if`        | `$signature`: [block signature type] | `($condition: i32) : ()`    | [B]      | 0x04   |
 
 The `if` instruction pushes an entry onto the control-flow stack. The entry
 contains an unbound [label], the current length of the value stack, and
@@ -3080,6 +3086,7 @@ TODO: Figure out what to say about the text format.
 [default linear memory]: #default-linear-memory
 [effective address]: #effective-address
 [embedding environment]: #embedding-environment
+[embedding environments]: #embedding-environment
 [encoding type]: #encoding-types
 [encoding types]: #encoding-types
 [exported]: #export-section
