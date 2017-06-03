@@ -1080,6 +1080,8 @@ mechanisms:
    replaced by the types bound to its parameters. If the list appears multiple
    times in a signature, it is replaced by the same types at each appearance.
 
+#### Named values
+
 The following named values are defined:
  - `$args` is defined in [call instructions][L] and indicates the length of the
    callee signature parameter list.
@@ -1149,7 +1151,7 @@ follows them.
 
 If the called function&mdash;the *callee*&mdash;is a function in the module, it
 is [executed](#function-execution). Otherwise the callee is an imported function
-which is executed according to its own semantics. The `$args` operands,
+which is executed according to its own semantics. The [`$args`] operands,
 excluding `$callee` when present, are passed as the incoming arguments. The
 return value of the call is defined by the execution.
 
@@ -1174,9 +1176,9 @@ address space and isn't directly accessible to applications.
 
 ##### Call Validation
 
- - The members of `$T[$args]` are bound to the operand types of the callee
-   signature, and the members of `$T[$returns]` are bound to the return types of
-   the callee signature.
+ - The members of `$T[`[`$args`]`]` are bound to the operand types of the callee
+   signature, and the members of `$T[`[`$returns`]`]` are bound to the return
+   types of the callee signature.
 
 #### G: Generic Integer Instruction Family
 
@@ -1457,9 +1459,9 @@ side effects.
 
 #### Unconditional Branch
 
-| Mnemonic    | Immediates            | Signature                                 | Families | Opcode |
-| ----------- | --------------------- | ----------------------------------------- | -------- | ------ |
-| `br`        | `$depth`: [varuint32] | `($T[$block_arity]) : ($T[$block_arity])` | [B] [Q]  | 0x0c   |
+| Mnemonic    | Immediates            | Signature                                             | Families | Opcode |
+| ----------- | --------------------- | ----------------------------------------------------- | -------- | ------ |
+| `br`        | `$depth`: [varuint32] | `($T[`[`$block_arity`]`]) : ($T[`[`$block_arity`]`])` | [B] [Q]  | 0x0c   |
 
 The `br` instruction [branches](#branching) according to the control-flow stack
 entry `$depth` from the top. It returns the values of its operands.
@@ -1471,9 +1473,9 @@ TODO: Explicitly describe the binding of $T.
 
 #### Conditional Branch
 
-| Mnemonic    | Immediates            | Signature                                                  | Families | Opcode |
-| ----------- | --------------------- | ---------------------------------------------------------- | -------- | ------ |
-| `br_if`     | `$depth`: [varuint32] | `($T[$block_arity], $condition: i32) : ($T[$block_arity])` | [B]      | 0x0d   |
+| Mnemonic    | Immediates            | Signature                                                              | Families | Opcode |
+| ----------- | --------------------- | ---------------------------------------------------------------------- | -------- | ------ |
+| `br_if`     | `$depth`: [varuint32] | `($T[`[`$block_arity`]`], $condition: i32) : ($T[`[`$block_arity`]`])` | [B]      | 0x0d   |
 
 If `$condition` is [true], the `br_if` instruction [branches](#branching)
 according to the control-flow stack entry `$depth` from the top. Otherwise, it
@@ -1487,9 +1489,9 @@ TODO: Explicitly describe the binding of $T.
 
 #### Table Branch
 
-| Mnemonic    | Immediates                                                | Signature                                              | Families | Opcode |
-| ----------- | --------------------------------------------------------- | ------------------------------------------------------ | -------- | ------ |
-| `br_table`  | `$table`: [array] of [varuint32], `$default`: [varuint32] | `($T[$block_arity], $index: i32) : ($T[$block_arity])` | [B] [Q]  | 0x0e   |
+| Mnemonic    | Immediates                                                | Signature                                                          | Families | Opcode |
+| ----------- | --------------------------------------------------------- | ------------------------------------------------------------------ | -------- | ------ |
+| `br_table`  | `$table`: [array] of [varuint32], `$default`: [varuint32] | `($T[`[`$block_arity`]`], $index: i32) : ($T[`[`$block_arity`]`])` | [B] [Q]  | 0x0e   |
 
 First, the `br_table` instruction selects a depth to use. If `$index` is within
 the bounds of `$table`, the depth is the value of the indexed `$table` element.
@@ -1528,9 +1530,9 @@ bind its label and pop its control-flow stack entry.
 
 #### Else
 
-| Mnemonic    | Signature                     | Families | Opcode |
-| ----------- | ----------------------------- | -------- | ------ |
-| `else`      | `($T[$any]) : ($T[$any])`     | [B]      | 0x05   |
+| Mnemonic    | Signature                             | Families | Opcode |
+| ----------- | ------------------------------------- | -------- | ------ |
+| `else`      | `($T[`[`$any`]`]) : ($T[`[`$any`]`])` | [B]      | 0x05   |
 
 The `else` instruction binds the control-flow stack top's [label] to the current
 position, pops an entry from the control-flow stack, pushes a new entry onto the
@@ -1540,31 +1542,31 @@ popped, and then [branches](#branching) according to this entry. It returns the
 values of its operands.
 
 **Validation:**
- - `$T[$any]` is required to be the type sequence described by the signature of
-   the popped control-flow stack entry.
+ - `$T[`[`$any`]`]` is required to be the type sequence described by the
+   signature of the popped control-flow stack entry.
 
 > Each `else` needs a corresponding [`end`](#end) to bind its label and pop its
 control-flow stack entry.
 
 > Unlike in the branch instructions, `else` and `end` do not ignore surplus
-values on the stack, as `$any` is bound to the number of values pushed within
+values on the stack, as [`$any`] is bound to the number of values pushed within
 the current block.
 
 TODO: Explicitly describe the binding of $T.
 
 #### End
 
-| Mnemonic    | Signature                     | Families | Opcode |
-| ----------- | ----------------------------- | -------- | ------ |
-| `end`       | `($T[$any]) : ($T[$any])`     |          | 0x0b   |
+| Mnemonic    | Signature                             | Families | Opcode |
+| ----------- | ------------------------------------- | -------- | ------ |
+| `end`       | `($T[`[`$any`]`]) : ($T[`[`$any`]`])` |          | 0x0b   |
 
 The `end` instruction pops an entry from the control-flow stack. If the entry's
 [label] is unbound, the label is bound to the current position. It returns the
 values of its operands.
 
 **Validation:**
- - `$T[$any]` is required to be the type sequence described by the signature of
-   the popped control-flow stack entry.
+ - `$T[`[`$any`]`]` is required to be the type sequence described by the
+   signature of the popped control-flow stack entry.
  - If the control-flow stack entry was pushed by an `if` (and there was no
    `else`), the signature is required to be `void`.
 
@@ -1572,16 +1574,16 @@ values of its operands.
 `else`, or the function entry.
 
 > Unlike in the branch instructions, `else` and `end` do not ignore surplus
-values on the stack, as `$any` is bound to the number of values pushed within
+values on the stack, as [`$any`] is bound to the number of values pushed within
 the current block.
 
 TODO: Explicitly describe the binding of $T.
 
 #### Return
 
-| Mnemonic    | Signature                                 | Families | Opcode |
-| ----------- | ----------------------------------------- | -------- | ------ |
-| `return`    | `($T[$block_arity]) : ($T[$block_arity])` | [B] [Q]  | 0x0f   |
+| Mnemonic    | Signature                                             | Families | Opcode |
+| ----------- | ----------------------------------------------------- | -------- | ------ |
+| `return`    | `($T[`[`$block_arity`]`]) : ($T[`[`$block_arity`]`])` | [B] [Q]  | 0x0f   |
 
 The `return` instruction [branches](#branching) according to the control-flow
 stack bottom. It returns the values of its operands.
@@ -1749,9 +1751,9 @@ instruction is sometimes called "value-polymorphic".
 
 #### Call
 
-| Mnemonic    | Immediates             | Signature                      | Families | Opcode |
-| ----------- | ---------------------- | ------------------------------ | -------- | ------ |
-| `call`      | `$callee`: [varuint32] | `($T[$args]) : ($T[$returns])` | [L]      | 0x10   |
+| Mnemonic    | Immediates             | Signature                                  | Families | Opcode |
+| ----------- | ---------------------- | ------------------------------------------ | -------- | ------ |
+| `call`      | `$callee`: [varuint32] | `($T[`[`$args`]`]) : ($T[`[`$returns`]`])` | [L]      | 0x10   |
 
 The `call` instruction performs a [call](#calling) to the function with index
 `$callee` in the [function index space].
@@ -1763,9 +1765,9 @@ The `call` instruction performs a [call](#calling) to the function with index
 
 #### Indirect Call
 
-| Mnemonic        | Immediates                | Signature                                    | Families | Opcode |
-| --------------- | ------------------------- | -------------------------------------------- | -------- | ------ |
-| `call_indirect` | `$signature`: [varuint32] | `($T[$args], $callee: i32) : ($T[$returns])` | [L]      | 0x11   |
+| Mnemonic        | Immediates                | Signature                                                | Families | Opcode |
+| --------------- | ------------------------- | -------------------------------------------------------- | -------- | ------ |
+| `call_indirect` | `$signature`: [varuint32] | `($T[`[`$args`]`], $callee: i32) : ($T[`[`$returns`]`])` | [L]      | 0x11   |
 
 The `call_indirect` instruction performs a [call](#calling) to the function in
 the default table with index `$callee`.
@@ -3154,3 +3156,7 @@ TODO: Figure out what to say about the text format.
 [varsint64]: #primitive-type-encodings
 [float32]: #primitive-type-encodings
 [float64]: #primitive-type-encodings
+[`$args`]: #named-values
+[`$returns`]: #named-values
+[`$any`]: #named-values
+[`$block_arity`]: #named-values
