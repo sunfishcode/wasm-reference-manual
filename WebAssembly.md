@@ -131,14 +131,12 @@ range of memory spanning from offset `0` and extending up to a *linear-memory
 size*, allocated as part of a WebAssembly instance. The size of a linear memory
 is always a multiple of the [page] size and may be increased dynamically (with
 the [`grow_memory`](#grow-memory) instruction) up to an optional declared
-*maximum size*. Linear memories are sandboxed, so they don't overlap with each
+*maximum length*. Linear memories are sandboxed, so they don't overlap with each
 other or with other parts of a WebAssembly instance, including the call stack,
 globals, and tables, and their bounds are enforced.
 
 Linear memories can either be [defined by a module](#linear-memory-section)
 or [imported](#import-section).
-
-TODO: Use `size` vs. `length` more consistently.
 
 ### Tables
 
@@ -152,8 +150,6 @@ Tables can be [defined by a module](#table-section) or
 
 > In the future, tables are expected to be generalized to hold a wide variety of
 opaque values and serve a wide variety of purposes.
-
-TODO: Use `size` vs. `length` more consistently.
 
 ### Encoding Types
 
@@ -535,16 +531,16 @@ through their respective [module index spaces](#module-index-spaces).
  - All global imports are required to be immutable.
  - Each global import with an initializer is required to be mutable.
  - Each import is required to be resolved by the [embedding environment].
- - A linear-memory import's `minimum` size is required to be at most the
-   imported linear memory's `minimum` size.
- - A linear-memory import is required to have a maximum size if the imported
-   linear memory has a `maximum` size.
- - If present, a linear-memory import's maximum size is required to be at least
-   the imported linear memory's maximum size.
+ - A linear-memory import's `minimum` length is required to be at most the
+   imported linear memory's `minimum` length.
+ - A linear-memory import is required to have a maximum length if the imported
+   linear memory has a `maximum` length.
+ - If present, a linear-memory import's maximum length is required to be at
+   least the imported linear memory's maximum length.
  - A table import's `minimum` length is required to be at most the imported
    table's `minimum` length.
- - A table import is required to have a maximum size if the imported table has a
-   maximum size.
+ - A table import is required to have a maximum length if the imported table has
+   a maximum length.
  - If present, a table import's maximum length is required to be at least the
    imported table's maximum length.
  - Embedding-environment-specific validation requirements may be required of
@@ -582,9 +578,9 @@ The Table Section consists of an [array] of [table descriptions].
 The Memory Section consists of an [array] of [linear-memory descriptions].
 
 > Implementations are encouraged to attempt to reserve enough resources for
-allocating up to the `maximum` size up front, if a `maximum` size is present.
-Otherwise, implementations are encouraged to allocate only enough for the
-`minimum` size up front.
+allocating up to the `maximum` length up front, if a `maximum` length is
+present. Otherwise, implementations are encouraged to allocate only enough for
+the `minimum` length up front.
 
 #### Global Section
 
@@ -683,7 +679,7 @@ If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
     - `index` is required to be within the bounds of the [table index space].
     - A table is identified by `index` in the [table index space] and:
        - The sum of the value of `offset` and the number of elements in `elems`
-         is required to be at most the `minimum` size declared for the table.
+         is required to be at most the `minimum` length declared for the table.
        - For each element of `elems`:
           - The element is required to be an index within the bounds of the
             associated [index space].
@@ -703,7 +699,7 @@ A *function body* consists of:
 
 | Field Name      | Type                       | Description                       |
 | --------------- | -------------------------- | --------------------------------- |
-| `body_size`     | [varuint32]                | the length of `body` in bytes     |
+| `body_size`     | [varuint32]                | the size of `body` in bytes       |
 | `locals`        | [array] of local entry     | local variable declarations       |
 | `body`          | sequence of [instructions] | the instructions                  |
 
@@ -787,7 +783,7 @@ the [linear-memory index space] during
     - A linear memory is identified by the linear-memory index in the
       linear-memory index space and:
        - The sum of `offset` and the length of `data` is required to be at most
-         the `minimum` size declared for the linear memory.
+         the `minimum` length declared for the linear memory.
 
 > Data initializers are sometimes called "segments".
 
@@ -877,10 +873,11 @@ present, in the order of that section.
 **Validation:**
  - The index space is required to have at most one element.
  - For each linear-memory declaration in the index space:
-    - If a `maximum` size is present, it is required to be at least the
-      `minimum` size.
-    - If a `maximum` size is present, the index of every byte in a linear memory
-      with the maximum size is required to be representable in an [varuPTR].
+    - If a `maximum` length is present, it is required to be at least the
+      `minimum` length.
+    - If a `maximum` length is present, the index of every byte in a linear
+      memory with the maximum length is required to be representable in an
+      [varuPTR].
 
 > The validation rules here specifically avoid requiring the size in bytes of
 any linear memory to be representable as a [varuPTR]. For example a 32-bit
@@ -910,7 +907,7 @@ section.
     - If a `maximum` length is present, it is required to be at least
       the table's `minimum` length.
     - If a `maximum` length is present, the index of every element in a table
-      with the maximum size is required to be representable in a [varuPTR].
+      with the maximum length is required to be representable in a [varuPTR].
 
 > The table index space is currently only used by the [Element Section].
 
@@ -958,6 +955,9 @@ consistently
 
 **Validation:**
  - The `element_type` is required to be `anyfunc`.
+
+> The words "size" and "length" are used interchangeably when describing linear
+memory, since the elements are byte-sized.
 
 > In the future, other `element_type` values may be permitted.
 
@@ -1328,7 +1328,7 @@ unaligned loads and stores still behave normally.
 ##### Accessed Bytes
 
 The *accessed bytes* consist of a contiguous sequence of [bytes] starting at the
-[effective address], with a length implied by the accessing instruction.
+[effective address], with a size implied by the accessing instruction.
 
 **Trap:** Out Of Bounds, if any of the accessed bytes are beyond the end of the
 accessed linear memory. This trap is triggered before any of the bytes are
@@ -2818,18 +2818,18 @@ The `grow_memory` instruction increases the size of the [default linear memory]
 by `$delta`, in units of unsigned [pages]. If the index of any byte of the
 referenced linear memory would be unrepresentable as unsigned in an `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
-has a maximum size and the actual size would exceed the maximum size, it returns
-`-1` and the linear-memory size is not increased; otherwise the linear-memory
-size is increased, and `grow_memory` returns the previous linear-memory size,
-also as an unsigned value in units of [pages]. Newly allocated bytes are
-initialized to all zeros.
+has a maximum length and the actual size would exceed the maximum length, it
+returns `-1` and the linear-memory size is not increased; otherwise the
+linear-memory size is increased, and `grow_memory` returns the previous
+linear-memory size, also as an unsigned value in units of [pages]. Newly
+allocated bytes are initialized to all zeros.
 
 **Validation**:
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
  - `$reserved` is required to be `0`.
 
-> This instruction can fail even when the maximum size isn't yet reached, due to
-resource exhaustion.
+> This instruction can fail even when the maximum length isn't yet reached, due
+to resource exhaustion.
 
 > Since the return value is in units of pages, `-1` isn't otherwise a valid
 linear-memory size. Also, note that `-1` isn't the only "negative" value (when
@@ -2890,7 +2890,7 @@ A linear memory is instantiated as follows:
 
 For a linear-memory definition in the [Linear-Memory Section], as opposed to a
 [linear-memory import](#import-section), a vector of [bytes] with the length
-being the value of the linear memory's `minimum` size field times the
+being the value of the linear memory's `minimum` length field times the
 [page size] is created, added to the instance, and initialized to all zeros. For
 a linear-memory import, storage for the vector is already allocated.
 
