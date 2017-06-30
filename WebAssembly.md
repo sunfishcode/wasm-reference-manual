@@ -2713,12 +2713,12 @@ instruction is always exact.
 
 #### Load
 
-| Mnemonic    | Immediates                                | Signature               | Families | Opcode |
-| ----------- | ----------------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
-| `i64.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
-| `f32.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
-| `f64.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
+| Mnemonic    | Immediates                                 | Signature               | Families | Opcode |
+| ----------- | ------------------------------------------ | ----------------------- | -------- | ------ |
+| `i32.load`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
+| `i64.load`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
+| `f32.load`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
+| `f64.load`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
 
 The `load` instruction performs a [load](#loading) of the same size as its type
 from the [default linear memory].
@@ -2731,12 +2731,12 @@ IEEE 754-2008 `copy` operation.
 
 #### Store
 
-| Mnemonic    | Immediates                                | Signature                         | Families | Opcode |
-| ----------- | ----------------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
-| `i64.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
-| `f32.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
-| `f64.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
+| Mnemonic    | Immediates                                 | Signature                         | Families | Opcode |
+| ----------- | ------------------------------------------ | --------------------------------- | -------- | ------ |
+| `i32.store` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
+| `i64.store` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
+| `f32.store` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
+| `f64.store` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
 
 The `store` instruction performs a [store](#storing) of `$value` of the same
 size as its type to the [default linear memory].
@@ -2749,14 +2749,14 @@ IEEE 754-2008 `copy` operation.
 
 #### Extending Load, Signed
 
-| Mnemonic       | Immediates                                | Signature               | Families | Opcode |
-| -------------- | ----------------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_s`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
-| `i32.load16_s` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
-|                |                                           |                         |          |        |
-| `i64.load8_s`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
-| `i64.load16_s` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
-| `i64.load32_s` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
+| Mnemonic       | Immediates                                 | Signature               | Families | Opcode |
+| -------------- | ------------------------------------------ | ----------------------- | -------- | ------ |
+| `i32.load8_s`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
+| `i32.load16_s` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
+|                |                                            |                         |          |        |
+| `i64.load8_s`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
+| `i64.load16_s` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
+| `i64.load32_s` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
 
 The signed extending load instructions perform a [load](#loading) of narrower
 width than their type from the [default linear memory], and return the value
@@ -2770,14 +2770,14 @@ width than their type from the [default linear memory], and return the value
 
 #### Extending Load, Unsigned
 
-| Mnemonic       | Immediates                                | Signature               | Families | Opcode |
-| -------------- | ----------------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_u`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [U] | 0x2d   |
-| `i32.load16_u` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [U] | 0x2f   |
-|                |                                           |                         |          |        |
-| `i64.load8_u`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x31   |
-| `i64.load16_u` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x33   |
-| `i64.load32_u` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
+| Mnemonic       | Immediates                                 | Signature               | Families | Opcode |
+| -------------- | ------------------------------------------ | ----------------------- | -------- | ------ |
+| `i32.load8_u`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [U] | 0x2d   |
+| `i32.load16_u` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [U] | 0x2f   |
+|                |                                            |                         |          |        |
+| `i64.load8_u`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x31   |
+| `i64.load16_u` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x33   |
+| `i64.load32_u` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
 
 The unsigned extending load instructions perform a [load](#loading) of narrower
 width than their type from the [default linear memory], and return the value
@@ -2791,14 +2791,14 @@ zero-extended to their type.
 
 #### Wrapping Store
 
-| Mnemonic      | Immediates                                | Signature                         | Families | Opcode |
-| ------------- | ----------------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store8`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3a   |
-| `i32.store16` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3b   |
-|               |                                           |                                   |          |        |
-| `i64.store8`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3c   |
-| `i64.store16` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
-| `i64.store32` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
+| Mnemonic      | Immediates                                 | Signature                         | Families | Opcode |
+| ------------- | ------------------------------------------ | --------------------------------- | -------- | ------ |
+| `i32.store8`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3a   |
+| `i32.store16` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3b   |
+|               |                                            |                                   |          |        |
+| `i64.store8`  | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3c   |
+| `i64.store16` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
+| `i64.store32` | `$flags`: [memflags], `$offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
 
 The wrapping store instructions performs a [store](#storing) of `$value` to the
 [default linear memory], silently wrapped to a narrower width.
