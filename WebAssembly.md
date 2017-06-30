@@ -529,7 +529,6 @@ through their respective [module index spaces](#module-index-spaces).
 
 **Validation:**
  - All global imports are required to be immutable.
- - Each global import with an initializer is required to be mutable.
  - Each import is required to be resolved by the [embedding environment].
  - A linear-memory import's `minimum` length is required to be at most the
    imported linear memory's `minimum` length.
