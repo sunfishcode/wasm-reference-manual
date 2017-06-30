@@ -1369,7 +1369,7 @@ before any of the bytes are written to.
 ##### Linear-Memory Access Validation
 
  - `$align` is required to be at most the number of [accessed bytes] (the
-   [*natural alignment*(#alignment)).
+   [*natural alignment*](#alignment)).
  - The module is required to contain a default linear memory.
 
 #### Z: Linear-Memory Size Instruction Family
