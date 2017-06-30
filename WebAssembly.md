@@ -804,7 +804,10 @@ interoperability, though they aren't required to be used.
 
 **Name:** `name`
 
-TODO: Update this to the new extensible name section format.
+TODO: This section currently describes a now-obsolete format. This needs to
+be updated to the [new extensible name section format].
+
+[new extensible name section format]: https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md#name-section
 
 The Name Section consists of an [array] of function name descriptors, which
 each describe names for the function with the corresponding index in the
