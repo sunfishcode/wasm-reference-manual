@@ -410,7 +410,7 @@ A module starts with header:
 The header is then followed by a sequence of sections. Each section consists of
 a [varuint7] *opcode* followed by a [byte array] *payload*. The opcode is
 required to either indicate a *known section*, or be `0x00`, indicating a
-*custom section*.
+[*custom section*](#custom-section).
 
 **Validation:**
  - `magic_cookie` is required to be `0x6d736100` (the string "\0asm").
@@ -437,10 +437,6 @@ encoding of the string "asm".
 > The version is expected to change infrequently if ever; forward-compatible
 extension is intended to be achieved by adding sections, types, instructions and
 others without bumping the version.
-
-> The contents of the payload of a custom section after its name are not subject
-to validation. Custom sections may be used for debugging information or
-non-standard language extensions.
 
 > The section byte array length field is usually redundant, as most section
 encodings end up specifying their size through other means as well, however it
@@ -796,6 +792,11 @@ the [linear-memory index space] during
 > Data initializers are sometimes called "segments".
 
 ### Custom Sections
+
+Custom sections may be used for debugging information or non-standard language
+extensions. The contents of the payload of a custom section after its name are not
+subject to validation. Some custom sections are decribed here to promote
+interoperability, though they aren't required to be used.
 
 0. [Name Section]
 
