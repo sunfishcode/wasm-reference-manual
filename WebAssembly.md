@@ -410,7 +410,7 @@ A module starts with header:
 The header is then followed by a sequence of sections. Each section consists of
 a [varuint7] *opcode* followed by a [byte array] *payload*. The opcode is
 required to either indicate a *known section*, or be `0x00`, indicating a
-[*custom section*](#custom-section).
+[*custom section*](#custom-sections).
 
 **Validation:**
  - `magic_cookie` is required to be `0x6d736100` (the string "\0asm").
