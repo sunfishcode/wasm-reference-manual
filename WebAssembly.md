@@ -682,6 +682,7 @@ If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
 | `elems`         | [array] of [varuint32]           | indices into the [function index space]           |
 
 **Validation:**
+ - The type of the value returned by `offset` must be `i32`.
  - For each table initializer in the array:
     - `index` is required to be within the bounds of the [table index space].
     - A table is identified by `index` in the [table index space] and:
@@ -786,6 +787,7 @@ the [linear-memory index space] during
 [linear-memory instantiation](#linear-memory-instantiation).
 
 **Validation:**
+ - The type of the value returned by `offset` must be `i32`.
  - For each data initializer in the array:
     - The linear-memory index is required to be within the bounds of the
       [linear-memory index space].
