@@ -688,9 +688,6 @@ If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
     - A table is identified by `index` in the [table index space] and:
        - The sum of the value of `offset` and the number of elements in `elems`
          is required to be at most the `minimum` size declared for the table.
-       - The value of `offset` is required to be greater than the index of any
-         element in the table that will be initialized by a prior table
-         initializer in the array. TODO: Will this restriction be lifted?
        - For each element of `elems`:
           - The element is required to be an index within the bounds of the
             associated [index space].
@@ -795,9 +792,6 @@ the [linear-memory index space] during
       linear-memory index space and:
        - The sum of `offset` and the length of `data` is required to be at most
          the `minimum` size declared for the linear memory.
-       - `offset` is required to be greater than the index of any byte in the
-         linear memory that will be initialized by a prior data initializer in
-         the array. TODO: Will this restriction be lifted?
 
 > Data initializers are sometimes called "segments".
 
