@@ -424,7 +424,7 @@ required to either indicate a *known section*, or be `0x00`, indicating a
    required to be ordered according to the order in the
    [enumeration of the Known Sections](#known-sections).
  - Custom sections are required to start their payload with an [identifier]
-   *name*. TODO: Is it a validation error if they don't?
+   *name*.
  - The encoding for the module is required to be exactly the length of the data
    that encodes it
  - The requirements of every component [encoding type] of the module are
