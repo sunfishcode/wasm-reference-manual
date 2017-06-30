@@ -533,16 +533,16 @@ through their respective [module index spaces](#module-index-spaces).
  - Each import is required to be resolved by the [embedding environment].
  - A linear-memory import's `minimum` length is required to be at most the
    imported linear memory's `minimum` length.
- - A linear-memory import is required to have a maximum length if the imported
+ - A linear-memory import is required to have a `maximum` length if the imported
    linear memory has a `maximum` length.
- - If present, a linear-memory import's maximum length is required to be at
-   least the imported linear memory's maximum length.
+ - If present, a linear-memory import's `maximum` length is required to be at
+   least the imported linear memory's `maximum` length.
  - A table import's `minimum` length is required to be at most the imported
    table's `minimum` length.
- - A table import is required to have a maximum length if the imported table has
-   a maximum length.
- - If present, a table import's maximum length is required to be at least the
-   imported table's maximum length.
+ - A table import is required to have a `maximum` length if the imported table
+   has a `maximum` length.
+ - If present, a table import's `maximum` length is required to be at least the
+   imported table's `maximum` length.
  - Embedding-environment-specific validation requirements may be required of
    each import.
 
@@ -876,7 +876,7 @@ present, in the order of that section.
     - If a `maximum` length is present, it is required to be at least the
       `minimum` length.
     - If a `maximum` length is present, the index of every byte in a linear
-      memory with the maximum length is required to be representable in an
+      memory with the `maximum` length is required to be representable in an
       [varuPTR].
 
 > The validation rules here specifically avoid requiring the size in bytes of
@@ -907,7 +907,7 @@ section.
     - If a `maximum` length is present, it is required to be at least
       the table's `minimum` length.
     - If a `maximum` length is present, the index of every element in a table
-      with the maximum length is required to be representable in a [varuPTR].
+      with the `maximum` length is required to be representable in a [varuPTR].
 
 > The table index space is currently only used by the [Element Section].
 
@@ -936,9 +936,6 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 | Field Name | Type         | Description                                            |
 | ---------- | ------------ | ------------------------------------------------------ |
 | `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
-
-TODO: In the rest of the document, code-quote `minimum` and `maximum` more
-consistently
 
 #### Linear-Memory Description
 
@@ -2818,7 +2815,7 @@ The `grow_memory` instruction increases the size of the [default linear memory]
 by `$delta`, in units of unsigned [pages]. If the index of any byte of the
 referenced linear memory would be unrepresentable as unsigned in an `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
-has a maximum length and the actual size would exceed the maximum length, it
+has a `maximum` length and the actual size would exceed the `maximum` length, it
 returns `-1` and the linear-memory size is not increased; otherwise the
 linear-memory size is increased, and `grow_memory` returns the previous
 linear-memory size, also as an unsigned value in units of [pages]. Newly
@@ -2828,8 +2825,8 @@ allocated bytes are initialized to all zeros.
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
  - `$reserved` is required to be `0`.
 
-> This instruction can fail even when the maximum length isn't yet reached, due
-to resource exhaustion.
+> This instruction can fail even when the `maximum` length isn't yet reached,
+due to resource exhaustion.
 
 > Since the return value is in units of pages, `-1` isn't otherwise a valid
 linear-memory size. Also, note that `-1` isn't the only "negative" value (when
