@@ -1094,7 +1094,7 @@ mechanisms:
    replaced by the types bound to its parameters. If the list appears multiple
    times in a signature, it is replaced by the same types at each appearance.
 
-#### Named values
+#### Named Values
 
 The following named values are defined:
  - `$args` is defined in [call instructions][L] and indicates the length of the
@@ -1617,7 +1617,7 @@ be executed except in the case of a bug in the application.
 
 ### Basic Instructions
 
-0. [No-op](#nop)
+0. [No-Op](#nop)
 0. [Drop](#drop)
 0. [Constant](#constant)
 0. [Get Local](#get-local)
@@ -1629,7 +1629,7 @@ be executed except in the case of a bug in the application.
 0. [Call](#call)
 0. [Indirect Call](#indirect-call)
 
-#### No-op
+#### No-Op
 
 | Mnemonic    | Signature                   | Families | Opcode |
 | ----------- | --------------------------- | -------- | ------ |
