@@ -3038,7 +3038,7 @@ to call exported functions in an instance that has seen a trap.
 Text Format
 --------------------------------------------------------------------------------
 
-TODO: Figure out what to say about the text format.
+TODO: Describe the text format.
 
 
 [B]: #b-branch-instruction-family
