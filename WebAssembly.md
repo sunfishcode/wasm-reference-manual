@@ -1648,8 +1648,10 @@ The `drop` instruction does nothing.
 > This differs from `nop` in that it has an operand, so it can be used to
 discard unneeded values from the value stack.
 
-TODO: Explicitly describe the binding of `$T` and document that this
-instruction is sometimes called "value-polymorphic".
+> This instruction is sometimes called "value-polymorphic" because it can
+accept values of any type.
+
+TODO: Explicitly describe the binding of $T.
 
 #### Constant
 
@@ -1755,8 +1757,10 @@ its second operand otherwise.
 > This instruction is similar to a "conditional move" in other languages and is
 meant to have similar performance properties.
 
-TODO: Explicitly describe the binding of `$T` and document that this
-instruction is sometimes called "value-polymorphic".
+> This instruction is sometimes called "value-polymorphic" because it can
+operate on values of any type.
+
+TODO: Explicitly describe the binding of $T.
 
 #### Call
 
