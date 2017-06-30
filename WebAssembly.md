@@ -1658,12 +1658,11 @@ The `const` instruction returns the value of `$value`.
 | `get_local` | `$id`: [varuint32] | `() : ($T[1])` |          | 0x20   |
 
 The `get_local` instruction returns the value of the local at index `$id` in the
-locals vector. The type parameter is bound to the type of the local.
+locals vector of the current [function execution]. The type parameter is bound
+to the type of the local.
 
 **Validation:**
  - `$id` is required to be within the bounds of the locals vector.
-
-TODO: Clarify which locals vector is accessed.
 
 #### Set Local
 
@@ -1672,8 +1671,8 @@ TODO: Clarify which locals vector is accessed.
 | `set_local` | `$id`: [varuint32] | `($T[1]) : ()` |          | 0x21   |
 
 The `set_local` instruction sets the value of the local at index `$id` in the
-locals vector to the value given in the operand. The type parameter is bound to
-the type of the local.
+locals vector of the current [function execution] to the value given in the
+operand. The type parameter is bound to the type of the local.
 
 **Validation:**
  - `$id` is required to be within the bounds of the locals vector.
@@ -1688,8 +1687,9 @@ the type of the local.
 | `tee_local` | `$id`: [varuint32] | `($T[1]) : ($T[1])` |          | 0x22   |
 
 The `tee_local` instruction sets the value of the locals at index `$id` in the
-locals vector to the value given in the operand. Its return value is the value
-of its operand. The type parameter is bound to the type of the local.
+locals vector of the current [function execution] to the value given in the
+operand. Its return value is the value of its operand. The type parameter is
+bound to the type of the local.
 
 **Validation:**
  - `$id` is required to be within the bounds of the locals vector.
@@ -3090,6 +3090,7 @@ TODO: Figure out what to say about the text format.
 [exported]: #export-section
 [external kind]: #external-kinds
 [false]: #booleans
+[function execution]: #function-execution
 [global description]: #global-description
 [Floor and Ceiling Functions]: https://en.wikipedia.org/wiki/Floor_and_ceiling_functions
 [identifier]: #identifier
