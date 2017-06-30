@@ -234,8 +234,7 @@ A *byte array* is an [array] of [bytes].
 
 #### Identifier
 
-An *identifier* is a [byte array] which is valid
-[UTF-8](https://en.wikipedia.org/wiki/UTF-8).
+An *identifier* is a [byte array] which is valid [UTF-8].
 
 **Validation:**
  - Decoding the bytes according to the [UTF-8 decode without BOM or fail]
@@ -442,9 +441,9 @@ required to either indicate a *known section*, or be `0x00`, indicating a
  - The requirements of every component [encoding type] of the module are
    required.
 
-> The `magic_cookie` bytes begin with a NUL character, indicating to generic
-tools that the ensuing contents are not generally "text", followed by the UTF-8
-encoding of the string "asm".
+> The `magic_cookie` bytes begin with a [NUL] character, indicating to generic
+tools that the ensuing contents are not generally "text", followed by the
+[UTF-8] encoding of the string "asm".
 
 > The version is expected to change infrequently if ever; forward-compatible
 extension is intended to be achieved by adding sections, types, instructions and
@@ -3161,6 +3160,7 @@ TODO: Describe the text format.
 [value type]: #value-types
 [value types]: #value-types
 [uint32]: #primitive-type-encodings
+[UTF-8]: https://en.wikipedia.org/wiki/UTF-8
 [valid UTF-8]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail
 [varuint1]: #primitive-type-encodings
 [varuint7]: #primitive-type-encodings
