@@ -992,6 +992,8 @@ would produce if it were executed within a function body.
 
 **Validation:**
  - The requirements of the instructions are required.
+ - For `get_global` instructions, the indexed global is required to be
+   an immutable import.
 
 > In the future, more instructions may be permitted as instantiation-time
 initializers.
