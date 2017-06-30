@@ -604,8 +604,8 @@ A *global declaration* consists of:
 | `init`          | [instantiation-time initializer] | the initial value of the global variable |
 
 **Validation:**
-  - The type of the value returned by `init` must be the same as `desc`'s
-    `type`.
+ - The type of the value returned by `init` must be the same as `desc`'s
+   `type`.
 
 > Exporting of mutable global variables may be permitted in the future.
 
