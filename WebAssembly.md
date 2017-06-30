@@ -155,6 +155,7 @@ opaque values and serve a wide variety of purposes.
 
 0. [Primitive Encoding Types](#primitive-encoding-types)
 0. [varuPTR Immediate Type](#varuptr-immediate-type)
+0. [memflags Immediate Type](#memflags-immediate-type)
 0. [Array](#array)
 0. [Byte Array](#byte-array)
 0. [Identifier](#identifier)
@@ -201,6 +202,21 @@ Except when specified otherwise, all values are encoded in
 
 A *varuPTR immediate* is either [varuint32] or [varuint64] depending on whether
 the linear memory associated with the instruction using it is 32-bit or 64-bit.
+
+#### memflags Immediate Type
+
+A *memflags immediate* is a [varuint32] containing the following bit fields:
+
+| Name     | Description                                            |
+| -------- | ------------------------------------------------------ |
+| `$align` | alignment in bytes, encoded as the [log2] of the value |
+
+> As implied by the log2 encoding, `$align` can only be a [power of 2].
+
+> `$flags` may hold additional fields in the future.
+
+[power of 2]: https://en.wikipedia.org/wiki/Power_of_two
+[log2]: https://en.wikipedia.org/wiki/Binary_logarithm
 
 #### Array
 
@@ -1353,14 +1369,9 @@ before any of the bytes are written to.
 
 ##### Linear-Memory Access Validation
 
- - `$align` is required to be a [power of 2].
- - `$align` is required to be at most the number of [accessed bytes].
+ - `$align` is required to be at most the number of [accessed bytes] (the
+   [*natural alignment*(#alignment)).
  - The module is required to contain a default linear memory.
-
-[power of 2]: https://en.wikipedia.org/wiki/Power_of_two
-
-TODO: $align is encoded in log2 format, rather than required to be a power of 2.
-TODO: And, it's part of a $flags immediate which has other parts to validate
 
 #### Z: Linear-Memory Size Instruction Family
 
@@ -2704,10 +2715,10 @@ instruction is always exact.
 
 | Mnemonic    | Immediates                                | Signature               | Families | Opcode |
 | ----------- | ----------------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
-| `i64.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
-| `f32.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
-| `f64.load`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
+| `i32.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [G] | 0x28   |
+| `i64.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [G] | 0x29   |
+| `f32.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (f32)` | [M], [E] | 0x2a   |
+| `f64.load`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (f64)` | [M], [E] | 0x2b   |
 
 The `load` instruction performs a [load](#loading) of the same size as its type
 from the [default linear memory].
@@ -2722,10 +2733,10 @@ IEEE 754-2008 `copy` operation.
 
 | Mnemonic    | Immediates                                | Signature                         | Families | Opcode |
 | ----------- | ----------------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
-| `i64.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
-| `f32.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
-| `f64.store` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
+| `i32.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x36   |
+| `i64.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x37   |
+| `f32.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: f32) : ()` | [M], [F] | 0x38   |
+| `f64.store` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: f64) : ()` | [M], [F] | 0x39   |
 
 The `store` instruction performs a [store](#storing) of `$value` of the same
 size as its type to the [default linear memory].
@@ -2740,12 +2751,12 @@ IEEE 754-2008 `copy` operation.
 
 | Mnemonic       | Immediates                                | Signature               | Families | Opcode |
 | -------------- | ----------------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_s`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
-| `i32.load16_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
+| `i32.load8_s`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2c   |
+| `i32.load16_s` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [S] | 0x2e   |
 |                |                                           |                         |          |        |
-| `i64.load8_s`  | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
-| `i64.load16_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
-| `i64.load32_s` | `$offset`: [varuPTR], `$align`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
+| `i64.load8_s`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x30   |
+| `i64.load16_s` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x32   |
+| `i64.load32_s` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [S] | 0x34   |
 
 The signed extending load instructions perform a [load](#loading) of narrower
 width than their type from the [default linear memory], and return the value
@@ -2759,14 +2770,14 @@ width than their type from the [default linear memory], and return the value
 
 #### Extending Load, Unsigned
 
-| Mnemonic       | Immediates                            | Signature               | Families | Opcode |
-| -------------- | ------------------------------------- | ----------------------- | -------- | ------ |
-| `i32.load8_u`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i32)` | [M], [U] | 0x2d   |
-| `i32.load16_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i32)` | [M], [U] | 0x2f   |
-|                |                                       |                         |          |        |
-| `i64.load8_u`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x31   |
-| `i64.load16_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x33   |
-| `i64.load32_u` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
+| Mnemonic       | Immediates                                | Signature               | Families | Opcode |
+| -------------- | ----------------------------------------- | ----------------------- | -------- | ------ |
+| `i32.load8_u`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [U] | 0x2d   |
+| `i32.load16_u` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i32)` | [M], [U] | 0x2f   |
+|                |                                           |                         |          |        |
+| `i64.load8_u`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x31   |
+| `i64.load16_u` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x33   |
+| `i64.load32_u` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR) : (i64)` | [M], [U] | 0x35   |
 
 The unsigned extending load instructions perform a [load](#loading) of narrower
 width than their type from the [default linear memory], and return the value
@@ -2780,14 +2791,14 @@ zero-extended to their type.
 
 #### Wrapping Store
 
-| Mnemonic      | Immediates                            | Signature                         | Families | Opcode |
-| ------------- | ------------------------------------- | --------------------------------- | -------- | ------ |
-| `i32.store8`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3a   |
-| `i32.store16` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3b   |
-|               |                                       |                                   |          |        |
-| `i64.store8`  | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3c   |
-| `i64.store16` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
-| `i64.store32` | `$offset`: varuPTR, `$align`: varuPTR | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
+| Mnemonic      | Immediates                                | Signature                         | Families | Opcode |
+| ------------- | ----------------------------------------- | --------------------------------- | -------- | ------ |
+| `i32.store8`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3a   |
+| `i32.store16` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i32) : ()` | [M], [G] | 0x3b   |
+|               |                                           |                                   |          |        |
+| `i64.store8`  | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3c   |
+| `i64.store16` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3d   |
+| `i64.store32` | `$flags`: [memflags], $offset`: [varuPTR] | `($base: iPTR, $value: i64) : ()` | [M], [G] | 0x3e   |
 
 The wrapping store instructions performs a [store](#storing) of `$value` to the
 [default linear memory], silently wrapped to a narrower width.
@@ -3115,6 +3126,7 @@ TODO: Describe the text format.
 [linear-memory description]: #linear-memory-description
 [linear-memory descriptions]: #linear-memory-description
 [little-endian byte order]: https://en.wikipedia.org/wiki/Endianness#Little-endian
+[memflags]: #memflags-immediate-type
 [minimum signed integer value]: https://en.wikipedia.org/wiki/Two%27s_complement#Most_negative_number
 [nondeterministic]: #nondeterminism
 [nondeterministically]: #nondeterminism
