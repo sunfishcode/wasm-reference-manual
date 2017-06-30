@@ -794,8 +794,8 @@ the [linear-memory index space] during
 ### Custom Sections
 
 Custom sections may be used for debugging information or non-standard language
-extensions. The contents of the payload of a custom section after its name are not
-subject to validation. Some custom sections are described here to promote
+extensions. The contents of the payload of a custom section after its name are
+not subject to validation. Some custom sections are described here to promote
 interoperability, though they aren't required to be used.
 
 0. [Name Section]
