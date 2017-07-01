@@ -768,9 +768,6 @@ require any kind of dynamic typing behavior.
 
 A *position* within a function refers to an element of the instruction sequence.
 
-> Positions in WebAssembly are represented as byte offsets; in [text form],
-positions may be represented with a special syntax.
-
 #### Data Section
 
 **Opcode:** `0x0b`.
@@ -1031,7 +1028,6 @@ their immediate operand values.
 0. [Instruction Signature Field](#instruction-signature-field)
 0. [Instruction Families Field](#instruction-families-field)
 0. [Instruction Opcode Field](#instruction-opcode-field)
-0. [Instruction Syntax Field](#instruction-syntax-field)
 0. [Instruction Description](#instruction-description)
 
 ### Instruction Mnemonic Field
@@ -1386,15 +1382,6 @@ The opcodes for [signed][S] and [unsigned][U] instructions have the convention
 that the unsigned opcode is always one greater than the signed opcode.
 
 [opcodes]: https://en.wikipedia.org/wiki/Opcode
-
-### Instruction Syntax Field
-
-These are suggested operator names for use in [text form]. A parenthesized
-number is given for each operator name giving a suggested operator [precedence]
-value when binary operators use infix notation and unary operators use prefix
-notation.
-
-[precedence]: https://en.wikipedia.org/wiki/Order_of_operations
 
 ### Instruction Description
 
@@ -1824,10 +1811,10 @@ of function pointers.
 
 #### Integer Add
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.add`   | `(i32, i32) : (i32)`        | [G]      | 0x6a   | `+` (13)    |
-| `i64.add`   | `(i64, i64) : (i64)`        | [G]      | 0x7c   | `+` (13)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.add`   | `(i32, i32) : (i32)`        | [G]      | 0x6a   |
+| `i64.add`   | `(i64, i64) : (i64)`        | [G]      | 0x7c   |
 
 The integer `add` instruction returns the [two's complement sum] of its
 operands. The carry bit is silently discarded.
@@ -1837,10 +1824,10 @@ this instruction can be used to add either signed or unsigned values.
 
 #### Integer Subtract
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.sub`   | `(i32, i32) : (i32)`        | [G]      | 0x6b   | `-` (13)    |
-| `i64.sub`   | `(i64, i64) : (i64)`        | [G]      | 0x7d   | `-` (13)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.sub`   | `(i32, i32) : (i32)`        | [G]      | 0x6b   |
+| `i64.sub`   | `(i64, i64) : (i64)`        | [G]      | 0x7d   |
 
 The integer `sub` instruction returns the [two's complement difference] of its
 operands. The borrow bit is silently discarded.
@@ -1853,10 +1840,10 @@ as the first operand.
 
 #### Integer Multiply
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.mul`   | `(i32, i32) : (i32)`        | [G]      | 0x6c   | `*` (14)    |
-| `i64.mul`   | `(i64, i64) : (i64)`        | [G]      | 0x7e   | `*` (14)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.mul`   | `(i32, i32) : (i32)`        | [G]      | 0x6c   |
+| `i64.mul`   | `(i64, i64) : (i64)`        | [G]      | 0x7e   |
 
 The integer `mul` instruction returns the low half of the
 [two's complement product] its operands.
@@ -1866,10 +1853,10 @@ this instruction can be used to multiply either signed or unsigned values.
 
 #### Integer Divide, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.div_s` | `(i32, i32) : (i32)`        | [S]      | 0x6d   | `/s` (14)   |
-| `i64.div_s` | `(i64, i64) : (i64)`        | [S]      | 0x7f   | `/s` (14)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.div_s` | `(i32, i32) : (i32)`        | [S]      | 0x6d   |
+| `i64.div_s` | `(i64, i64) : (i64)`        | [S]      | 0x7f   |
 
 The `div_s` instruction returns the signed quotient of its operands, interpreted
 as signed. The quotient is silently rounded to the nearest integer toward zero.
@@ -1882,10 +1869,10 @@ zero.
 
 #### Integer Divide, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.div_u` | `(i32, i32) : (i32)`        | [U]      | 0x6e   | `/u` (14)   |
-| `i64.div_u` | `(i64, i64) : (i64)`        | [U]      | 0x80   | `/u` (14)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.div_u` | `(i32, i32) : (i32)`        | [U]      | 0x6e   |
+| `i64.div_u` | `(i64, i64) : (i64)`        | [U]      | 0x80   |
 
 The `div_u` instruction returns the unsigned quotient of its operands,
 interpreted as unsigned. The quotient is silently rounded to the nearest integer
@@ -1896,10 +1883,10 @@ zero.
 
 #### Integer Remainder, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.rem_s` | `(i32, i32) : (i32)`        | [S] [R]  | 0x6f   | `%s` (14)   |
-| `i64.rem_s` | `(i64, i64) : (i64)`        | [S] [R]  | 0x81   | `%s` (14)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.rem_s` | `(i32, i32) : (i32)`        | [S] [R]  | 0x6f   |
+| `i64.rem_s` | `(i64, i64) : (i64)`        | [S] [R]  | 0x81   |
 
 The `rem_s` instruction returns the signed remainder from a division of its
 operand values interpreted as signed, with the result having the same sign as
@@ -1922,10 +1909,10 @@ its handling of negative numbers.
 
 #### Integer Remainder, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.rem_u` | `(i32, i32) : (i32)`        | [U] [R]  | 0x70   | `%u` (14)   |
-| `i64.rem_u` | `(i64, i64) : (i64)`        | [U] [R]  | 0x82   | `%u` (14)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.rem_u` | `(i32, i32) : (i32)`        | [U] [R]  | 0x70   |
+| `i64.rem_u` | `(i64, i64) : (i64)`        | [U] [R]  | 0x82   |
 
 The `rem_u` instruction returns the unsigned remainder from a division of its
 operand values interpreted as unsigned.
@@ -1938,10 +1925,10 @@ languages.
 
 #### Integer Bitwise And
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.and`   | `(i32, i32) : (i32)`        | [G]      | 0x71   | `&` (9)     |
-| `i64.and`   | `(i64, i64) : (i64)`        | [G]      | 0x83   | `&` (9)     |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.and`   | `(i32, i32) : (i32)`        | [G]      | 0x71   |
+| `i64.and`   | `(i64, i64) : (i64)`        | [G]      | 0x83   |
 
 The `and` instruction returns the [bitwise and] of its operands.
 
@@ -1949,10 +1936,10 @@ The `and` instruction returns the [bitwise and] of its operands.
 
 #### Integer Bitwise Or
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.or`    | `(i32, i32) : (i32)`        | [G]      | 0x72   | `\|` (7)    |
-| `i64.or`    | `(i64, i64) : (i64)`        | [G]      | 0x84   | `\|` (7)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.or`    | `(i32, i32) : (i32)`        | [G]      | 0x72   |
+| `i64.or`    | `(i64, i64) : (i64)`        | [G]      | 0x84   |
 
 The `or` instruction returns the [bitwise inclusive-or] of its operands.
 
@@ -1960,10 +1947,10 @@ The `or` instruction returns the [bitwise inclusive-or] of its operands.
 
 #### Integer Bitwise Exclusive-Or
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.xor`   | `(i32, i32) : (i32)`        | [G]      | 0x73   | `^` (8)     |
-| `i64.xor`   | `(i64, i64) : (i64)`        | [G]      | 0x85   | `^` (8)     |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.xor`   | `(i32, i32) : (i32)`        | [G]      | 0x73   |
+| `i64.xor`   | `(i64, i64) : (i64)`        | [G]      | 0x85   |
 
 The `xor` instruction returns the [bitwise exclusive-or] of its operands.
 
@@ -1976,10 +1963,10 @@ negative one as the first operand, an operation sometimes called
 
 #### Integer Shift Left
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.shl`   | `(i32, i32) : (i32)`        | [T], [G] | 0x74   | `<<` (12)   |
-| `i64.shl`   | `(i64, i64) : (i64)`        | [T], [G] | 0x86   | `<<` (12)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.shl`   | `(i32, i32) : (i32)`        | [T], [G] | 0x74   |
+| `i64.shl`   | `(i64, i64) : (i64)`        | [T], [G] | 0x86   |
 
 The `shl` instruction returns the value of the first operand [shifted] to the
 left by the [shift count].
@@ -1989,10 +1976,10 @@ the shift count.
 
 #### Integer Shift Right, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.shr_s` | `(i32, i32) : (i32)`        | [T], [S] | 0x75   | `>>s` (12)  |
-| `i64.shr_s` | `(i64, i64) : (i64)`        | [T], [S] | 0x87   | `>>s` (12)  |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.shr_s` | `(i32, i32) : (i32)`        | [T], [S] | 0x75   |
+| `i64.shr_s` | `(i64, i64) : (i64)`        | [T], [S] | 0x87   |
 
 The `shr_s` instruction returns the value of the first operand
 [shifted](https://en.wikipedia.org/wiki/Arithmetic_shift) to the right by the
@@ -2007,10 +1994,10 @@ rounding of negative values is different. `shr_s` effectively rounds down, while
 
 #### Integer Shift Right, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.shr_u` | `(i32, i32) : (i32)`        | [T], [U] | 0x76   | `>>u` (12)  |
-| `i64.shr_u` | `(i64, i64) : (i64)`        | [T], [U] | 0x88   | `>>u` (12)  |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.shr_u` | `(i32, i32) : (i32)`        | [T], [U] | 0x76   |
+| `i64.shr_u` | `(i64, i64) : (i64)`        | [T], [U] | 0x88   |
 
 The `shr_u` instruction returns the value of the first operand [shifted] to the
 right by the [shift count].
@@ -2095,10 +2082,10 @@ in other languages.
 
 #### Integer Equal To Zero
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.eqz`   | `(i32) : (i32)`             | [G]      | 0x45   | `!` (15)    |
-| `i64.eqz`   | `(i64) : (i32)`             | [G]      | 0x50   | `!` (15)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.eqz`   | `(i32) : (i32)`             | [G]      | 0x45   |
+| `i64.eqz`   | `(i64) : (i32)`             | [G]      | 0x50   |
 
 The `eqz` instruction returns [true] if the operand is equal to zero, or [false]
 otherwise.
@@ -2125,40 +2112,40 @@ otherwise.
 
 #### Floating-Point Add
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.add`   | `(f32, f32) : (f32)`        | [F]      | 0x92   | `+` (13)    |
-| `f64.add`   | `(f64, f64) : (f64)`        | [F]      | 0xa0   | `+` (13)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.add`   | `(f32, f32) : (f32)`        | [F]      | 0x92   |
+| `f64.add`   | `(f64, f64) : (f64)`        | [F]      | 0xa0   |
 
 The floating-point `add` instruction performs the IEEE 754-2008 `addition`
 operation according to the [general floating-point rules][F].
 
 #### Floating-Point Subtract
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.sub`   | `(f32, f32) : (f32)`        | [F]      | 0x93   | `-` (13)    |
-| `f64.sub`   | `(f64, f64) : (f64)`        | [F]      | 0xa1   | `-` (13)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.sub`   | `(f32, f32) : (f32)`        | [F]      | 0x93   |
+| `f64.sub`   | `(f64, f64) : (f64)`        | [F]      | 0xa1   |
 
 The floating-point `sub` instruction performs the IEEE 754-2008 `subtraction`
 operation according to the [general floating-point rules][F].
 
 #### Floating-Point Multiply
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.mul`   | `(f32, f32) : (f32)`        | [F]      | 0x94   | `*` (14)    |
-| `f64.mul`   | `(f64, f64) : (f64)`        | [F]      | 0xa2   | `*` (14)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.mul`   | `(f32, f32) : (f32)`        | [F]      | 0x94   |
+| `f64.mul`   | `(f64, f64) : (f64)`        | [F]      | 0xa2   |
 
 The floating-point `mul` instruction performs the IEEE 754-2008 `multiplication`
 operation according to the [general floating-point rules][F].
 
 #### Floating-Point Divide
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.div`   | `(f32, f32) : (f32)`        | [F]      | 0x95   | `/` (14)    |
-| `f64.div`   | `(f64, f64) : (f64)`        | [F]      | 0xa3   | `/` (14)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.div`   | `(f32, f32) : (f32)`        | [F]      | 0x95   |
+| `f64.div`   | `(f64, f64) : (f64)`        | [F]      | 0xa3   |
 
 The `div` instruction performs the IEEE 754-2008 `division` operation according
 to the [general floating-point rules][F].
@@ -2304,10 +2291,10 @@ values as not less than zero.
 
 #### Floating-Point Negate
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.neg`   | `(f32) : (f32)`             | [E]      | 0x8c   | `-` (15)    |
-| `f64.neg`   | `(f64) : (f64)`             | [E]      | 0x9a   | `-` (15)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.neg`   | `(f32) : (f32)`             | [E]      | 0x8c   |
+| `f64.neg`   | `(f64) : (f64)`             | [E]      | 0x9a   |
 
 The `neg` instruction performs the IEEE 754-2008 `negate` operation.
 
@@ -2347,19 +2334,19 @@ either operand is a NaN or a zero.
 
 #### Integer Equality
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.eq`    | `(i32, i32) : (i32)`        | [C], [G] | 0x46   | `==` (10)   |
-| `i64.eq`    | `(i64, i64) : (i32)`        | [C], [G] | 0x51   | `==` (10)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.eq`    | `(i32, i32) : (i32)`        | [C], [G] | 0x46   |
+| `i64.eq`    | `(i64, i64) : (i32)`        | [C], [G] | 0x51   |
 
 The integer `eq` instruction tests whether the operands are equal.
 
 #### Integer Inequality
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.ne`    | `(i32, i32) : (i32)`        | [C], [G] | 0x47   | `!=` (10)   |
-| `i64.ne`    | `(i64, i64) : (i32)`        | [C], [G] | 0x52   | `!=` (10)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.ne`    | `(i32, i32) : (i32)`        | [C], [G] | 0x47   |
+| `i64.ne`    | `(i64, i64) : (i32)`        | [C], [G] | 0x52   |
 
 The integer `ne` instruction tests whether the operands are not equal.
 
@@ -2368,30 +2355,30 @@ languages.
 
 #### Integer Less Than, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.lt_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x48   | `<s` (11)   |
-| `i64.lt_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x53   | `<s` (11)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.lt_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x48   |
+| `i64.lt_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x53   |
 
 The `lt_s` instruction tests whether the first operand is less than the second
 operand, interpreting the operands as signed.
 
 #### Integer Less Than, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.lt_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x49   | `<u` (11)   |
-| `i64.lt_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x54   | `<u` (11)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.lt_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x49   |
+| `i64.lt_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x54   |
 
 The `lt_u` instruction tests whether the first operand is less than the second
 operand, interpreting the operands as unsigned.
 
 #### Integer Less Than Or Equal To, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.le_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x4c   | `<=s` (11)  |
-| `i64.le_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x57   | `<=s` (11)  |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.le_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x4c   |
+| `i64.le_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x57   |
 
 The `le_s` instruction tests whether the first operand is less than or equal to
 the second operand, interpreting the operands as signed.
@@ -2401,10 +2388,10 @@ languages.
 
 #### Integer Less Than Or Equal To, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.le_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x4d   | `<=u` (11)  |
-| `i64.le_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x58   | `<=u` (11)  |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.le_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x4d   |
+| `i64.le_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x58   |
 
 The `le_u` instruction tests whether the first operand is less than or equal to
 the second operand, interpreting the operands as unsigned.
@@ -2414,30 +2401,30 @@ languages.
 
 #### Integer Greater Than, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.gt_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x4a   | `>s` (11)   |
-| `i64.gt_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x55   | `>s` (11)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.gt_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x4a   |
+| `i64.gt_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x55   |
 
 The `gt_s` instruction tests whether the first operand is greater than the
 second operand, interpreting the operands as signed.
 
 #### Integer Greater Than, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.gt_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x4b   | `>u` (11)   |
-| `i64.gt_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x56   | `>u` (11)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.gt_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x4b   |
+| `i64.gt_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x56   |
 
 The `gt_u` instruction tests whether the first operand is greater than the
 second operand, interpreting the operands as unsigned.
 
 #### Integer Greater Than Or Equal To, Signed
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.ge_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x4e   | `>=s` (11)  |
-| `i64.ge_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x59   | `>=s` (11)  |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.ge_s`  | `(i32, i32) : (i32)`        | [C], [S] | 0x4e   |
+| `i64.ge_s`  | `(i64, i64) : (i32)`        | [C], [S] | 0x59   |
 
 The `ge_s` instruction tests whether the first operand is greater than or equal
 to the second operand, interpreting the operands as signed.
@@ -2447,10 +2434,10 @@ languages.
 
 #### Integer Greater Than Or Equal To, Unsigned
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `i32.ge_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x4f   | `>=u` (11)  |
-| `i64.ge_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x5a   | `>=u` (11)  |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `i32.ge_u`  | `(i32, i32) : (i32)`        | [C], [U] | 0x4f   |
+| `i64.ge_u`  | `(i64, i64) : (i32)`        | [C], [U] | 0x5a   |
 
 The `ge_u` instruction tests whether the first operand is greater than or equal
 to the second operand, interpreting the operands as unsigned.
@@ -2469,10 +2456,10 @@ languages.
 
 #### Floating-Point Equality
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.eq`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5b   | `==` (10)   |
-| `f64.eq`    | `(f64, f64) : (i32)`        | [C], [F] | 0x61   | `==` (10)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.eq`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5b   |
+| `f64.eq`    | `(f64, f64) : (i32)`        | [C], [F] | 0x61   |
 
 The floating-point `eq` instruction performs the IEEE 754-2008
 `compareQuietEqual` operation according to the
@@ -2483,10 +2470,10 @@ or "oeq", in other languages.
 
 #### Floating-Point Inequality
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.ne`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5c   | `!=` (10)   |
-| `f64.ne`    | `(f64, f64) : (i32)`        | [C], [F] | 0x62   | `!=` (10)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.ne`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5c   |
+| `f64.ne`    | `(f64, f64) : (i32)`        | [C], [F] | 0x62   |
 
 The floating-point `ne` instruction performs the IEEE 754-2008
 `compareQuietNotEqual` operation according to the
@@ -2501,10 +2488,10 @@ instruction.
 
 #### Floating-Point Less Than
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.lt`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5d   | `<` (11)    |
-| `f64.lt`    | `(f64, f64) : (i32)`        | [C], [F] | 0x63   | `<` (11)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.lt`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5d   |
+| `f64.lt`    | `(f64, f64) : (i32)`        | [C], [F] | 0x63   |
 
 The `lt` instruction performs the IEEE 754-2008 `compareQuietLess` operation
 according to the [general floating-point rules][F].
@@ -2514,10 +2501,10 @@ than", or "olt", in other languages.
 
 #### Floating-Point Less Than Or Equal To
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.le`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5f   | `<=` (11)   |
-| `f64.le`    | `(f64, f64) : (i32)`        | [C], [F] | 0x65   | `<=` (11)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.le`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5f   |
+| `f64.le`    | `(f64, f64) : (i32)`        | [C], [F] | 0x65   |
 
 The `le` instruction performs the IEEE 754-2008 `compareQuietLessEqual`
 operation according to the [general floating-point rules][F].
@@ -2527,10 +2514,10 @@ than or equal", or "ole", in other languages.
 
 #### Floating-Point Greater Than
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.gt`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5e   | `>` (11)    |
-| `f64.gt`    | `(f64, f64) : (i32)`        | [C], [F] | 0x64   | `>` (11)    |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.gt`    | `(f32, f32) : (i32)`        | [C], [F] | 0x5e   |
+| `f64.gt`    | `(f64, f64) : (i32)`        | [C], [F] | 0x64   |
 
 The `gt` instruction performs the IEEE 754-2008 `compareQuietGreater` operation
 according to the [general floating-point rules][F].
@@ -2540,10 +2527,10 @@ than", or "ogt", in other languages.
 
 #### Floating-Point Greater Than Or Equal To
 
-| Mnemonic    | Signature                   | Families | Opcode | Syntax      |
-| ----------- | --------------------------- | -------- | ------ | ----------- |
-| `f32.ge`    | `(f32, f32) : (i32)`        | [C], [F] | 0x60   | `>=` (11)   |
-| `f64.ge`    | `(f64, f64) : (i32)`        | [C], [F] | 0x66   | `>=` (11)   |
+| Mnemonic    | Signature                   | Families | Opcode |
+| ----------- | --------------------------- | -------- | ------ |
+| `f32.ge`    | `(f32, f32) : (i32)`        | [C], [F] | 0x60   |
+| `f64.ge`    | `(f64, f64) : (i32)`        | [C], [F] | 0x66   |
 
 The `ge` instruction performs the IEEE 754-2008 `compareQuietGreaterEqual`
 operation according to the [general floating-point rules][F].
