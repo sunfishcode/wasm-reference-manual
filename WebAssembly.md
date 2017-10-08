@@ -1764,12 +1764,14 @@ The `call` instruction performs a [call](#calling) to the function with index
 
 #### Indirect Call
 
-| Mnemonic        | Opcode | Immediates                | Signature                                                | Families |
-| --------------- | ------ | ------------------------- | -------------------------------------------------------- | -------- |
-| `call_indirect` | 0x11   | `$signature`: [varuint32] | `($T[`[`$args`]`], $callee: i32) : ($T[`[`$returns`]`])` | [L]      |
+| Mnemonic        | Opcode | Immediates                                         | Signature                                                | Families |
+| --------------- | ------ | -------------------------------------------------- | -------------------------------------------------------- | -------- |
+| `call_indirect` | 0x11   | `$signature`: [varuint32], `$reserved`: [varuint1] | `($T[`[`$args`]`], $callee: i32) : ($T[`[`$returns`]`])` | [L]      |
 
 The `call_indirect` instruction performs a [call](#calling) to the function in
 the default table with index `$callee`.
+
+In future versions of WebAssembly, the reserved immediate may be used to index additional tables.
 
 **Trap:** Indirect Callee Absent, if the indexed table element is the special
 "null" value.
