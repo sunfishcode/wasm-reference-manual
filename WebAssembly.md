@@ -1771,8 +1771,6 @@ The `call` instruction performs a [call](#calling) to the function with index
 The `call_indirect` instruction performs a [call](#calling) to the function in
 the default table with index `$callee`.
 
-In future versions of WebAssembly, the reserved immediate may be used to index additional tables.
-
 **Trap:** Indirect Callee Absent, if the indexed table element is the special
 "null" value.
 
@@ -1788,6 +1786,8 @@ index `$callee` differs from the signature in the [Type Section] with index
 
 > Indices in the default table can provide applications with the functionality
 of function pointers.
+
+> In future versions of WebAssembly, the reserved immediate may be used to index additional tables.
 
 ### Integer Arithmetic Instructions
 
