@@ -1764,9 +1764,9 @@ The `call` instruction performs a [call](#calling) to the function with index
 
 #### Indirect Call
 
-| Mnemonic        | Opcode | Immediates                | Signature                                                | Families |
-| --------------- | ------ | ------------------------- | -------------------------------------------------------- | -------- |
-| `call_indirect` | 0x11   | `$signature`: [varuint32] | `($T[`[`$args`]`], $callee: i32) : ($T[`[`$returns`]`])` | [L]      |
+| Mnemonic        | Opcode | Immediates                                         | Signature                                                | Families |
+| --------------- | ------ | -------------------------------------------------- | -------------------------------------------------------- | -------- |
+| `call_indirect` | 0x11   | `$signature`: [varuint32], `$reserved`: [varuint1] | `($T[`[`$args`]`], $callee: i32) : ($T[`[`$returns`]`])` | [L]      |
 
 The `call_indirect` instruction performs a [call](#calling) to the function in
 the default table with index `$callee`.
@@ -1786,6 +1786,8 @@ index `$callee` differs from the signature in the [Type Section] with index
 
 > Indices in the default table can provide applications with the functionality
 of function pointers.
+
+> In future versions of WebAssembly, the reserved immediate may be used to index additional tables.
 
 ### Integer Arithmetic Instructions
 
