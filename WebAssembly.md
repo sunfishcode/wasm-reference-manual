@@ -655,6 +655,7 @@ defined in this reference manual.
 
 > Because exports reference index spaces which include imports, modules can
 re-export their imports.
+> The immutability restriction might be lifted in a future version, as part of the [threads proprosal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Globals.md).
 
 #### Start Section
 
