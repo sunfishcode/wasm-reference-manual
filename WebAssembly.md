@@ -591,6 +591,9 @@ The Table Section consists of an [array] of [table descriptions].
 
 The Memory Section consists of an [array] of [linear-memory descriptions].
 
+**Validation:**
+ - Linear-memory description items must be valid.
+
 > Implementations are encouraged to attempt to reserve enough resources for
 allocating up to the `maximum` length up front, if a `maximum` length is
 present. Otherwise, implementations are encouraged to allocate only enough for
@@ -950,11 +953,18 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 | ---------- | ------------ | ------------------------------------------------------ |
 | `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
 
+**Validation:**
+ - If maximum is specified, it must not be smaller than minimum.
+
 #### Linear-Memory Description
 
 | Field Name | Type               | Description                                       |
 | ---------- | ------------------ | ------------------------------------------------- |
 | `limits`   | [resizable limits] | linear-memory flags and sizes in units of [pages] |
+
+**Validation:**
+ - Limits items must be valid (see above).
+ - Memory size must be at most 65536 pages (4GiB).
 
 #### Table Description
 
