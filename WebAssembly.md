@@ -952,7 +952,7 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 | `maximum`  | [varuint32]  | maximum length (in same units as `minimum`)            |
 
 **Validation:**
- - If maximum is specified, it must be greater than minimum.
+ - If maximum is specified, it must not be smaller than minimum.
 
 #### Linear-Memory Description
 
