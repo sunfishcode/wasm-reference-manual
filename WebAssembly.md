@@ -651,9 +651,11 @@ defined in this reference manual.
  - Each export's name is required to be unique among all the exports' names.
  - Each export's index is required to be within the bounds of its associated
    index space.
+ - All global exports are required to be immutable.
 
 > Because exports reference index spaces which include imports, modules can
 re-export their imports.
+> The immutability restriction might be lifted in a future version, as part of the [threads proprosal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Globals.md).
 
 #### Start Section
 
