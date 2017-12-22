@@ -1,6 +1,6 @@
 # WebAssembly Reference Manual
 
-This project contains a [human-readable WebAssembly reference manual document written in Markdown](https://github.com/sunfishcode/wasm-reference-manual/tree/master/WebAssembly.md). It is intended as an alternative to the [official WebAssembly specification](https://webassembly.github.io/spec/), which is not terribly accessible or readable. If you want to know how the WebAssembly runtime works, are writing a compiler, or want to try writing WebAssembly by hand (in text format), this manual is a good starting point.
+This project contains a [human-readable WebAssembly reference manual document written in Markdown](https://github.com/sunfishcode/wasm-reference-manual/tree/master/WebAssembly.md). It is intended as an alternative to the [official WebAssembly specification](https://webassembly.github.io/spec/), which is organized around a particular approach to language specification, rather than on explanation. If you want to know how the WebAssembly runtime works, are writing a compiler, or want to try writing WebAssembly by hand (in text format), this manual is a good starting point.
 
 ## Contribution
 
