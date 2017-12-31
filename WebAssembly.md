@@ -411,7 +411,7 @@ Module
 
 ### Module Contents
 
-A module starts with header:
+A module starts with a header:
 
 | Field Name     | Type     | Description                                                             |
 | -------------- | -------- | ----------------------------------------------------------------------- |
