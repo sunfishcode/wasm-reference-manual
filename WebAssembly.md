@@ -566,6 +566,13 @@ through their respective [module index spaces](#module-index-spaces).
 an export in that module to import, but [embedding environments] may provide
 other mechanisms for resolving imports as well.
 
+> For example, even though WebAssembly itself does not support overloading of
+functions or other entities based on their signature, embedding environments may
+provide imports that do so. Or they may ignore any or all of the signature,
+`kind`, and `export_name`, and any other fields, and resolve imports
+arbitrarily. Two identical imports need not even be resolved to the same entity
+within an instantiation.
+
 #### Function Section
 
 **Opcode:** `0x03`.
