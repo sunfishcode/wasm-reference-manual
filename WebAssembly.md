@@ -1294,8 +1294,7 @@ WebAssembly follows IEEE 754-2008, which calls them "subnormal numbers".
 When the result of any instruction in this family (which excludes `neg`, `abs`,
 `copysign`, `load`, `store`, and `const`) is a NaN, the sign bit and the
 significand field (which doesn't include the implicit leading digit of the
-significand) of the NaN are computed by one of the following rules,
-selected [nondeterministically]:
+significand) of the NaN are computed as follows:
 
  - If the instruction has any NaN non-immediate operand values with significand
    fields that have any bits set to `1` other than the most significant bit of
