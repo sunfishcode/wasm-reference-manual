@@ -1310,7 +1310,10 @@ Implementations are permitted to further implement the IEEE 754-2008 section
 "Operations with NaNs" recommendation that operations propagate NaN bits from
 their operands, however it isn't required.
 
-> The NaN propagation rules are intended to support NaN-boxing.
+> The NaN propagation rules are intended to support NaN-boxing. If all inputs
+to an arithmetic operator are "canonical", the result is also "canonical", so
+NaN-boxing implementations don't need to worry about non-"canonical" NaNs
+being generated as a result of arithmetic.
 
 > At present, there is no observable difference between quiet and signaling NaN
 other than the difference in the bit pattern.
