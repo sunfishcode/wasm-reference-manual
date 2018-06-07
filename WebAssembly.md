@@ -2860,7 +2860,8 @@ valid returns.
 
 > `$reserved` is intended for future use.
 
-> This instruction was previously named `grow_memory`.
+> This instruction was previously named `grow_memory`, and was briefly proposed
+to be named `mem.grow`.
 
 #### Current Linear-Memory Size
 
@@ -2877,7 +2878,8 @@ as an unsigned value in units of [pages].
 
 > `$reserved` is intended for future use.
 
-> This instruction was previously named `current_memory`.
+> This instruction was previously named `current_memory` and was briefly
+proposed to be named `mem.size`.
 
 
 Instantiation
