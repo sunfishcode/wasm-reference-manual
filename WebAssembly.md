@@ -130,10 +130,10 @@ A *linear memory* is a contiguous, [byte]-addressable, readable and writable
 range of memory spanning from offset `0` and extending up to a *linear-memory
 size*, allocated as part of a WebAssembly instance. The size of a linear memory
 is always a multiple of the [page] size and may be increased dynamically (with
-the [`mem.grow`](#grow-memory) instruction) up to an optional declared
-*maximum length*. Linear memories are sandboxed, so they don't overlap with each
-other or with other parts of a WebAssembly instance, including the call stack,
-globals, and tables, and their bounds are enforced.
+the [`memory.grow`](#grow-linear-memory-size) instruction) up to an optional
+declared *maximum length*. Linear memories are sandboxed, so they don't overlap
+with each other or with other parts of a WebAssembly instance, including the
+call stack, globals, and tables, and their bounds are enforced.
 
 Linear memories can either be [defined by a module](#linear-memory-section)
 or [imported](#import-section).
@@ -2832,17 +2832,17 @@ the name "wrap".
 
 #### Grow Linear-Memory Size
 
-| Mnemonic    | Opcode | Immediates              | Signature                 | Families |
-| ----------- | ------ | ----------------------- | ------------------------- | -------- |
-| `mem.grow`  | 0x40   | `$reserved`: [varuint1] | `($delta: iPTR) : (iPTR)` | [Z]      |
+| Mnemonic      | Opcode | Immediates              | Signature                 | Families |
+| ------------- | ------ | ----------------------- | ------------------------- | -------- |
+| `memory.grow` | 0x40   | `$reserved`: [varuint1] | `($delta: iPTR) : (iPTR)` | [Z]      |
 
-The `mem.grow` instruction increases the size of the [default linear memory] by
-`$delta`, in units of unsigned [pages]. If the index of any byte of the
+The `memory.grow` instruction increases the size of the [default linear memory]
+by `$delta`, in units of unsigned [pages]. If the index of any byte of the
 referenced linear memory would be unrepresentable as unsigned in an `iPTR`, if
 allocation fails due to insufficient dynamic resources, or if the linear memory
 has a `maximum` length and the actual size would exceed the `maximum` length, it
 returns `-1` and the linear-memory size is not increased; otherwise the
-linear-memory size is increased, and `mem.grow` returns the previous
+linear-memory size is increased, and `memory.grow` returns the previous
 linear-memory size, also as an unsigned value in units of [pages]. Newly
 allocated bytes are initialized to all zeros.
 
@@ -2864,12 +2864,12 @@ valid returns.
 
 #### Current Linear-Memory Size
 
-| Mnemonic    | Opcode | Immediates              | Signature              | Families |
-| ----------- | ------ | ----------------------- | ---------------------- | -------- |
-| `mem.size`  | 0x3f   | `$reserved`: [varuint1] | `() : (iPTR)`          | [Z]      |
+| Mnemonic      | Opcode | Immediates              | Signature              | Families |
+| ------------- | ------ | ----------------------- | ---------------------- | -------- |
+| `memory.size` | 0x3f   | `$reserved`: [varuint1] | `() : (iPTR)`          | [Z]      |
 
-The `mem.size` instruction returns the size of the [default linear memory], as
-an unsigned value in units of [pages].
+The `memory.size` instruction returns the size of the [default linear memory],
+as an unsigned value in units of [pages].
 
 **Validation**:
  - [Linear-memory size validation](#linear-memory-size-validation) is required.
