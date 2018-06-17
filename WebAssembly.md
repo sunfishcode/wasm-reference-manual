@@ -3175,18 +3175,18 @@ TODO: Describe the text format.
 [two's complement sum]: https://en.wikipedia.org/wiki/Two%27s_complement#Addition
 [value type]: #value-types
 [value types]: #value-types
-[uint32]: #primitive-type-encodings
+[uint32]: #primitive-encoding-types
 [UTF-8]: https://en.wikipedia.org/wiki/UTF-8
 [valid UTF-8]: https://encoding.spec.whatwg.org/#utf-8-decode-without-bom-or-fail
-[varuint1]: #primitive-type-encodings
-[varuint7]: #primitive-type-encodings
-[varuint32]: #primitive-type-encodings
-[varuint64]: #primitive-type-encodings
-[varsint7]: #primitive-type-encodings
-[varsint32]: #primitive-type-encodings
-[varsint64]: #primitive-type-encodings
-[float32]: #primitive-type-encodings
-[float64]: #primitive-type-encodings
+[varuint1]: #primitive-encoding-types
+[varuint7]: #primitive-encoding-types
+[varuint32]: #primitive-encoding-types
+[varuint64]: #primitive-encoding-types
+[varsint7]: #primitive-encoding-types
+[varsint32]: #primitive-encoding-types
+[varsint64]: #primitive-encoding-types
+[float32]: #primitive-encoding-types
+[float64]: #primitive-encoding-types
 [`$args`]: #named-values
 [`$returns`]: #named-values
 [`$any`]: #named-values
