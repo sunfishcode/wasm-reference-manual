@@ -723,11 +723,11 @@ The Code Section consists of an [array] of function bodies.
 
 A *function body* consists of:
 
-| Field Name      | Type                       | Description                       |
-| --------------- | -------------------------- | --------------------------------- |
-| `body_size`     | [varuint32]                | the size of `body` in bytes       |
-| `locals`        | [array] of local entry     | local variable declarations       |
-| `body`          | sequence of [instructions] | the instructions                  |
+| Field Name      | Type                       | Description                                       |
+| --------------- | -------------------------- | ------------------------------------------------- |
+| `body_size`     | [varuint32]                | the size of `locals` and `instructions`, in bytes |
+| `locals`        | [array] of local entry     | local variable declarations                       |
+| `instructions`  | sequence of [instructions] | the instructions                                  |
 
 A *local entry* consists of:
 
