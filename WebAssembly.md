@@ -142,7 +142,7 @@ or [imported](#import-section).
 
 A *table* is similar to a [linear memory] whose elements, instead of being
 bytes, are opaque values. Each table has a [table element type] specifying what
-kind of data they hold. A table of `anyfunc` is used as the index space for
+kind of data they hold. A table of `funcref` is used as the index space for
 [indirect calls](#indirect-call).
 
 Tables can be [defined by a module](#table-section) or
@@ -265,7 +265,7 @@ A *type encoding* is a value indicating a particular [language type].
 | `i64`     | `-0x02`         |
 | `f32`     | `-0x03`         |
 | `f64`     | `-0x04`         |
-| `anyfunc` | `-0x10`         |
+| `funcref` | `-0x10`         |
 | `func`    | `-0x20`         |
 | `void`    | `-0x40`         |
 
@@ -361,7 +361,7 @@ are usually unimportant).
 
 | Name       | Description                                  |
 | ---------- | -------------------------------------------- |
-| `anyfunc`  | a reference to a function with any signature |
+| `funcref`  | a reference to a function with any signature |
 
 **Validation:**
  - Table element types are required to be one of the values defined here.
@@ -693,7 +693,7 @@ A *table initializer* consists of:
 | `index`         | [varuint32]                      | identifies a table in the [table index space]     |
 | `offset`        | [instantiation-time initializer] | the index of the element in the table to start at |
 
-If the [table]'s `element_type` is `anyfunc`, the following fields are appended.
+If the [table]'s `element_type` is `funcref`, the following fields are appended.
 
 | Field Name      | Type                             | Description                                       |
 | --------------- | -------------------------------- | ------------------------------------------------- |
@@ -882,7 +882,7 @@ index for each global in the [Global Section], if present, in the order of that
 section.
 
 > The global index space is used by:
- - the [`get_global`](#get-global) and [`set_global`](#set-global) instructions.
+ - the [`global.get`](#get-global) and [`global.set`](#set-global) instructions.
  - the [Data Section], to define the offset of a data initializer (in a linear
    memory) as the value of a global variable.
 
@@ -981,7 +981,7 @@ If bit `0x1` is set in `flags`, the following fields are appended.
 | `resizable`     | [resizable limits]   | table flags and sizes in units of elements |
 
 **Validation:**
- - The `element_type` is required to be `anyfunc`.
+ - The `element_type` is required to be `funcref`.
 
 > The words "size" and "length" are used interchangeably when describing linear
 memory, since the elements are byte-sized.
@@ -1016,14 +1016,14 @@ and can be any one of the following values:
 An *instantiation-time initializer* is a single [instruction], which is one of
 the following:
  - [`const`](#constant) (of any type).
- - [`get_global`](#get-global).
+ - [`global.get`](#get-global).
 
 The value produced by a module initializer is the value that such an instruction
 would produce if it were executed within a function body.
 
 **Validation:**
  - The requirements of the instructions are required.
- - For `get_global` instructions, the indexed global is required to be
+ - For `global.get` instructions, the indexed global is required to be
    an immutable import.
 
 > In the future, more instructions may be permitted as instantiation-time
@@ -1677,9 +1677,9 @@ The `const` instruction returns the value of `$value`.
 
 | Mnemonic    | Opcode | Immediates         | Signature      | Families |
 | ----------- | ------ | ------------------ | -------------- | -------- |
-| `get_local` | 0x20   | `$id`: [varuint32] | `() : ($T[1])` |          |
+| `local.get` | 0x20   | `$id`: [varuint32] | `() : ($T[1])` |          |
 
-The `get_local` instruction returns the value of the local at index `$id` in the
+The `local.get` instruction returns the value of the local at index `$id` in the
 locals vector of the current [function execution]. The type parameter is bound
 to the type of the local.
 
@@ -1690,25 +1690,25 @@ to the type of the local.
 
 | Mnemonic    | Opcode | Immediates         | Signature      | Families |
 | ----------- | ------ | ------------------ | -------------- | -------- |
-| `set_local` | 0x21   | `$id`: [varuint32] | `($T[1]) : ()` |          |
+| `local.set` | 0x21   | `$id`: [varuint32] | `($T[1]) : ()` |          |
 
-The `set_local` instruction sets the value of the local at index `$id` in the
+The `local.set` instruction sets the value of the local at index `$id` in the
 locals vector of the current [function execution] to the value given in the
 operand. The type parameter is bound to the type of the local.
 
 **Validation:**
  - `$id` is required to be within the bounds of the locals vector.
 
-> `set_local` is semantically equivalent to a similar `tee_local` followed by a
+> `local.set` is semantically equivalent to a similar `local.tee` followed by a
 `drop`.
 
 #### Tee Local
 
 | Mnemonic    | Opcode | Immediates         | Signature           | Families |
 | ----------- | ------ | ------------------ | ------------------- | -------- |
-| `tee_local` | 0x22   | `$id`: [varuint32] | `($T[1]) : ($T[1])` |          |
+| `local.tee` | 0x22   | `$id`: [varuint32] | `($T[1]) : ($T[1])` |          |
 
-The `tee_local` instruction sets the value of the locals at index `$id` in the
+The `local.tee` instruction sets the value of the locals at index `$id` in the
 locals vector of the current [function execution] to the value given in the
 operand. Its return value is the value of its operand. The type parameter is
 bound to the type of the local.
@@ -1726,9 +1726,9 @@ return value.
 
 | Mnemonic     | Opcode | Immediates         | Signature      | Families |
 | ------------ | ------ | ------------------ | -------------- | -------- |
-| `get_global` | 0x23   | `$id`: [varuint32] | `() : ($T[1])` |          |
+| `global.get` | 0x23   | `$id`: [varuint32] | `() : ($T[1])` |          |
 
-The `get_global` instruction returns the value of the global identified by index
+The `global.get` instruction returns the value of the global identified by index
 `$id` in the [global index space]. The type parameter is bound to the type of
 the global.
 
@@ -1739,9 +1739,9 @@ the global.
 
 | Mnemonic     | Opcode | Immediates         | Signature      | Families |
 | ------------ | ------ | ------------------ | -------------- | -------- |
-| `set_global` | 0x24   | `$id`: [varuint32] | `($T[1]) : ()` |          |
+| `global.set` | 0x24   | `$id`: [varuint32] | `($T[1]) : ()` |          |
 
-The `set_global` instruction sets the value of the global identified by index
+The `global.set` instruction sets the value of the global identified by index
 `$id` in the [global index space] to the value given in the operand. The type
 parameter is bound to the type of the global.
 
@@ -2578,7 +2578,7 @@ than or equal", or "oge", in other languages.
 
 | Mnemonic       | Opcode | Signature                | Families |
 | -------------- | ------ | ------------------------ | -------- |
-| `i32.wrap/i64` | 0xa7   | `(i64) : (i32)`          | [G]      |
+| `i32.wrap_i64` | 0xa7   | `(i64) : (i32)`          | [G]      |
 
 The `wrap` instruction returns the value of its operand silently wrapped to its
 result type. Wrapping means reducing the value modulo the number of unique
@@ -2593,7 +2593,7 @@ effectively discarding the most significant digits.
 
 | Mnemonic           | Opcode | Signature            | Families |
 | ------------------ | ------ | -------------------- | -------- |
-| `i64.extend_s/i32` | 0xac   | `(i32) : (i64)`      | [S]      |
+| `i64.extend_i32_s` | 0xac   | `(i32) : (i64)`      | [S]      |
 
 The `extend_s` instruction returns the value of its operand [sign-extended] to
 its result type.
@@ -2602,7 +2602,7 @@ its result type.
 
 | Mnemonic           | Opcode | Signature            | Families |
 | ------------------ | ------ | -------------------- | -------- |
-| `i64.extend_u/i32` | 0xad   | `(i32) : (i64)`      | [U]      |
+| `i64.extend_i32_u` | 0xad   | `(i32) : (i64)`      | [U]      |
 
 The `extend_u` instruction returns the value of its operand zero-extended to its
 result type.
@@ -2611,10 +2611,10 @@ result type.
 
 | Mnemonic          | Opcode | Signature             | Families |
 | ----------------- | ------ | --------------------- | -------- |
-| `i32.trunc_s/f32` | 0xa8   | `(f32) : (i32)`       | [F], [S] |
-| `i32.trunc_s/f64` | 0xaa   | `(f64) : (i32)`       | [F], [S] |
-| `i64.trunc_s/f32` | 0xae   | `(f32) : (i64)`       | [F], [S] |
-| `i64.trunc_s/f64` | 0xb0   | `(f64) : (i64)`       | [F], [S] |
+| `i32.trunc_f32_s` | 0xa8   | `(f32) : (i32)`       | [F], [S] |
+| `i32.trunc_f64_s` | 0xaa   | `(f64) : (i32)`       | [F], [S] |
+| `i64.trunc_f32_s` | 0xae   | `(f32) : (i64)`       | [F], [S] |
+| `i64.trunc_f64_s` | 0xb0   | `(f64) : (i64)`       | [F], [S] |
 
 The `trunc_s` instruction performs the IEEE 754-2008
 `convertToIntegerTowardZero` operation, with the result value interpreted as
@@ -2630,10 +2630,10 @@ occurs, due to the operand being outside the range that can be converted
 
 | Mnemonic          | Opcode | Signature             | Families |
 | ----------------- | ------ | --------------------- | -------- |
-| `i32.trunc_u/f32` | 0xa9   | `(f32) : (i32)`       | [F], [U] |
-| `i32.trunc_u/f64` | 0xab   | `(f64) : (i32)`       | [F], [U] |
-| `i64.trunc_u/f32` | 0xaf   | `(f32) : (i64)`       | [F], [U] |
-| `i64.trunc_u/f64` | 0xb1   | `(f64) : (i64)`       | [F], [U] |
+| `i32.trunc_f32_u` | 0xa9   | `(f32) : (i32)`       | [F], [U] |
+| `i32.trunc_f64_u` | 0xab   | `(f64) : (i32)`       | [F], [U] |
+| `i64.trunc_f32_u` | 0xaf   | `(f32) : (i64)`       | [F], [U] |
+| `i64.trunc_f64_u` | 0xb1   | `(f64) : (i64)`       | [F], [U] |
 
 The `trunc_u` instruction performs the IEEE 754-2008
 `convertToIntegerTowardZero` operation, with the result value interpreted as
@@ -2651,7 +2651,7 @@ truncate up to zero.
 
 | Mnemonic         | Opcode | Signature              | Families |
 | ---------------- | ------ | ---------------------- | -------- |
-| `f32.demote/f64` | 0xb6   | `(f64) : (f32)`        | [F]      |
+| `f32.demote_f64` | 0xb6   | `(f64) : (f32)`        | [F]      |
 
 The `demote` instruction performs the IEEE 754-2008 `convertFormat` operation,
 converting from its operand type to its result type, according to the
@@ -2663,7 +2663,7 @@ converting from its operand type to its result type, according to the
 
 | Mnemonic          | Opcode | Signature             | Families |
 | ----------------- | ------ | --------------------- | -------- |
-| `f64.promote/f32` | 0xbb   | `(f32) : (f64)`       | [F]      |
+| `f64.promote_f32` | 0xbb   | `(f32) : (f64)`       | [F]      |
 
 The `promote` instruction performs the IEEE 754-2008 `convertFormat` operation,
 converting from its operand type to its result type, according to the
@@ -2675,40 +2675,40 @@ converting from its operand type to its result type, according to the
 
 | Mnemonic            | Opcode | Signature           | Families |
 | ------------------- | ------ | ------------------- | -------- |
-| `f32.convert_s/i32` | 0xb2   | `(i32) : (f32)`     | [F], [S] |
-| `f32.convert_s/i64` | 0xb4   | `(i64) : (f32)`     | [F], [S] |
-| `f64.convert_s/i32` | 0xb7   | `(i32) : (f64)`     | [F], [S] |
-| `f64.convert_s/i64` | 0xb9   | `(i64) : (f64)`     | [F], [S] |
+| `f32.convert_i32_s` | 0xb2   | `(i32) : (f32)`     | [F], [S] |
+| `f32.convert_i64_s` | 0xb4   | `(i64) : (f32)`     | [F], [S] |
+| `f64.convert_i32_s` | 0xb7   | `(i32) : (f64)`     | [F], [S] |
+| `f64.convert_i64_s` | 0xb9   | `(i64) : (f64)`     | [F], [S] |
 
 The `convert_s` instruction performs the IEEE 754-2008 `convertFromInt`
 operation, with its operand value interpreted as signed, according to the
 [general floating-point rules][F].
 
-> `f64.convert_s/i32` is always exact; the other instructions here may round.
+> `f64.convert_i32_s` is always exact; the other instructions here may round.
 
 #### Convert Integer To Floating-Point, Unsigned
 
 | Mnemonic            | Opcode | Signature           | Families |
 | ------------------- | ------ | ------------------- | -------- |
-| `f32.convert_u/i32` | 0xb3   | `(i32) : (f32)`     | [F], [U] |
-| `f32.convert_u/i64` | 0xb5   | `(i64) : (f32)`     | [F], [U] |
-| `f64.convert_u/i32` | 0xb8   | `(i32) : (f64)`     | [F], [U] |
-| `f64.convert_u/i64` | 0xba   | `(i64) : (f64)`     | [F], [U] |
+| `f32.convert_i32_u` | 0xb3   | `(i32) : (f32)`     | [F], [U] |
+| `f32.convert_i64_u` | 0xb5   | `(i64) : (f32)`     | [F], [U] |
+| `f64.convert_i32_u` | 0xb8   | `(i32) : (f64)`     | [F], [U] |
+| `f64.convert_i64_u` | 0xba   | `(i64) : (f64)`     | [F], [U] |
 
 The `convert_u` instruction performs the IEEE 754-2008 `convertFromInt`
 operation, with its operand value interpreted as unsigned, according to the
 [general floating-point rules][F].
 
-> `f64.convert_u/i32` is always exact; the other instructions here may round.
+> `f64.convert_i32_u` is always exact; the other instructions here may round.
 
 #### Reinterpret
 
 | Mnemonic              | Opcode | Signature         | Families |
 | --------------------- | ------ | ----------------- | -------- |
-| `i32.reinterpret/f32` | 0xbc   | `(f32) : (i32)`   |          |
-| `i64.reinterpret/f64` | 0xbd   | `(f64) : (i64)`   |          |
-| `f32.reinterpret/i32` | 0xbe   | `(i32) : (f32)`   |          |
-| `f64.reinterpret/i64` | 0xbf   | `(i64) : (f64)`   |          |
+| `i32.reinterpret_f32` | 0xbc   | `(f32) : (i32)`   |          |
+| `i64.reinterpret_f64` | 0xbd   | `(f64) : (i64)`   |          |
+| `f32.reinterpret_i32` | 0xbe   | `(i32) : (f32)`   |          |
+| `f64.reinterpret_i64` | 0xbf   | `(i64) : (f64)`   |          |
 
 The `reinterpret` instruction returns a value which has the same bit-pattern as
 its operand value, in its result type.
