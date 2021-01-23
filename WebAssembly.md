@@ -2573,6 +2573,7 @@ than or equal", or "oge", in other languages.
 0. [Convert Integer To Floating-Point, Signed](#convert-integer-to-floating-point-signed)
 0. [Convert Integer To Floating-Point, Unsigned](#convert-integer-to-floating-point-unsigned)
 0. [Reinterpret](#reinterpret)
+0. [Narrow-Width Integer Sign Extension](#narrow-width-integer-sign-extension)
 
 #### Integer Wrap
 
@@ -2595,7 +2596,7 @@ effectively discarding the most significant digits.
 | ------------------ | ------ | -------------------- | -------- |
 | `i64.extend_i32_s` | 0xac   | `(i32) : (i64)`      | [S]      |
 
-The `extend_s` instruction returns the value of its operand [sign-extended] to
+The `extend_i32_s` instruction returns the value of its operand [sign-extended] to
 its result type.
 
 #### Integer Extend, Unsigned
@@ -2604,7 +2605,7 @@ its result type.
 | ------------------ | ------ | -------------------- | -------- |
 | `i64.extend_i32_u` | 0xad   | `(i32) : (i64)`      | [U]      |
 
-The `extend_u` instruction returns the value of its operand zero-extended to its
+The `extend_i32_u` instruction returns the value of its operand zero-extended to its
 result type.
 
 #### Truncate Floating-Point to Integer, Signed
@@ -2715,6 +2716,26 @@ its operand value, in its result type.
 
 > The operand type is always the same width as the result type, so this
 instruction is always exact.
+
+#### Narrow-Width Integer Sign Extension
+
+| Mnemonic           | Opcode | Signature            | Families |
+| ------------------ | ------ | -------------------- | -------- |
+| `i32.extend8_s`    | 0xc0   | `(i32) : (i32)`      | [S]      |
+| `i32.extend16_s`   | 0xc1   | `(i32) : (i32)`      | [S]      |
+|                    |        |                      |          |
+| `i64.extend8_s`    | 0xc2   | `(i64) : (i64)`      | [S]      |
+| `i64.extend16_s`   | 0xc3   | `(i64) : (i64)`      | [S]      |
+| `i64.extend32_s`   | 0xc4   | `(i64) : (i64)`      | [S]      |
+
+The `extend_s` instruction interprets its operand as the corresponding signed
+narrower-width type and returns its value [sign-extended] to its full width.
+ - `extend8_s` extends the 8 least significant bits to the full width of its
+type.
+ - `extend16_s` extends the 16 least significant bits to the full width of its
+ type.
+ - `extend32_s` extends the 32 least significant bits to the full width of its
+ type.
 
 ### Load And Store Instructions
 
