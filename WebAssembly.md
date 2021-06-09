@@ -1821,7 +1821,7 @@ of function pointers.
 0. [Integer Remainder, Unsigned](#integer-remainder-unsigned)
 0. [Integer Bitwise And](#integer-bitwise-and)
 0. [Integer Bitwise Or](#integer-bitwise-or)
-0. [Integer Bitwise Exclusive-Or](#integer-exclusive-bitwise-or)
+0. [Integer Bitwise Exclusive-Or](#integer-bitwise-exclusive-or)
 0. [Integer Shift Left](#integer-shift-left)
 0. [Integer Shift Right, Signed](#integer-shift-right-signed)
 0. [Integer Shift Right, Unsigned](#integer-shift-right-unsigned)
