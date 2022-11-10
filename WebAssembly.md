@@ -1624,7 +1624,7 @@ be executed except in the case of a bug in the application.
 
 ### Basic Instructions
 
-0. [No-Op](#nop)
+0. [No-Op](#no-op)
 0. [Drop](#drop)
 0. [Constant](#constant)
 0. [Get Local](#get-local)
