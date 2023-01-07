@@ -1751,9 +1751,10 @@ parameter is bound to the type of the global.
 
 #### Select
 
-| Mnemonic    | Opcode | Signature                                   | Families |
-| ----------- | ------ | ------------------------------------------- | -------- |
-| `select`    | 0x1b   | `($T[1], $T[1], $condition: i32) : ($T[1])` |          |
+| Mnemonic    | Opcode | Immediates                                          | Signature                                   | Families |
+| ----------- | ------ | --------------------------------------------------- | ------------------------------------------- | -------- |
+| `select`    | 0x1b   |                                                     | `($T[1], $T[1], $condition: i32) : ($T[1])` |          |
+| `select`    | 0x1c   | `$signature`: [array] of [value types]; length is 1 | `($T[1], $T[1], $condition: i32) : ($T[1])` |          |
 
 The `select` instruction returns its first operand if `$condition` is [true], or
 its second operand otherwise.
@@ -1766,6 +1767,9 @@ meant to have similar performance properties.
 
 > This instruction is sometimes called "value-polymorphic" because it can
 operate on values of any type.
+
+**Validation:**
+ - `$signature[0]` is the [type] of the first and second operand.
 
 TODO: Explicitly describe the binding of $T.
 
